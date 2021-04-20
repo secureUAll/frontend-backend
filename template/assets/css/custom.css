@@ -333,3 +333,11 @@ a.text-danger:hover {
 .form-control:focus {
     border: 1px solid #92d400;
 }
+
+/* General elements */
+body {
+    background-color: #ebecf1;
+}
+a {
+    color: #92d400;
+}
