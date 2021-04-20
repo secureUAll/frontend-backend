@@ -318,3 +318,13 @@ a.text-danger:focus,
 a.text-danger:hover {
   color: #f0592a !important;
 }
+
+/* Qoute */
+.blockquote.blockquote-primary {
+    border-color: #92d400;
+    color: #92d400;
+}
+
+.blockquote.blockquote-primary small{
+    color: #92d400;
+}
