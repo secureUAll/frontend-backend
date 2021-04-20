@@ -5892,3 +5892,10 @@ Copyright (c) 2015 Daniel Eden
 .text-secondary {
   color: #9A9A9A!important;
 }
+
+button.close {
+  padding: 0;
+  background: 0 0;
+  border: 0;
+  -webkit-appearance: none;
+}

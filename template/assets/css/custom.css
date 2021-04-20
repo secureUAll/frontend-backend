@@ -2,3 +2,25 @@
 .navbar-collapse {
     background-color: #000;
 }
+
+/* Alerts */
+
+.alert.alert-success {
+    background-color: #92d400;
+}
+
+.alert.alert-danger {
+    background-color: #f0592a;
+}
+
+.alert.alert-warning {
+    background-color: #f3b21b;
+}
+
+.alert.alert-info {
+    background-color: #42d3b8;
+}
+
+.alert.alert-primary {
+    background-color: #92d400;
+}
