@@ -328,3 +328,8 @@ a.text-danger:hover {
 .blockquote.blockquote-primary small{
     color: #92d400;
 }
+
+/* Forms */
+.form-control:focus {
+    border: 1px solid #92d400;
+}
