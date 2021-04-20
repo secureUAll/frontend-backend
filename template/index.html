@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
+        name='viewport' />
+    <title>Secure(ua)ll Template</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700,200" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="assets/css/template.css" rel="stylesheet" />
+    <link href="assets/css/custom.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+
+                <a class="navbar-brand" href="#pablo">
+                    <h3 class="m-0 p-0">secure(ua)ll</h3>
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
+                aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <p>
+                                Home
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p>
+                                Buttons
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p>
+                                Cards
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p>
+                                Colors
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p>
+                                Charts
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p>
+                                Tables
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- Header -->
+    <div class="panel-header panel-header-lg">
+        <canvas id="bigDashboardChart"></canvas>
+    </div>
+    <!-- End Header -->
+
+    <!-- Page Content -->
+    <div class="content col-10 mx-auto">
+        <!-- Row of Cards -->
+        <div class="row">
+            <!-- Card 1 -->
+            <div class="col-lg-4">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Charts</h5>
+                        <h4 class="card-title">Line Chart</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Card 1 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Charts</h5>
+                        <h4 class="card-title">Bar Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Category</h5>
+                        <h4 class="card-title">Pie Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Row of Cards -->
+    </div>
+
+    <!--   Core JS Files   -->
+    <script src="assets/js/core/jquery.min.js"></script>
+    <script src="assets/js/core/popper.min.js"></script>
+    <script src="assets/js/core/bootstrap.min.js"></script>
+    <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <!-- Chart JS -->
+    <script src="assets/js/plugins/chartjs.min.js"></script>
+    <!--  Notifications Plugin    -->
+    <script src="assets/js/plugins/bootstrap-notify.js"></script>
+    <!-- Custom Scripts -->
+    <script src="assets/js/home.js"></script>
+
+    <!-- Activate charts -->
+    <script>
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            initCharts();
+        });
+    </script>
+</body>
+
+</html>
