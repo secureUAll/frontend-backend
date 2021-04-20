@@ -5887,3 +5887,8 @@ Copyright (c) 2015 Daniel Eden
   }
   
   /*# sourceMappingURL=dashboard-free.css.map */
+
+/* Custom changes to template */
+.text-secondary {
+  color: #9A9A9A!important;
+}
