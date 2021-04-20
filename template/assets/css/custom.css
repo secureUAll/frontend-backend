@@ -264,3 +264,57 @@ fieldset[disabled] .btn-danger.active {
     background-color: #f0592a;
     border-color: #f0592a;
 }
+
+/* Bachgrounds */
+
+.bg-primary {
+    background-color: #92d400 !important;
+}
+
+.bg-info {
+    background-color: #42d3b8 !important;
+}
+
+.bg-success {
+    background-color: #92d400 !important;
+}
+
+.bg-danger {
+    background-color: #f0592a !important;
+}
+
+.bg-warning {
+    background-color: #f3b21b !important;
+}
+
+/* Text */
+
+.text-primary,
+a.text-primary:focus,
+a.text-primary:hover {
+  color: #92d400 !important;
+}
+
+.text-info,
+a.text-info:focus,
+a.text-info:hover {
+  color: #42d3b8 !important;
+}
+
+.text-success,
+a.text-success:focus,
+a.text-success:hover {
+  color: #92d400 !important;
+}
+
+.text-warning,
+a.text-warning:focus,
+a.text-warning:hover {
+  color: #f3b21b !important;
+}
+
+.text-danger,
+a.text-danger:focus,
+a.text-danger:hover {
+  color: #f0592a !important;
+}
