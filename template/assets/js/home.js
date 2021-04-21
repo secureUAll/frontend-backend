@@ -279,32 +279,31 @@ const initPieChart = () => {
     // Colors
     const chartColor = "#92d400";
     const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
 
     // Data
     const DATA_COUNT = 5;
     const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
     const data = {
-        labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-        datasets: {
-            labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            datasets: [{
-                label: "Active Countries",
-                backgroundColor: gradientFill,
-                borderColor: chartColor,
-                pointBorderColor: "#FFF",
-                pointBackgroundColor: chartColor,
-                pointBorderWidth: 2,
-                pointHoverRadius: 4,
-                pointHoverBorderWidth: 1,
-                pointRadius: 4,
-                fill: true,
-                borderWidth: 1,
-                data: [80, 99, 86, 96, 123, 85, 100, 75, 88, 90, 123, 155]
-            }]
-        },
-    };
+        labels: [
+          'Info',
+          'Warning',
+          'Danger'
+        ],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [300, 50, 100],
+          backgroundColor: [
+            'rgb(66, 211, 184, 0.80)',
+            'rgb(243, 178, 27, 0.80)',
+            'rgb(240, 89, 42, 0.80)'
+          ],
+          pointHoverBackgroundColor: [
+            'rgb(44, 186, 160, 0.60)',
+            'rgb(218, 156, 11, 0.60)',
+            'rgb(215, 62, 15, 0.60)'
+          ]
+        }]
+      };
 
     // Draw chart
     const myChart = {
