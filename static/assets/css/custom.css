@@ -353,3 +353,31 @@ a {
 a:hover, a:focus {
     color: #7ab300!important;
 }
+
+/* Tables */
+table.table-discreet tbody tr { color: #9A9A9A!important;}
+
+table.table-discreet tbody tr:hover {
+    cursor: pointer;
+    color: #000!important;
+}
+
+table.table-discreet tbody tr .bg-1 { background-color: rgba(146, 212, 0, .6)!important;}
+table.table-discreet tbody tr .bg-2 { background-color: rgba(122, 179, 0, .6)!important;}
+table.table-discreet tbody tr .bg-3 { background-color: rgba(87, 128, 0, .6)!important;}
+table.table-discreet tbody tr .bg-4 { background-color: rgba(52, 77, 0, .6)!important;}
+table.table-discreet tbody tr .bg-5 { background-color: rgba(17, 26, 0, .6)!important;}
+table.table-discreet tbody tr .bg-primary { background-color: rgba(146, 212, 0, .6)!important;}
+table.table-discreet tbody tr .bg-danger { background-color: rgba(240, 89, 42, .6)!important;}
+table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, .6)!important;}
+table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, .6)!important;}
+
+table.table-discreet tbody tr:hover .bg-1 { background-color: rgba(146, 212, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-2 { background-color: rgba(122, 179, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-3 { background-color: rgba(87, 128, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-4 { background-color: rgba(52, 77, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-5 { background-color: rgba(17, 26, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 212, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
+table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
+table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, 1)!important;}
