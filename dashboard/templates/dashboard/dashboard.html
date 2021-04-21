@@ -1,9 +1,169 @@
 {% extends "dashboard/base.html" %}
+{% load static %}
 
 {% block meta %}
     <title>Secure(ua)ll | Dashboard</title>
 {% endblock meta %}
 
+{% block headerClass %}panel-header-lg{% endblock headerClass %}
+
+{% block header %}
+    <canvas id="vulnerabilitiesNumbersChart"></canvas>
+{% endblock header %}
+
 {% block content %}
-    <h1>Hello world!</h1>
+    <!-- Row of Graphs -->
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">% of Machines in a Risk Level</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <div class="chart-area my-auto">
+                        <canvas id="machinesRiskLevelChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 1 -->
+        <!-- Card 2 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart d-flex">
+                <div class="card-header mb-auto">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">Vulnerabilities by Group</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <div class="chart-area my-auto">
+                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 2 -->
+        <!-- Card 3 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart d-flex">
+                <div class="card-header mb-auto">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">UA in Numbers</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <table class="text-center text-secondary col-12 my-auto">
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">1242</h3>
+                                <p class="mt-0">machines</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">1502</h3>
+                                <p class="mt-0">domains</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">4968</h3>
+                                <p class="mt-0">exposed ports</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">2901</h3>
+                                <p class="mt-0">active vulnerabilities</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">0</h3>
+                                <p class="mt-0">weeks without vulnerabilities</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">13004</h3>
+                                <p class="mt-0">vulnerabilities found</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 3 -->
+    </div>
+    <!-- End Row of Graphs -->
+
+
+
 {% endblock content %}
+
+{% block scripts %}
+    <!-- Chart JS -->
+    <script src="{% static 'assets/js/plugins/charts.global.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+    <!-- Chart JS Labels -->
+    <script src="{% static 'assets/js/plugins/chartjs-plugin-labels.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'dashboard/dashboard.js' %}"></script>
+    <!-- Activate charts -->
+    <script>
+        // Define charts values
+        const vulnsNumbersLabels = ["08 APR", "09 APR", "10 APR", "11 APR", "12 APR", "13 APR", "14 APR", "15 APR", "16 APR", "17 APR", "18 APR", "19 APR"];
+        const vulnsNumbersValues = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
+        const machinesRiskLevelChartValues = [43, 16, 25, 6, 10];
+        const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
+        const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
+        // Start charts
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            initCharts();
+        });
+    </script>
+{% endblock scripts %}
