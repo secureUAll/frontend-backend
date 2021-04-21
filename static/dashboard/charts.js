@@ -23,7 +23,6 @@ const initVulnsNumbersChart = () => {
         data: {
             labels: vulnsNumbersLabels,
             datasets: [{
-                label: "Vulnerabilities",
                 borderColor: chartColor,
                 pointBorderColor: chartColor,
                 pointBackgroundColor: chartColor,
@@ -94,7 +93,7 @@ const initVulnsNumbersChart = () => {
                         fontStyle: "bold"
                     }
                 }]
-            }
+            },
         }
     });
 }
@@ -109,6 +108,10 @@ const initVulnsByGroupChart = () => {
     gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
     gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
 
+    const gradientFillHover = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFillHover.addColorStop(0, "rgba(146, 212, 0, 0)");
+    gradientFillHover.addColorStop(1, "rgba(146, 212, 0, 1)");
+
     // Draw chart
     var myChart = {
         type: "bar",
@@ -117,13 +120,8 @@ const initVulnsByGroupChart = () => {
             datasets: [{
                 label: "Amount",
                 backgroundColor: gradientFill,
+                hoverBackgroundColor: gradientFillHover,
                 borderColor: chartColor,
-                pointBorderColor: "#FFF",
-                pointBackgroundColor: chartColor,
-                pointBorderWidth: 2,
-                pointHoverRadius: 4,
-                pointHoverBorderWidth: 1,
-                pointRadius: 4,
                 fill: true,
                 borderWidth: 1,
                 data: initVulnsByGroupChartValues
@@ -146,7 +144,7 @@ const initVulnsByGroupChart = () => {
                 position: "nearest",
                 xPadding: 10,
                 yPadding: 10,
-                caretPadding: 10
+                caretPadding: 10,
             },
             responsive: 1,
             scales: {
@@ -160,7 +158,10 @@ const initVulnsByGroupChart = () => {
                 xAxes: [{
                     display: 1,
                 }]
-            }
+            },
+            plugins: {
+                labels: false
+            },
         }
     };
 

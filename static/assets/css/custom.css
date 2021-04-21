@@ -2,6 +2,9 @@
 .navbar-collapse {
     background-color: #000;
 }
+.navbar .navbar-brand {
+    text-transform: none!important;
+}
 
 /* Alerts */
 
