@@ -23,6 +23,7 @@ const initVulnsNumbersChart = () => {
         data: {
             labels: vulnsNumbersLabels,
             datasets: [{
+                label: "Vulnerabilities",
                 borderColor: chartColor,
                 pointBorderColor: chartColor,
                 pointBackgroundColor: chartColor,
