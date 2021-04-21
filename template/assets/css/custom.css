@@ -347,3 +347,6 @@ body {
 a {
     color: #92d400;
 }
+a:hover, a:focus {
+    color: #7ab300;
+}

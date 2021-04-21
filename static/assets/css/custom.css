@@ -287,6 +287,12 @@ fieldset[disabled] .btn-danger.active {
     background-color: #f3b21b !important;
 }
 
+.bg-1 { background-color: #92d400 !important }
+.bg-2 { background-color: #7ab300 !important }
+.bg-3 { background-color: #578000 !important }
+.bg-4 { background-color: #344d00 !important }
+.bg-5 { background-color: #111a00 !important }
+
 /* Text */
 
 .text-primary,
@@ -340,4 +346,7 @@ body {
 }
 a {
     color: #92d400;
+}
+a:hover, a:focus {
+    color: #7ab300!important;
 }
