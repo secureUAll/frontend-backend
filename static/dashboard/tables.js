@@ -9,17 +9,20 @@ $(document).ready(function () {
         $('#latestChangesTableAddRemoved').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
             "searching": false,
-            "lengthChange": false
+            "lengthChange": false,
+            "ordering": false
         });
         $('#latestChangesTableUpdates').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
             "searching": false,
-            "lengthChange": false
+            "lengthChange": false,
+            "ordering": false
         });
         $('#latestChangesTableFixedVulns').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
             "searching": false,
-            "lengthChange": false
+            "lengthChange": false,
+            "ordering": false
         });
     });
 });
