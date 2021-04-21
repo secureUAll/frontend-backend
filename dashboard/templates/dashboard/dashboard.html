@@ -1,9 +1,653 @@
 {% extends "dashboard/base.html" %}
+{% load static %}
 
 {% block meta %}
     <title>Secure(ua)ll | Dashboard</title>
 {% endblock meta %}
 
+{% block headerClass %}panel-header-lg{% endblock headerClass %}
+
+{% block header %}
+    <canvas id="vulnerabilitiesNumbersChart"></canvas>
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
 {% block content %}
-    <h1>Hello world!</h1>
+    <!-- Row of Graphs -->
+    <div class="row">
+        <!-- Card 1 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">% of Machines in a Risk Level</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <div class="chart-area my-auto">
+                        <canvas id="machinesRiskLevelChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 1 -->
+        <!-- Card 2 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart d-flex">
+                <div class="card-header mb-auto">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">Vulnerabilities by Group</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <div class="chart-area my-auto">
+                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 2 -->
+        <!-- Card 3 -->
+        <div class="col-lg-4 col-md-6 d-flex">
+            <div class="card card-chart d-flex">
+                <div class="card-header mb-auto">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">UA in Numbers</h4>
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                            data-toggle="dropdown">
+                            <i class="now-ui-icons loader_gear"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                            <a class="dropdown-item" href="#">Last 14 days</a>
+                            <a class="dropdown-item" href="#">Last month</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <table class="text-center text-secondary col-12 my-auto">
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">1242</h3>
+                                <p class="mt-0">machines</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">1502</h3>
+                                <p class="mt-0">domains</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">4968</h3>
+                                <p class="mt-0">exposed ports</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">2901</h3>
+                                <p class="mt-0">active vulnerabilities</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">0</h3>
+                                <p class="mt-0">weeks without vulnerabilities</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">13004</h3>
+                                <p class="mt-0">vulnerabilities found</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Card 3 -->
+    </div>
+    <!-- End Row of Graphs -->
+
+    <!-- Tables -->
+    <div class="row">
+        <!-- Latest Changes Table -->
+        <div class="col-lg-4 d-flex">
+            <div class="card d-flex">
+                <div class="card-header">
+                    <h4 class="card-title">Latest Changes</h4>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <!-- Machines Added/Removed -->
+                    <div class="my-auto">
+                        <h6 class="mb-0">Machines Added/Removed</h6>
+                        <div class="table-responsive">
+                            <table class="table table-discreet" id="latestChangesTableAddRemoved">
+                                <thead class=" text-primary">
+                                    <th></th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.128
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.030
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.077
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- End Machines Added/Removed -->
+
+                    <!-- Machines Updates -->
+                    <div class="my-auto">
+                        <h6 class="mt-3">Machines Updates</h6>
+                        <div class="table-responsive">
+                            <table class="table table-discreet" id="latestChangesTableUpdates">
+                                <thead class=" text-primary">
+                                    <th></th>
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                        <td>
+                                            owner update
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.128
+                                        </td>
+                                        <td>
+                                            notes added
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.030
+                                        </td>
+                                        <td>
+                                            OS update
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- End Machines Updates -->
+
+                    <!-- Machines Fixed Vulnerabilities -->
+                    <div class="my-auto">
+                        <h6 class="mt-3">Fixed Vulnerabilities</h6>
+                        <div class="table-responsive">
+                            <table class="table table-discreet" id="latestChangesTableFixedVulns">
+                                <thead class=" text-primary">
+                                    <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            127.001.100.037
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.128
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            127.001.100.030
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- End Fixed Vulnerabilities -->
+                </div>
+                <!-- End Tables -->
+            </div>
+        </div>
+        <!-- End Latest Changes Table -->
+
+        <!-- Right Side Tables Row -->
+        <div class="col-lg-8">
+            <!-- Machines Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Machines</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-discreet" id="machinesTable">
+                            <thead class=" text-primary">
+                                <th>
+                                    Machine
+                                </th>
+                                <th>
+                                    Risk Level
+                                </th>
+                                <th>
+                                    Owner
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-1">1</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-2">2</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-4">4</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-3">3</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-1">1</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-2">2</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-1">1</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-2">2</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-5">5</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-3">3</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Machines Table -->
+
+            <!-- Workers Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Workers</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-discreet" id="workersTable">
+                            <thead class=" text-primary">
+                                <th>
+                                    Worker
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Failures
+                                </th>
+                                <th>
+                                    Machines on Schedule
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        abc
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       282
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        www
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger">1</span>
+                                    </td>
+                                    <td>
+                                       312
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-danger">Idle</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-danger">3</span>
+                                    </td>
+                                    <td>
+                                       0
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        xyz
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-primary">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-primary">0</span>
+                                    </td>
+                                    <td>
+                                       335
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Right Side Tables Row -->
+        </div>
+        <!-- End Workers Table -->
+
+
+
 {% endblock content %}
+
+{% block scripts %}
+    <!-- Chart JS -->
+    <script src="{% static 'assets/js/plugins/charts.global.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+    <!-- Chart JS Labels -->
+    <script src="{% static 'assets/js/plugins/chartjs-plugin-labels.min.js' %}"></script>
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'dashboard/charts.js' %}"></script>
+    <script src="{% static 'dashboard/tables.js' %}"></script>
+    <!-- Activate charts -->
+    <script>
+        // Define charts values
+        const vulnsNumbersLabels = ["08 APR", "09 APR", "10 APR", "11 APR", "12 APR", "13 APR", "14 APR", "15 APR", "16 APR", "17 APR", "18 APR", "19 APR"];
+        const vulnsNumbersValues = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
+        const machinesRiskLevelChartValues = [43, 16, 25, 6, 10];
+        const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
+        const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
+        // Start charts
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            initCharts();
+        });
+    </script>
+{% endblock scripts %}
