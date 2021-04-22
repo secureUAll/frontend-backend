@@ -1,7 +1,9 @@
 from django.urls import path
 
+from .views import MachinesView
+
 app_name = 'machines'
 
 urlpatterns = [
-    # path('', <viewName>, name='')
+    path('', MachinesView, name='machines'),
 ]
