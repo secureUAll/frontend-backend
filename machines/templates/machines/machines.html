@@ -1,0 +1,329 @@
+{% extends "dashboard/base.html" %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Dashboard</title>
+{% endblock meta %}
+
+{% block content %}
+<!-- Infos and Graphs -->
+<div class="row">
+    <!-- Left Side Row - Latest Changes Table -->
+    <div class="col-lg-6 d-flex">
+        <div class="card d-flex">
+            <div class="card-header">
+                <h4 class="card-title">Machine Information</h4>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <!-- Machine General Information -->
+                <div class="my-auto">
+                    <h6 class="mb-0"></h6>
+                    <div class="row">
+                        <div class="col-lg-5 d-flex">
+                            <p class="col-4">IP:</p><span class="col-8">127.0.0.1</span>
+                        </div>
+                        <div class="col-lg-7 d-flex">
+                            <div class="row">
+                                <div class="col-lg-4 d-flex">
+                                    <p>DNS:</p>
+                                </div>
+                                <div class="table-responsive col-lg-8 d-flex">
+                                    <table class="table">                                  
+                                        <tbody>
+                                            <tr><td>domain1.ua.pt</td></tr>
+                                            <tr><td>domain2.ua.pt</td></tr>
+                                            <tr><td>domain3.ua.pt</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 d-flex">
+                            <p class="col-4">OS:</p><span class="col-8">Alpine Linux v3.12</span>
+                        </div>
+                        <div class="col-lg-7 d-flex">
+                            <div class="row">
+                                <div class="col-lg-6 d-flex">
+                                    <p>Scan Level:</p>
+                                </div>
+                                <div class="table-responsive col-lg-6 d-flex">
+                                    <span><button class="btn btn-warning">warning</button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Machine General Information -->
+
+                <!-- Open Ports -->
+                <div class="my-auto">
+                    <h6 class="mt-3">Open Ports</h6>
+                    <div class="table-responsive">
+                        <table class="table table-discreet" id="openPorts">
+                            <thead class=" text-primary">
+                                <th>Number</th>
+                                <th>Description</th>
+                                <th>Scan port</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>22</td>
+                                    <td>ssh</td>
+                                    <td>XXX</td>
+                                </tr>
+                                <tr>
+                                    <td>80</td>
+                                    <td>http</td>
+                                    <td>XXX</td>
+                                </tr>
+                                <tr>
+                                    <td>110</td>
+                                    <td>pop3</td>
+                                    <td>XXX</td>
+                                </tr>
+                                <tr>
+                                    <td>142</td>
+                                    <td>imap</td>
+                                    <td>XXX</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Open Ports -->
+
+                <!-- Services and Versions -->
+                <div class="my-auto">
+                    <h6 class="mt-3">Services and Versions</h6>
+                    <div class="table-responsive">
+                        <table class="table table-discreet" id="servicesVersions">
+                            <thead class=" text-primary">
+                                <th>Service</th>
+                                <th>Version</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ssh</td>
+                                    <td>OpenSSH 7.6p1</td>
+                                </tr>
+                                <tr>
+                                    <td>http</td>
+                                    <td>nginx</td>
+                                </tr>
+                                <tr>
+                                    <td>pop3</td>
+                                    <td>Dovecot pop3d</td>
+                                </tr>
+                                <tr>
+                                    <td>imap</td>
+                                    <td>Dovecot imapd</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Services and Versions -->
+            </div>
+            <!-- End Tables -->
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Left Side Row - Latest Changes Table -->
+
+    <!-- Right Side Row -->
+    <div class="col-lg-6">
+        <!-- Row Graph 1 -->
+        <div class="row">
+            <div class="d-flex">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                                <a class="dropdown-item" href="#">Last 14 days</a>
+                                <a class="dropdown-item" href="#">Last month</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="machinesRiskLevelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Graph 1 -->
+
+        <!-- Row Graph 2 -->
+        <div class="row">
+            <div class="d-flex">
+                <div class="card card-chart d-flex">
+                    <div class="card-header mb-auto">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">History of Risk Level</h4>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="riskOfVulnerabilities"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer mt-auto">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Row Graph 2 -->
+    </div>
+    <!-- End Right Side Row -->
+</div>
+<!-- End Infos and Graphs -->
+
+<div class="row">
+    <!-- Row Next Scan -->
+    <div class="col-4"></div>
+    <div class="card text-center text-white bg-dark justify-content-center align-middle col-4" style="height:4rem; width:fit-content;">
+        <div class="card-body">
+            <p class="card-text">Next Scan:
+            <div class="input-group">
+                <input type="text" class="" aria-label="Text input with dropdown button">
+                    
+            </div>
+            </p>
+        </div>
+    </div>
+    <div class="col-4"></div>
+    <!-- End Row Next Scan -->
+</div>
+<!-- Vulnerabilities Report -->
+<div class="row">
+    <div class="card card-chart">
+        <div class="card-header">
+            <h5 class="card-category"></h5>
+            <h4 class="card-title">Vulnerability Report</h4>
+            <div class="dropdown">
+                <button type="button"
+                    class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                    data-toggle="dropdown">
+                    <i class="now-ui-icons loader_gear"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                    <a class="dropdown-item" href="#">Last 14 days</a>
+                    <a class="dropdown-item" href="#">Last month</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-discreet" id="vulnerabilitiesTable">
+                    <thead class=" text-primary">
+                        <th>Risk</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge p-2 bg-primary">1</span></td>
+                            <td>Injection</td>
+                            <td>Some description about the vulnerability</td>
+                            <td>www.domain1.ua.pt/some_page?filed=1</td>
+                            <td><span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span></td>
+                            <td>
+                                <p><a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge p-2 bg-warning">2</span></td>
+                            <td>Injection</td>
+                            <td>Some description about the vulnerability</td>
+                            <td>www.domain1.ua.pt/some_page?filed=2</td>
+                            <td><span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not fixed</span></td>
+                            <td>
+                                <p><a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge p-2 bg-primary">1</span></td>
+                            <td>Injection</td>
+                            <td>Some description about the vulnerability</td>
+                            <td>www.domain2.ua.pt/some_page?filed=3</td>
+                            <td><span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span></td>
+                            <td>
+                                <p>
+                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
+                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Show</a>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge p-2 bg-primary">1</span></td>
+                            <td>Injection</td>
+                            <td>Some description about the vulnerability</td>
+                            <td>www.domain3.ua.pt/some_page?filed=1</td>
+                            <td><span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span></td>
+                            <td>
+                                <p><a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge p-2 bg-warning">2</span></td>
+                            <td>Injection</td>
+                            <td>Some description about the vulnerability</td>
+                            <td>www.domain3.ua.pt/some_page?filed=2</td>
+                            <td><span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not fixed</span></td>
+                            <td>
+                                <p><a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Cooments for the vulnerability.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    <!-- End Modal -->
+</div>
+<!-- End Vulnerabilities Report -->
+{% endblock content %}
