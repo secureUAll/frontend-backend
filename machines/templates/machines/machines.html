@@ -1,8 +1,18 @@
 {% extends "dashboard/base.html" %}
 
 {% block meta %}
-    <title>Secure(ua)ll | Dashboard</title>
+    <title>Secure(ua)ll | Machine</title>
 {% endblock meta %}
+
+{% block headerClass %}panel-header-lg{% endblock headerClass %}
+
+{% block header %}
+    <canvas id="vulnerabilitiesNumbersChart"></canvas>
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
 
 {% block content %}
 <!-- Infos and Graphs -->
@@ -202,12 +212,15 @@
 <div class="row">
     <!-- Row Next Scan -->
     <div class="col-4"></div>
-    <div class="card text-center text-white bg-dark justify-content-center align-middle col-4" style="height:4rem; width:fit-content;">
+    <div class="card text-white bg-default justify-content-center align-middle col-4" style="height:5rem; width:fit-content;">
         <div class="card-body">
-            <p class="card-text">Next Scan:
-            <div class="input-group">
-                <input type="text" class="" aria-label="Text input with dropdown button">
-                    
+            <div class="p-2 bd-highlight d-flex justify-content-center">
+                <div class="row">
+                    <p class="col-6">Next Scan:</p>
+                    <div class="col-6 border shadow-sm rounded-pill bg-white">
+                        <p class="center" style="color:grey; width: fit-content;">30/04/2021</p>
+                    </div>
+                </div>
             </div>
             </p>
         </div>
@@ -327,3 +340,17 @@
 </div>
 <!-- End Vulnerabilities Report -->
 {% endblock content %}
+
+{% block scripts %}
+    <!-- Chart JS -->
+    <script src="{% static 'assets/js/plugins/charts.global.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+    <!-- Chart JS Labels -->
+    <script src="{% static 'assets/js/plugins/chartjs-plugin-labels.min.js' %}"></script>
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'dashboard/charts.js' %}"></script>
+    <script src="{% static 'dashboard/tables.js' %}"></script>
+
+{% endblock scripts %}
