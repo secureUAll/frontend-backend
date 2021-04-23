@@ -8,6 +8,10 @@
     - meta, for meta related tags (title, description, ...)
     - styles, to insert tags at the bottom of the <header></header>(like <link />, ...)
     - header, to insert html inside the page header
+<<<<<<< HEAD
+=======
+    - headerClass, to define aditional classes for header (text only)
+>>>>>>> main
     - content, to insert html inside the page content area
     - scripts, to add <script></script> tags to the bottom of the <body></body>
 
@@ -18,6 +22,12 @@
     {% block meta %}
         <title>My page</title>
     {% endblock meta %}
+<<<<<<< HEAD
+=======
+
+    To define an extra class for header
+    {% block headerClass %}panel-header-lg{% endblock headerClass %}
+>>>>>>> main
 {% endcomment %}
 
 <!DOCTYPE html>
@@ -49,7 +59,11 @@
     <!-- End Navbar -->
 
     <!-- Header -->
+<<<<<<< HEAD
     <div class="panel-header">
+=======
+    <div class="panel-header {% block headerClass %}{% endblock headerClass %}">
+>>>>>>> main
         {% block header %}
         {% endblock header %}
     </div>
