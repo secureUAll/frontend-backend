@@ -13,4 +13,7 @@ class WorkersView(View):
 class NewWorkerView(View):
 
     def get(self, request, *args, **kwargs):
-        return render(request, "workers/newWorker.html", )
+        context = {
+            'machines': [m for worker in dataContext.workersContext['workers'] for m in worker['machinesList']]
+        }
+        return render(request, "workers/newWorker.html", context)

@@ -19,6 +19,63 @@
 
 {% block content %}
 
+    <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form>
+                            <div class="row col-12">
+                                <div class="col-12 pl-1">
+                                    <div class="form-group">
+                                        <label>Machine ID</label>
+                                        <input type="text" class="form-control" placeholder="" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Public key</label>
+                                        <textarea
+                                            rows="10"
+                                            cols="80"
+                                            class="form-control"
+                                            placeholder="Begins with 'ssh-rsa', 'ecdsa-sha2-nistp256', 'ecdsa-sha2-nistp384', 'ecdsa-sha2-nistp521', or 'ssh-ed25519'"
+                                        ></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 pr-1">
+                                    <div class="form-group">
+                                        <label>IP Range</label>
+                                        <input type="text" class="form-control" placeholder="From" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                                    </div>
+                                </div>
+                                <div class="col-md-5 pl-1">
+                                    <div class="form-group">
+                                        <label class="text-white">IP Range</label>
+                                        <input type="text" class="form-control" placeholder="To"  minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                                    </div>
+                                </div>
+                                <div class="col-2 my-auto">
+                                    <span class="p-2 btn btn-outline-primary col-12"><i class="now-ui-icons ui-1_simple-add ms-2"></i> Add range</span>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row d-flex flex-row flex-nowrap">
+                            <a href="/workers" class="col-4">
+                                <button class="btn btn-outline-primary col-12">Cancel</button>
+                            </a>
+                            <a href="/workers" class="col-8">
+                                <button class="btn btn-primary col-12">Add new worker</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}
 

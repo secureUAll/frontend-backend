@@ -368,6 +368,8 @@ a.text-danger:hover {
     border: 1px solid #92d400;
 }
 
+textarea.form-control { max-height: none!important; }
+
 /* General elements */
 body {
     background-color: #ebecf1;
