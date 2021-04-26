@@ -296,6 +296,9 @@ fieldset[disabled] .btn-danger.active {
 .bg-4 { background-color: #344d00 !important }
 .bg-5 { background-color: #111a00 !important }
 
+.bg-outline-primary { color: #92d400; border: 1px solid #92d400; transition: .15s;}
+a.bg-outline-primary:hover { color: #ffffff!important; background-color: #92d400; border: 1px solid #92d400; }
+
 /* Text */
 
 .text-primary,
@@ -381,3 +384,24 @@ table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 21
 table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, 1)!important;}
+
+/* Dictionaries */
+/* Based on https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line */
+dl {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0
+}
+dt {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
+dd {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
