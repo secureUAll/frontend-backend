@@ -268,6 +268,28 @@ fieldset[disabled] .btn-danger.active {
     border-color: #f0592a;
 }
 
+.btn-outline-primary {
+    color: #92d400;
+    border-color: #92d400;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn-outline-primary:not(:disabled):not(.disabled):active:focus,
+.btn-outline-primary:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary:active:hover,
+.btn-outline-primary.active:hover,
+.show>.btn-outline-primary.dropdown-toggle,
+.show>.btn-outline-primary.dropdown-toggle:focus,
+.show>.btn-outline-primary.dropdown-toggle:hover {
+    background-color: #92d400;
+    color: #ffffff;
+    border-color: #92d400;
+    box-shadow: none;
+}
+
 /* Bachgrounds */
 
 .bg-primary {

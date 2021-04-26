@@ -9,3 +9,8 @@ class WorkersView(View):
     def get(self, request, *args, **kwargs):
         context = dataContext.workersContext
         return render(request, "workers/workers.html", context)
+
+class NewWorkerView(View):
+
+    def get(self, request, *args, **kwargs):
+        return render(request, "workers/newWorker.html", )
