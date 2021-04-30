@@ -8,10 +8,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 def kafka_test(request):
     producer = KafkaProducer(bootstrap_servers='192.168.16.2:29092',                            
-                            security_protocol='SSL',
+                            security_protocol='SASL_SSL',
                             ssl_cafile='certs/CARoot.pem',
                             ssl_certfile='certs/certificate.pem',
                             ssl_keyfile='certs/key.pem',
+                            sasl_mechanism='PLAIN',
+                            sasl_plain_username='django',
+                            sasl_plain_password='django',
                             ssl_check_hostname=False,
                             api_version=(2,7,0))
     producer.send('test',b"Hello World")
