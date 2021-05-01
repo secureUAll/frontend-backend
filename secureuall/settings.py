@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-w3f=c#)&_9c3ym!@8ex^dq^+!5*l@z9h)9=$yqd+f6hnd=u=&j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,11 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # UA IdP
+    'djangosaml2',
+    'django_extensions',
+    'corsheaders',
     # Our apps
     'login',
     'dashboard',
     'workers',
-    'machines'
+    'machines',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +135,19 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -------------------
+# |  AUTHORIZATION  |
+# -------------------
+# AUTH_USER_MODEL = 'django.contrib.auth.models.User'
+
+AUTHENTICATION_BACKENDS = [
+    # 'user_aut.backends.CustomUserAuth',
+    'django.contrib.auth.backends.ModelBackend', #idp
+    'djangosaml2.backends.Saml2Backend', #idp
+]
+
+MIDDLEWARE.append('djangosaml2.middleware.SamlSessionMiddleware')
+SAML_SESSION_COOKIE_NAME = 'saml_session'
+
+from login.sp_pysaml2 import *

@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://deti-vuln-mon.ua.pt/saml2/metadata">
+  <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+	   <ds:X509Certificate>
+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
+sj+Bqx4YJVYGYUz+ToO+t7j6DtEcBKo=
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>
+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
+sj+Bqx4YJVYGYUz+ToO+t7j6DtEcBKo=
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://deti-vuln-mon.ua.pt/saml2/ls"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://deti-vuln-mon.ua.pt/saml2/ls/post"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://deti-vuln-mon.ua.pt/saml2/acs" index="0"/>
+  </md:SPSSODescriptor>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>Vuln</md:GivenName>
+    <md:SurName>Mon</md:SurName>
+    <md:EmailAddress>jpbarraca@ua.pt</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>
