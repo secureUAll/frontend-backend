@@ -3,7 +3,7 @@ services:
         image: postgres
         restart: always
         ports:
-            - 5432:5432
+            - 5432:5432 # TODO! Remove on production!
         volumes:
             - ./data/db:/var/lib/postgresql/data
         environment:
@@ -15,14 +15,12 @@ services:
         build:
             dockerfile: docker/frontend/Dockerfile
             context: ../
-        ports:
-            - 9000:9000
         environment:
             - RUNNING_MODE=production
             - DB_NAME=secureuall
             - DB_USER=frontend
             - DB_PASSWORD=abc
-            - DB_HOST=localhost
+            - DB_HOST=db
             - DB_PORT=5432
         depends_on:
             - "db"
