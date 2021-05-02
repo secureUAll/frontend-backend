@@ -1,4 +1,4 @@
-FROM python:3.8.9
+FROM python:3
 COPY secureuall/ /app
 ADD docker/frontend/entrypoint.sh /app
 RUN  apt update -y
