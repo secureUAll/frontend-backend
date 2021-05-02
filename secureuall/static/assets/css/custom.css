@@ -268,6 +268,28 @@ fieldset[disabled] .btn-danger.active {
     border-color: #f0592a;
 }
 
+.btn-outline-primary {
+    color: #92d400;
+    border-color: #92d400;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn-outline-primary:not(:disabled):not(.disabled):active:focus,
+.btn-outline-primary:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary:active:hover,
+.btn-outline-primary.active:hover,
+.show>.btn-outline-primary.dropdown-toggle,
+.show>.btn-outline-primary.dropdown-toggle:focus,
+.show>.btn-outline-primary.dropdown-toggle:hover {
+    background-color: #92d400;
+    color: #ffffff;
+    border-color: #92d400;
+    box-shadow: none;
+}
+
 /* Bachgrounds */
 
 .bg-primary {
@@ -295,6 +317,9 @@ fieldset[disabled] .btn-danger.active {
 .bg-3 { background-color: #578000 !important }
 .bg-4 { background-color: #344d00 !important }
 .bg-5 { background-color: #111a00 !important }
+
+.bg-outline-primary { color: #92d400; border: 1px solid #92d400; transition: .15s;}
+a.bg-outline-primary:hover { color: #ffffff!important; background-color: #92d400; border: 1px solid #92d400; }
 
 /* Text */
 
@@ -343,6 +368,8 @@ a.text-danger:hover {
     border: 1px solid #92d400;
 }
 
+textarea.form-control { max-height: none!important; }
+
 /* General elements */
 body {
     background-color: #ebecf1;
@@ -381,3 +408,24 @@ table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 21
 table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, 1)!important;}
+
+/* Dictionaries */
+/* Based on https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line */
+dl {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0
+}
+dt {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
+dd {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
