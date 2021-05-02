@@ -3,7 +3,7 @@ COPY secureuall/ /app
 ADD docker/frontend/entrypoint.sh /app
 RUN  apt update -y
 RUN apt install postgresql postgresql-contrib -y
-RUN apt-get install xmlsec1
+RUN apt install xmlsec1 -y
 WORKDIR /app
 RUN pip3 install -r requirements.txt
 RUN chmod +x entrypoint.sh
