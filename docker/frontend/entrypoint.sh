@@ -11,4 +11,5 @@ echo "Connected to database!."
 
 python3 manage.py makemigrations
 python3 manage.py migrate
-gunicorn --bind 0.0.0.0:9000 secureuall.wsgi:application --log-level debug
+gunicorn --bind 0.0.0.0:9000 secureuall.wsgi:application --log-level debug --log-file /var/log/frontend_gunicorn.log
+
