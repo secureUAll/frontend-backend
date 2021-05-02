@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,10 +23,40 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-w3f=c#)&_9c3ym!@8ex^dq^+!5*l@z9h)9=$yqd+f6hnd=u=&j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+RUNNING_MODE = os.environ.get("RUNNING_MODE", None)
+PRODUCTION = RUNNING_MODE is  not  None  and RUNNING_MODE.lower() == 'production'
+DEBUG = not PRODUCTION
+print("Prod?", PRODUCTION)
 
-ALLOWED_HOSTS = []
-
+if PRODUCTION:
+	print("REST API running in production environment.")
+	# Update configs as you wish
+	ALLOWED_HOSTS = ['*']
+	CORS_ALLOW_ALL_ORIGINS = True
+	SECURE_SSL_REDIRECT = False
+	# Database
+	DATABASES = {
+		'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get("DB_NAME", 'postgres'),
+            'USER': os.environ.get("DB_USER", 'postgres'),
+            'PASSWORD': os.environ.get("DB_PASSWORD", 'postgres'),
+            'HOST': os.environ.get("DB_HOST", 'db'),
+            'PORT': os.environ.get("DB_PORT", 5432),
+        }
+	}
+else:
+	print("REST API running in development environment.")
+	CORS_ALLOW_ALL_ORIGINS = True
+	ALLOWED_HOSTS = ['*']
+	SECURE_SSL_REDIRECT = False
+	# Database
+	DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+		}
+	}
 
 # Application definition
 
@@ -73,17 +103,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'secureuall.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation

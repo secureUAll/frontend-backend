@@ -1,0 +1,37 @@
+services:
+    db:
+        image: postgres
+        restart: always
+        ports:
+            - 5432:5432 # TODO! Remove on production!
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=secureuall
+            - POSTGRES_USER=frontend
+            - POSTGRES_PASSWORD=abc
+
+    frontend:
+        build:
+            dockerfile: docker/frontend/Dockerfile
+            context: ../
+        environment:
+            - RUNNING_MODE=production
+            - DB_NAME=secureuall
+            - DB_USER=frontend
+            - DB_PASSWORD=abc
+            - DB_HOST=db
+            - DB_PORT=5432
+        depends_on:
+            - "db"
+
+    nginx:
+        image: nginx
+        ports:
+            - 8000:80 # Development
+            # - 80:80 # Production
+        volumes:
+            - ../secureuall/static:/var/www/html/static # Django static files
+            - ./interface/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - "frontend"
