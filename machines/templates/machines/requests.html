@@ -47,115 +47,27 @@
                         <th>Approval</th>
                     </thead>
                     <tbody>
+                    {% for request in requests %}
                         <tr>
-                            <td class="email">subscriber1@ua.pt</td>
+                            <td class="email">{{request.subscriber}}</td>
                             <td>
-                                <p>127.0.0.3</p>
+                                <p>{{request.ip}}</p>
                                 <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
+                                {% for domain in request.domains %}
+                                    <span>{{domain}}</span><br>
+                                {% endfor %}
                                 </p>
-                                
                             </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
+                            <td>{{request.motive}}</td>
                             <td>
                                 <div class="d-flex justify-content-around">
                                     <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="email">subscriber1@ua.pt</td>
-                            <td>
-                                <p>127.0.0.3</p>
-                                <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
-                                </p>
-                            </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="email">subscriber1@ua.pt</td>
-                            <td>
-                                <p>127.0.0.3</p>
-                                <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
-                                </p>
-                            </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="email">subscriber1@ua.pt</td>
-                            <td>
-                                <p>127.0.0.3</p>
-                                <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
-                                </p>
-                            </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="email">subscriber1@ua.pt</td>
-                            <td>
-                                <p>127.0.0.3</p>
-                                <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
-                                </p>
-                            </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="email">subscriber1@ua.pt</td>
-                            <td>
-                                <p>127.0.0.3</p>
-                                <p>
-                                    <span>onedomain@ua.pt</span><br>
-                                    <span>twodomain@ua.pt</span>
-                                </p>
-                            </td>
-                            <td>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum. 
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
+                    {% empty %}
+                        <tr><span>No pending requests.</span></tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
