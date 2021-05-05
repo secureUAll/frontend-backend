@@ -9,15 +9,11 @@ from saml2.sigver import get_xmlsec_binary
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOGIN_URL = '/saml2/login/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 BASE = 'https://deti-vuln-mon.ua.pt'
 
 BASE_URL = '{}/saml2'.format(BASE)
-
-LOGIN_URL = '/saml2/login/'
-LOGOUT_URL = '/saml2/logout/'
 
 IDP_URL = 'https://idp.ua.pt'
 
