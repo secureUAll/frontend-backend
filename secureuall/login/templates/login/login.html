@@ -1,0 +1,45 @@
+{% extends "login/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(UA)ll | Login</title>
+{% endblock meta %}
+
+{% block header %}
+{% endblock header %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block content %}
+    <div class="col-md-4 mx-auto text-white">
+        <h2 class="title text-center">Welcome to Secure(UA)ll!</h2>
+
+        {% if not production %}
+            {% comment %}Debug login/register form{% endcomment %}
+            <div class="border border-warning rounded p-2 mb-3">
+                <p class="text-warning fw-bold mb-1"><i class="now-ui-icons ui-2_settings-90 mr-2"></i> You are in development mode!</p>
+                <p class="mb-0">In this mode, the IdP integration is deactivated. To mimic its behaviour to log in just fill in your email.</p>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="col-12 pl-1">
+                    <div class="form-group">
+                        <label for="loginEmailAddres">IdP Email address</label>
+                        <input type="email" class="form-control" placeholder="Email" id="loginEmailAddres" name="email">
+                    </div>
+                </div>
+                <button class="btn btn-primary col-12">Login</button>
+            </form>
+        {% else %}
+            {% comment %}Production login button{% endcomment %}
+            <a href="/saml2/login">
+                <button class="btn btn-primary col-12">Log in with your UA account</button>
+            </a>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}
