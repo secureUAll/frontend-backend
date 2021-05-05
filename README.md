@@ -4,6 +4,8 @@
 
 ## How to run locally?
 
+> This tutorial only runs the frontend, without integration with other services like the database or nginx. To run it with those services, go to [docker/README.md](docker/README.md).
+
 
 
 ### First time
