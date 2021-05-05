@@ -320,7 +320,6 @@ fieldset[disabled] .btn-danger.active {
 .bg-outline-primary { color: #92d400; border: 1px solid #92d400; transition: .15s;}
 a.bg-outline-primary:hover { color: #ffffff!important; background-color: #92d400; border: 1px solid #92d400; }
 
->>>>>>> main:secureuall/static/assets/css/custom.css
 /* Text */
 
 .text-primary,
@@ -430,5 +429,4 @@ dd {
   width: 50%;
   padding: 0;
   margin: 0
->>>>>>> main:secureuall/static/assets/css/custom.css
 }
