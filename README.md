@@ -2,6 +2,23 @@
 
 
 
+## Authentication and database
+
+The method for authentication in production is the UA IdP. However, as it redirects to the server URL, it is not suitable for testing and development. To allow local testing it was developed a simple authentication method that resumes to introducing the email address.
+
+The database is a dockerized PostgreSQL database. However, when someone only needs to test the interface without any other components, running Docker is not an efficient approach and the Django  lightweight development Web server on the local machine is a better option.
+
+To allow the combination of all this approaches Django reads the value of `RUNNING_MODE` environmental variable.
+
+| Authentication \ Database | Postgres                | SQLite  |
+| ------------------------- | ----------------------- | ------- |
+| IdP                       | RUNNING_MODE=production | -       |
+| Local authentication      | RUNNING_MODE=docker     | Default |
+
+ 
+
+
+
 ## How to run locally?
 
 > This tutorial only runs the frontend, without integration with other services like the database or nginx. To run it with those services, go to [docker/README.md](docker/README.md).
