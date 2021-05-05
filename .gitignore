@@ -707,3 +707,7 @@ fabric.properties
 .idea/codestream.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,code
+
+# Extra django
+*/migrations/*
+!*/migrations/__init__.py

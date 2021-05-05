@@ -1,0 +1,108 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Workers</title>
+{% endblock meta %}
+
+{% block headerClass %}{% endblock headerClass %}
+
+{% block header %}
+    <div class="header text-center my-auto">
+        <h2 class="title mb-0">Workers</h2>
+        <a href="/workers/new">
+            <button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i> Add new</button>
+        </a>
+    </div>
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+    <!-- Row of Tables -->
+    <div class="row">
+        {% for worker in workers %}
+            <div class="col-lg-4 col-md-6 d-flex mx-auto">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Worker {{worker.id}}</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                {% if worker.active %}
+                                    <a class="dropdown-item text-danger" href="#">Deactivate</a>
+                                {% else %}
+                                    <a class="dropdown-item text-primary" href="#">Activate</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body my-auto d-flex flex-column">
+                        <!-- Worker data -->
+                        <div class="d-flex col-12 text-secondary">
+                            <dl class="col-6">
+                                <dt>ID</dt>
+                                <dd>{{worker.id}}</dd>
+                                <dt>Failures</dt>
+                                <dd>{{worker.failures}}</dd>
+                            </dl>
+                            <dl class="col-6">
+                                <dt>Status</dt>
+                                <dd>
+                                    {% if worker.active %}
+                                        <span class="text-primary">Active</span>
+                                    {% else %}
+                                        <span class="text-danger">Idle</span>
+                                    {% endif %}
+                                </dd>
+                                <dt>Machines</dt>
+                                <dd>{{worker.machines}}</dd>
+                            </dl>
+                            </div>
+                        <!-- Machines table -->
+                        <div class="table-responsive col-12 mt-3">
+                            <table class="table table-discreet" id="table{{forloop.counter}}">
+                                <thead class=" text-primary">
+                                    <th>Machine</th>
+                                    <th>Location</th>
+                                    <th>Risk</th>
+                                </thead>
+                                <tbody>
+                                    {% for machine in worker.machinesList %}
+                                            <tr title="See machine page">
+                                                <td>{{machine.machine}}</td>
+                                                <td>{{machine.location}}</td>
+                                                <td>
+                                                    <span class="badge p-2 bg-{{machine.risk}}">{{machine.risk}}</span>
+                                                </td>
+                                            </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Updated 2 minutes ago
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'workers/tables.js' %}"></script>
+{% endblock scripts %}
