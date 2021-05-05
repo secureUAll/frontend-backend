@@ -30,6 +30,8 @@ DEBUG = not PRODUCTION
 DOCKER_DEBUG = RUNNING_MODE is  not  None  and RUNNING_MODE.lower() == 'docker'
 print("Prod?", PRODUCTION)
 LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL="/"
+LOGOUT_REDIRECT_URL = "/login/"
 
 if PRODUCTION or DOCKER_DEBUG:
     # Update configs as you wish
