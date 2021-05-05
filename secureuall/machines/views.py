@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from kafka import KafkaProducer
 from django.http import HttpResponse
 import logging
@@ -9,18 +10,15 @@ logging.basicConfig(level=logging.DEBUG)
 # Create your views here.
 context = dataContext.machineContext
 
+@login_required
 def MachinesView(request, *args, **kwargs):
     return render(request, "machines/machines.html", context)
 
-
+@login_required
 def RequestsView(request, *args, **kwargs):
-    return render(request, "machines/requests.html", context)    
+    return render(request, "machines/requests.html", context)
 
-
-def MachinesView(request, *args, **kwargs):
-    context = dataContext.machineContext
-    return render(request, "machines/machines.html", context)
-
+@login_required
 def kafka_test(request):
     producer = KafkaProducer(bootstrap_servers='kafka:9092',                            
                             security_protocol='SASL_SSL',
