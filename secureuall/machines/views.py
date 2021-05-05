@@ -17,6 +17,10 @@ def RequestsView(request, *args, **kwargs):
     return render(request, "machines/requests.html", context)    
 
 
+def MachinesView(request, *args, **kwargs):
+    context = dataContext.machineContext
+    return render(request, "machines/machines.html", context)
+
 def kafka_test(request):
     producer = KafkaProducer(bootstrap_servers='kafka:9092',                            
                             security_protocol='SASL_SSL',

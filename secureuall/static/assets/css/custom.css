@@ -2,12 +2,6 @@
 .navbar-collapse {
     background-color: #000;
 }
-<<<<<<< HEAD
-=======
-.navbar .navbar-brand {
-    text-transform: none!important;
-}
->>>>>>> main
 
 /* Alerts */
 
@@ -315,7 +309,7 @@ fieldset[disabled] .btn-danger.active {
     background-color: #f3b21b !important;
 }
 
-<<<<<<< HEAD
+<<<<<<< HEAD:static/assets/css/custom.css
 =======
 .bg-1 { background-color: #92d400 !important }
 .bg-2 { background-color: #7ab300 !important }
@@ -381,8 +375,7 @@ body {
 }
 a {
     color: #92d400;
-<<<<<<< HEAD
-}
+<<<<<<< HEAD:static/assets/css/custom.css
 =======
 }
 a:hover, a:focus {
@@ -416,3 +409,24 @@ table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 21
 table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, 1)!important;}
+
+/* Dictionaries */
+/* Based on https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line */
+dl {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0
+}
+dt {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
+dd {
+  float: left;
+  width: 50%;
+  padding: 0;
+  margin: 0
+}
