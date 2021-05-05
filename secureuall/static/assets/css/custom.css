@@ -2,9 +2,6 @@
 .navbar-collapse {
     background-color: #000;
 }
-.navbar .navbar-brand {
-    text-transform: none!important;
-}
 
 /* Alerts */
 
@@ -312,6 +309,8 @@ fieldset[disabled] .btn-danger.active {
     background-color: #f3b21b !important;
 }
 
+<<<<<<< HEAD:static/assets/css/custom.css
+=======
 .bg-1 { background-color: #92d400 !important }
 .bg-2 { background-color: #7ab300 !important }
 .bg-3 { background-color: #578000 !important }
@@ -376,6 +375,8 @@ body {
 }
 a {
     color: #92d400;
+<<<<<<< HEAD:static/assets/css/custom.css
+=======
 }
 a:hover, a:focus {
     color: #7ab300!important;

@@ -1,0 +1,443 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Machines</title>
+{% endblock meta %}
+
+{% block headerClass %}{% endblock headerClass %}
+
+{% block header %}
+<div class="header text-center my-auto">
+    <h2 class="title">Machines</h2>
+</div>  
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+<!-- Infos and Graphs -->
+<div class="row align-items-center">
+    <!-- Left Side Row - Latest Changes Table -->
+    <div class="col-lg-6 d-flex">
+        <div class="card d-flex">
+            <div class="card-header">
+                <h4 class="card-title">Machine Information</h4>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <!-- Machine General Information -->
+                <div class="my-auto">
+                    <h6 class="mb-0"></h6>
+                    <div class="row">
+                        <div class="d-flex col-md-12 text-secondary">
+                            <dl class="col-md-6">
+                                <dt>IP</dt>
+                                <dd>{{machine.ip}}</dd>
+                                <dt>DNS</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                        <table class="table">                                  
+                                            <tbody>
+                                            {% for domain in machine.domains %}
+                                                <tr><td>{{domain}}</td></tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </dd> 
+                            </dl>
+                            <dl class="col-md-6">
+                                <dt>OS</dt>
+                                <dd>{{machine.os}}</dd>
+                                <dt>Scan Level</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                    {% if machine.scanLevel == '1' %}
+                                        <span><button class="btn btn-primary">1</button></span>
+                                    {% elif machine.scanLevel == '2' %}
+                                        <span><button class="btn btn-warning">2</button></span>
+                                    {% elif machine.scanLevel == '3' %}
+                                        <span><button class="btn btn-danger">3</button></span>
+                                    {% elif machine.scanLevel == '4' %}
+                                        <span><button class="btn btn-danger">3</button></span>
+                                    {% endif %}
+                                    </div>
+                                </dd>
+                            </dl>           
+                        </div>
+                    </div>
+                </div>
+                <!-- End Machine General Information -->
+
+                <!-- Open Ports -->
+                <div class="my-auto">
+                    <h6 class="mt-3">Open Ports</h6>
+                    <div class="table-responsive col-12">
+                        <table class="table table-discreet" id="openPorts">
+                            <thead class=" text-primary">
+                                <th class="col-3">Number</th>
+                                <th class="col-6">Description</th>
+                                <th class="col-3">Scan port</th>
+                            </thead>
+                            <tbody>
+                            {% for port in machine.openPorts %}
+                                <tr>
+                                    <td>{{port.number}}</td>
+                                    <td>{{port.description}}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-around">
+                                            {% if machine.scanEnabled %}
+                                                <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
+                                            {% else %}
+                                                <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Open Ports -->
+
+                <!-- Services and Versions -->
+                <div class="my-auto">
+                    <h6 class="mt-3">Services and Versions</h6>
+                    <div class="table-responsive">
+                        <table class="table table-discreet" id="servicesVersions">
+                            <thead class=" text-primary">
+                                <th>Service</th>
+                                <th>Version</th>
+                            </thead>
+                            <tbody>
+                                {% for port in machine.openPorts %}
+                                    <tr>
+                                        <td>{{port.description}}</td>
+                                        <td>{{port.version}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- End Services and Versions -->
+
+                <!-- Owners and Subscribers -->
+                <div class="my-auto">
+                    <h6 class="mb-0"></h6>
+                    <div class="row">
+                        <div class="d-flex col-12 text-secondary">
+                            <dl class="col-6">
+                                <dt>Owners</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                        <table class="table">                                  
+                                            <tbody>
+                                            {% for owner in machine.owners %}
+                                                <tr><td>{{owner}}</td></tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button class="btn btn-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
+                                </dd>
+                            </dl>
+                            <dl class="col-6">
+                                <dt>Subscribers</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                        <table class="table">             
+                                            <tbody>
+                                            {% for subscriber in machine.subscribers %}
+                                                <tr><td>{{subscriber}}</td></tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button class="btn btn-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
+                                </dd>
+                            </dl>           
+                        </div>
+                    </div>
+                </div>
+                <!-- End Owners and Subscribers -->
+            </div>
+            <!-- End Tables -->
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Left Side Row - Latest Changes Table -->
+
+    <!-- Right Side Row -->
+    <div class="col-lg-6">
+        <!-- Row Graph 1 -->
+        <div class="row">
+            <div class="d-flex">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                                <a class="dropdown-item" href="#">Last 14 days</a>
+                                <a class="dropdown-item" href="#">Last month</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="vulnerabilitiesNumbersChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Graph 1 -->
+
+        <!-- Row Graph 2 -->
+        <div class="row">
+            <div class="d-flex">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Vulnerabilities by Group</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                                <a class="dropdown-item" href="#">Last 14 days</a>
+                                <a class="dropdown-item" href="#">Last month</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer mt-auto">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Row Graph 2 -->
+
+        <!-- Row Graph 3 -->
+        <div class="row">
+            <div class="d-flex">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                                <a class="dropdown-item" href="#">Last 14 days</a>
+                                <a class="dropdown-item" href="#">Last month</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="machinesRiskLevelChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Row Graph 3 -->
+    </div>
+    <!-- End Right Side Row -->
+</div>
+<!-- End Infos and Graphs -->
+
+<!-- Vulnerabilities Report -->
+<div class="row">
+    <div class="card card-chart">
+        <div class="card-header">
+            <h5 class="card-category"></h5>
+            <h4 class="card-title">Vulnerability Report</h4>
+            <div class="dropdown">
+                <button type="button"
+                    class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                    data-toggle="dropdown">
+                    <i class="now-ui-icons loader_gear"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                    <a class="dropdown-item" href="#">Last 14 days</a>
+                    <a class="dropdown-item" href="#">Last month</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Row Next Scan -->
+            <div class="row">
+                <div class="d-flex justify-content-center text-secondary my-auto">
+                    <span class="fw-bold fs-4 px-4">Next Scan:</span><span class="border border-secondary rounded-pill fs-5 px-4 py-1">07/05/2021</span>
+                </div>
+            </div>
+            <!-- End Row Next Scan -->
+            <div class="table-responsive">
+                <table class="table table-discreet" id="vulnerabilitiesTable">
+                    <thead class=" text-primary">
+                        <th>Risk</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                    </thead>
+                    <tbody>
+                        {% for vuln in machine.vulnerabilities %}
+                        <tr>
+                            <td>
+                            {% if vuln.risk == 1 %}
+                                <span class="badge p-2 bg-primary">1</span>
+                            {% elif vuln.risk == 2 %}
+                                <span class="badge p-2 bg-warning">2</span>
+                            {% elif vuln.risk == 3 %}
+                                <span class="badge p-2 bg-danger">3</span>
+                            {% elif vuln.risk == 4 %}
+                                <span class="badge p-2 bg-danger">4</span>
+                            {% endif %}
+                            </td>
+                            <td>{{vuln.type}}</td>
+                            <td>{{vuln.description}}</td>
+                            <td>{{vuln.location}}</td>
+                            <td>
+                            {% if vuln.status == 'Fixed' %}
+                                <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
+                            {% elif vuln.status == 'Not Fixed' %}
+                                <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
+                            {% elif vuln.status == 'Fixing' %}
+                                <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
+                            {% elif vuln.status == 'Invalid' %}
+                                <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
+                            {% endif %}
+                            </td>
+                            <td>
+                            {% if vuln.comments %}
+                                <p>
+                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
+                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Show</a>
+                                </p>
+                            {% else %}
+                                <p>
+                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
+                                </p>
+                            {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <div class="stats">
+                    <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                </div>
+                <div class="stats">
+                    Scan done by worker <span class="text-muted font-weight-bold">xyz</span> 0 erros reported.
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Cooments for the vulnerability.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+</div>
+<!-- End Vulnerabilities Report -->
+{% endblock content %}
+
+{% block scripts %}
+    <!-- Chart JS -->
+    <script src="{% static 'assets/js/plugins/charts.global.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+    <!-- Chart JS Labels -->
+    <script src="{% static 'assets/js/plugins/chartjs-plugin-labels.min.js' %}"></script>
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'machines/charts.js' %}"></script>
+    <script src="{% static 'machines/tables.js' %}"></script>
+    <!-- Activate charts -->
+    <script>
+        // Define charts values
+        const vulnsNumbersLabels = ["08 APR", "09 APR", "10 APR", "11 APR", "12 APR", "13 APR", "14 APR", "15 APR", "16 APR", "17 APR", "18 APR", "19 APR"];
+        const vulnsNumbersValues = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
+        const machinesRiskLevelChartValues = [43, 16, 25, 6, 10];
+        const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
+        const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
+        // Start charts
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            initCharts();
+        });
+    </script>
+{% endblock scripts %}

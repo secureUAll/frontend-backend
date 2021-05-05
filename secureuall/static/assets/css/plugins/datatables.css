@@ -97,9 +97,9 @@ table.dataTable thead .sorting_desc_disabled {
 .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
   color: #333 !important;
-  background-color: rgba(146, 212, 0, .6);
+  background-color: #92d400;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-  background-color: #92d400;
+  background-color: #7ab300;
 }
