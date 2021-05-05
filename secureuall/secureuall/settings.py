@@ -26,18 +26,22 @@ SECRET_KEY = 'django-insecure-w3f=c#)&_9c3ym!@8ex^dq^+!5*l@z9h)9=$yqd+f6hnd=u=&j
 RUNNING_MODE = os.environ.get("RUNNING_MODE", None)
 PRODUCTION = RUNNING_MODE is  not  None  and RUNNING_MODE.lower() == 'production'
 DEBUG = not PRODUCTION
+# Docker debug allows for local authentication but with connection to the database
+DOCKER_DEBUG = RUNNING_MODE is  not  None  and RUNNING_MODE.lower() == 'docker'
 print("Prod?", PRODUCTION)
 LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL="/"
+LOGOUT_REDIRECT_URL = "/login/"
 
-if PRODUCTION:
-	print("REST API running in production environment.")
-	# Update configs as you wish
-	ALLOWED_HOSTS = ['*']
-	CORS_ALLOW_ALL_ORIGINS = True
-	SECURE_SSL_REDIRECT = False
-	# Database
-	DATABASES = {
-		'default': {
+if PRODUCTION or DOCKER_DEBUG:
+    # Update configs as you wish
+    if not DOCKER_DEBUG:
+        print("REST API running in production environment with local authentication.")
+    else:
+        print("REST API running in production environment with UA IdP authentication.")
+    # Database
+    DATABASES = {
+        'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ.get("DB_NAME", 'postgres'),
             'USER': os.environ.get("DB_USER", 'postgres'),
@@ -45,19 +49,20 @@ if PRODUCTION:
             'HOST': os.environ.get("DB_HOST", 'db'),
             'PORT': os.environ.get("DB_PORT", 5432),
         }
-	}
+    }
 else:
-	print("REST API running in development environment.")
-	CORS_ALLOW_ALL_ORIGINS = True
-	ALLOWED_HOSTS = ['*']
-	SECURE_SSL_REDIRECT = False
-	# Database
-	DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-		}
-	}
+    print("REST API running in development environment with local authentication.")
+    # Database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
+SECURE_SSL_REDIRECT = False
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -68,11 +73,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # UA IdP
+    'djangosaml2',
+    'django_extensions',
+    'corsheaders',
     # Our apps
     'login',
     'dashboard',
     'workers',
-    'machines'
+    'machines',
 ]
 
 MIDDLEWARE = [
@@ -151,3 +160,19 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -------------------
+# |  AUTHORIZATION  |
+# -------------------
+# AUTH_USER_MODEL = 'django.contrib.auth.models.User'
+
+AUTHENTICATION_BACKENDS = [
+    # 'user_aut.backends.CustomUserAuth',
+    'django.contrib.auth.backends.ModelBackend', #idp
+    'djangosaml2.backends.Saml2Backend', #idp
+]
+
+MIDDLEWARE.append('djangosaml2.middleware.SamlSessionMiddleware')
+SAML_SESSION_COOKIE_NAME = 'saml_session'
+
+from login.sp_pysaml2 import *

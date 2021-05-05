@@ -29,7 +29,7 @@ class LoginView(View):
             else:
                 u = User.objects.get(email=email)
             # Log in
-            login(request, u)
+            login(request, u, backend='django.contrib.auth.backends.ModelBackend')
             # If ?next= parameter is passed, redirect to requested page
             if 'next' in request.GET and request.GET['next']:
                 return redirect(request.GET['next'])
