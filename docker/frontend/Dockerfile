@@ -1,6 +1,5 @@
 FROM python:3
 COPY secureuall/ /app
-ADD docker/frontend/entrypoint.sh /app
 RUN  apt update -y
 RUN apt install postgresql postgresql-contrib -y
 WORKDIR /app

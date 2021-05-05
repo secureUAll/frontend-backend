@@ -23,6 +23,8 @@ services:
             - DB_PASSWORD=abc
             - DB_HOST=db
             - DB_PORT=5432
+        volumes:
+            - ../secureuall:/app
         depends_on:
             - "db"
 
