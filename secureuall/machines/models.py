@@ -2,14 +2,36 @@ from django.db import models
 
 
 class Machine(models.Model):
-    ip = models.CharField(max_length=15, primary_key=True)
-    os = models.CharField(max_length=20)
-    risk = models.IntegerField()
-    scanLevel = models.IntegerField()
-    location = models.CharField(max_length=30)
+    riskLevels = (
+        ('1', 1),
+        ('2', 2),
+        ('3', 3),
+        ('4', 4),
+        ('5', 5)
+    )
+    scanLevel = (
+        ('2', 2),
+        ('3', 3),
+        ('4', 4)
+    )
+
+    ip = models.CharField(max_length=15, null=True, blank=True)
+    dns = models.TextField(max_length=255, null=True, blank=True)
+    os = models.CharField(max_length=20, null=True, blank=True)
+    risk = models.CharField(max_length=1, choices=riskLevels, null=True, blank=True)
+    scanLevel = models.IntegerField(max_length=1, choices=scanLevel, null=True, blank=True)
+    location = models.CharField(max_length=30, null=True, blank=True)
 
     def _str_(self):
-        return self.ip
+        return self.ip or self.dns
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_ip_and_or_dns",
+                check=(models.Q(ip__isnull=True, dns__isnull=False) | models.Q(ip__isnull=False, dns__isnull=True)),
+            )
+        ]
 
 
 class MachineUser(models.Model):
@@ -20,6 +42,10 @@ class MachineUser(models.Model):
     class Meta:
         unique_together = (("user", "machine"),)
 
+
+class MachineWorker(models.Model):
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='workers')
+    worker = models.ForeignKey('workers.worker', on_delete=models.CASCADE, related_name='machines')
 
 class Subscription(models.Model):
     user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='subscriptions')
@@ -36,14 +62,6 @@ class Scan(models.Model):
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='scans')
     date = models.DateField(auto_now=True)
     status = models.CharField(max_length=15)
-
-
-class MachineDNS(models.Model):
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='DNS')
-    dns = models.CharField(max_length=100, primary_key=True)
-
-    def _str_(self):
-        return self.dns
 
 
 class MachineService(models.Model):

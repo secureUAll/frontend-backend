@@ -711,3 +711,4 @@ fabric.properties
 # Extra django
 */migrations/*
 !*/migrations/__init__.py
+*_initial.py

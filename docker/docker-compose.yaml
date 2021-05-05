@@ -11,6 +11,7 @@ services:
             - POSTGRES_USER=frontend
             - POSTGRES_PASSWORD=abc
 
+
     frontend:
         build:
             dockerfile: docker/frontend/Dockerfile
@@ -22,8 +23,11 @@ services:
             - DB_PASSWORD=abc
             - DB_HOST=db
             - DB_PORT=5432
+        volumes:
+            - ../secureuall:/app
         depends_on:
             - "db"
+
 
     nginx:
         image: nginx
@@ -37,3 +41,8 @@ services:
             - ./interface/sslCerts/snippets:/etc/nginx/snippets # SSL snippets
         depends_on:
             - "frontend"
+
+networks:
+    default:
+        external:
+            name: rede
