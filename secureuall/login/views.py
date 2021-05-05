@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 
 from secureuall.settings import PRODUCTION
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 
 # Create your views here.
 class LoginView(View):
@@ -27,3 +27,14 @@ class LoginView(View):
                 u = User.models.get(email=email)
             login(request, u)
         return render(request, self.template_name, {'production': PRODUCTION})
+
+
+class LogoutView(View):
+
+    def get(self, request, *args, **kwargs):
+        # In production, log out with saml2
+        if PRODUCTION:
+            return redirect('/saml2/logout/')
+        # In development, log user out on Django only
+        logout(request)
+        return redirect('login:login')
