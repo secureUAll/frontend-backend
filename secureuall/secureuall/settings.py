@@ -32,12 +32,12 @@ print("Prod?", PRODUCTION)
 LOGIN_URL = "/login/"
 
 if PRODUCTION or DOCKER_DEBUG:
+    ALLOWED_HOSTS = ['*']
+    CORS_ALLOW_ALL_ORIGINS = True
+    SECURE_SSL_REDIRECT = True
     # Update configs as you wish
     if not DOCKER_DEBUG:
         print("REST API running in production environment with local authentication.")
-        ALLOWED_HOSTS = ['*']
-        CORS_ALLOW_ALL_ORIGINS = True
-        SECURE_SSL_REDIRECT = False
     else:
         print("REST API running in production environment with UA IdP authentication.")
     # Database
