@@ -22,8 +22,8 @@ urlpatterns = [
     # Admin panel
     path('admin/', admin.site.urls),
     # Other apps
-    path('login/', include('login.urls')),
     path('workers/', include('workers.urls')),
     path('machines/', include('machines.urls')),
     path('', include('dashboard.urls')),
+    path('', include('login.urls')),
 ]

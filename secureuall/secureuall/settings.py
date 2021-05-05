@@ -27,6 +27,7 @@ RUNNING_MODE = os.environ.get("RUNNING_MODE", None)
 PRODUCTION = RUNNING_MODE is  not  None  and RUNNING_MODE.lower() == 'production'
 DEBUG = not PRODUCTION
 print("Prod?", PRODUCTION)
+LOGIN_URL = "/login/"
 
 if PRODUCTION:
 	print("REST API running in production environment.")
