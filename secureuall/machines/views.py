@@ -7,6 +7,15 @@ import machines.dataContext as dataContext
 
 logging.basicConfig(level=logging.DEBUG)
 # Create your views here.
+context = dataContext.machineContext
+
+def MachinesView(request, *args, **kwargs):
+    return render(request, "machines/machines.html", context)
+
+
+def RequestsView(request, *args, **kwargs):
+    return render(request, "machines/requests.html", context)    
+
 
 def MachinesView(request, *args, **kwargs):
     context = dataContext.machineContext

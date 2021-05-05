@@ -148,5 +148,59 @@ machineContext = {
                 ]
             },
         ]
-    }
+    },
+    'requests': [
+        {
+            'subscriber': 'subscriber1@ua.pt',
+            'ip': '127.0.0.1',
+            'domains': [
+                'domain1.ua.pt',
+                'domain2.ua.pt'
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+        {
+            'subscriber': 'subscriber2@ua.pt',
+            'ip': '127.0.0.2',
+            'domains': [
+                'domain3.ua.pt',
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+        {
+            'subscriber': 'subscriber3@ua.pt',
+            'ip': '127.0.0.3',
+            'domains': [
+                'domain4.ua.pt',
+                'domain5.ua.pt',
+                'domain6.ua.pt'
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+        {
+            'subscriber': 'subscriber4@ua.pt',
+            'ip': '127.0.0.4',
+            'domains': [
+                'domain7.ua.pt',
+                'domain8.ua.pt'
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+        {
+            'subscriber': 'subscriber5@ua.pt',
+            'ip': '127.0.0.5',
+            'domains': [
+                'domain9.ua.pt',
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+        {
+            'subscriber': 'subscriber6@ua.pt',
+            'ip': '127.0.0.6',
+            'domains': [
+                'domain10.ua.pt',
+            ],
+            'motive': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dolor ipsum, molestie eu sem in, vulputate molestie mi. Donec a fringilla arcu. Aliquam sollicitudin cursus maximus. Maecenas vestibulum blandit enim eget placerat. Suspendisse cursus purus lorem, sit amet iaculis justo porttitor ac. Donec sem enim, interdum ut tincidunt vel, rhoncus non turpis. Praesent id justo consequat, luctus purus id, efficitur ligula. Aliquam et ipsum nibh. Sed efficitur urna ultricies bibendum bibendum.'
+        },
+    ]
 }
