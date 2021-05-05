@@ -25,7 +25,7 @@ SAML_CONFIG = {
   'debug': True,
   # full path to the xmlsec1 binary programm
   'xmlsec_binary': '/usr/bin/xmlsec1',
-  'entityid': "https://deti-vuln-mon.ua.pt/saml2/metadata",
+  'entityid': "https://deti-vuln-mon.ua.pt/saml2/metadata/",
   'attribute_map_dir': os.path.join(os.path.join(BASE_DIR,
                                       'login'),
                                       'attribute_maps'),
