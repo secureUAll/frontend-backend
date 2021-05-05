@@ -32,9 +32,6 @@ print("Prod?", PRODUCTION)
 LOGIN_URL = "/login/"
 
 if PRODUCTION or DOCKER_DEBUG:
-    ALLOWED_HOSTS = ['*']
-    CORS_ALLOW_ALL_ORIGINS = True
-    SECURE_SSL_REDIRECT = True
     # Update configs as you wish
     if not DOCKER_DEBUG:
         print("REST API running in production environment with local authentication.")
@@ -53,9 +50,6 @@ if PRODUCTION or DOCKER_DEBUG:
     }
 else:
     print("REST API running in development environment with local authentication.")
-    CORS_ALLOW_ALL_ORIGINS = True
-    ALLOWED_HOSTS = ['*']
-    SECURE_SSL_REDIRECT = False
     # Database
     DATABASES = {
         'default': {
@@ -63,6 +57,10 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+
+SECURE_SSL_REDIRECT = False
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
