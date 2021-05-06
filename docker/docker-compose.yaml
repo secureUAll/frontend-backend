@@ -23,6 +23,9 @@ services:
             - DB_PASSWORD=abc
             - DB_HOST=db
             - DB_PORT=5432
+            - DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
+            - DJANGO_SUPERUSER_USERNAME=secureuall
+            - DJANGO_SUPERUSER_EMAIL=gmatos.ferreira@ua.pt
         volumes:
             - ../secureuall:/app
         depends_on:
