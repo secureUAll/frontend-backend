@@ -2,11 +2,18 @@ from django.db import models
 
 
 class Worker(models.Model):
-    name = models.CharField(max_length=12)
-    status = models.CharField(max_length=12)
-    failures = models.IntegerField()
+    statusOps = (
+        ('I', 'Idle'),
+        ('A', 'Active'),
+        ('D', 'Down'),
+    )
 
-    def _str_(self):
+    name = models.CharField(max_length=12, primary_key=True)
+    status = models.CharField(max_length=1, choices=statusOps, default='I')
+    failures = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
         return self.name
 
 
@@ -15,5 +22,5 @@ class WorkerScanComment(models.Model):
     comment = models.CharField(max_length=256)
     user_cod = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='scanComments')
 
-    def _str_(self):
+    def __str__(self):
         return self.comment

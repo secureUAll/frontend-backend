@@ -24,12 +24,12 @@ class Machine(models.Model):
     dns = models.TextField(max_length=255, null=True, blank=True)
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
-    scanLevel = models.IntegerField(max_length=1, choices=scanLevelOps, null=True, blank=True)
+    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True)
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.ip or self.dns
 
     class Meta:
@@ -65,7 +65,7 @@ class Subscription(models.Model):
     notificationEmail = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
 
-    def _str_(self):
+    def __str__(self):
         return self.description
 
 
@@ -92,7 +92,7 @@ class MachinePort(models.Model):
     port = models.IntegerField()
     service = models.ForeignKey(MachineService, on_delete=models.CASCADE)
 
-    def _str_(self):
+    def __str__(self):
         return self.service + " (" + str(self.port) + ")"
 
     class Meta:
@@ -107,7 +107,7 @@ class Vulnerability(models.Model):
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
 
-    def _str_(self):
+    def __str__(self):
         return "(" + self.risk + ") " + self.description
 
 
@@ -116,7 +116,7 @@ class VulnerabilityComment(models.Model):
     user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=256)
 
-    def _str_(self):
+    def __str__(self):
         return self.comment
 
 
