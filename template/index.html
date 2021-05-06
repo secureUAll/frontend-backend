@@ -26,7 +26,7 @@
         <div class="container-fluid">
             <div class="navbar-wrapper">
 
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="#">
                     <h3 class="m-0 p-0">secure(ua)ll</h3>
                 </a>
             </div>
@@ -39,16 +39,9 @@
             <div class="collapse navbar-collapse justify-content-end" id="navigation">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">
+                        <a class="nav-link" href="#">
                             <p>
                                 Home
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="icons.html">
-                            <p>
-                                Icons
                             </p>
                         </a>
                     </li>
@@ -88,7 +81,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="charts.html">
                             <p>
                                 Charts
                             </p>
@@ -115,27 +108,86 @@
     <!-- End Navbar -->
 
     <!-- Header -->
-    <div class="panel-header">
-        <div class="header text-center">
-            <h2 class="title">Charts</h2>
-            <p class="category"></p>
-        </div>
+    <div class="panel-header panel-header-lg">
+        <canvas id="bigDashboardChart"></canvas>
     </div>
     <!-- End Header -->
 
     <!-- Page Content -->
-    <div class="content col-10 mx-auto row">
-        <div class="col-md-6 mx-auto">
-            <div class="card card-chart">
-                <div class="card-header">
-                    <h4 class="card-title">Chart.js</h4>
+    <div class="content col-10 mx-auto">
+        <!-- Row of Cards -->
+        <div class="row">
+            <!-- Card 1 -->
+            <div class="col-lg-4">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Charts</h5>
+                        <h4 class="card-title">Line Chart</h4>
+                        <div class="dropdown">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <p>To create graphics we use the Charts.js library. You can check its documentation <a href="https://www.chartjs.org/docs/latest/" target="_blank">here</a>.</p>
-                    <p>To see this library in action go to the <a href="index.html">main page</a>.</p>
+            </div>
+            <!-- End Card 1 -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Charts</h5>
+                        <h4 class="card-title">Bar Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category">Charts</h5>
+                        <h4 class="card-title">Pie Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- End Row of Cards -->
     </div>
 
     <!--   Core JS Files   -->
@@ -143,6 +195,20 @@
     <script src="assets/js/core/popper.min.js"></script>
     <script src="assets/js/core/bootstrap.min.js"></script>
     <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <!-- Chart JS -->
+    <script src="assets/js/plugins/chartjs.min.js"></script>
+    <!--  Notifications Plugin    -->
+    <script src="assets/js/plugins/bootstrap-notify.js"></script>
+    <!-- Custom Scripts -->
+    <script src="assets/js/home.js"></script>
+
+    <!-- Activate charts -->
+    <script>
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            initCharts();
+        });
+    </script>
 </body>
 
 </html>

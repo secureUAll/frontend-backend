@@ -2,9 +2,6 @@
 .navbar-collapse {
     background-color: #000;
 }
-.navbar .navbar-brand {
-    text-transform: none!important;
-}
 
 /* Alerts */
 
@@ -292,25 +289,11 @@ fieldset[disabled] .btn-danger.active {
 
 /* Bachgrounds */
 
-.bg-primary {
-    background-color: #92d400 !important;
-}
-
-.bg-info {
-    background-color: #42d3b8 !important;
-}
-
-.bg-success {
-    background-color: #92d400 !important;
-}
-
-.bg-danger {
-    background-color: #f0592a !important;
-}
-
-.bg-warning {
-    background-color: #f3b21b !important;
-}
+.bg-primary { background-color: #92d400 !important; }
+.bg-info { background-color: #42d3b8 !important; }
+.bg-success { background-color: #92d400 !important; }
+.bg-danger { background-color: #f0592a !important; }
+.bg-warning { background-color: #f3b21b !important; }
 
 .bg-1 { background-color: #92d400 !important }
 .bg-2 { background-color: #7ab300 !important }
@@ -320,6 +303,13 @@ fieldset[disabled] .btn-danger.active {
 
 .bg-outline-primary { color: #92d400; border: 1px solid #92d400; transition: .15s;}
 a.bg-outline-primary:hover { color: #ffffff!important; background-color: #92d400; border: 1px solid #92d400; }
+
+/* Borders */
+.border-primary { border-color: #92d400 !important; }
+.border-info { border-color: #42d3b8 !important; }
+.border-success { border-color: #92d400 !important; }
+.border-danger { border-color: #f0592a !important; }
+.border-warning { border-color: #f3b21b !important; }
 
 /* Text */
 
@@ -428,4 +418,9 @@ dd {
   width: 50%;
   padding: 0;
   margin: 0
+}
+
+/* Login */
+.panel-login {
+    min-height: 100vh;
 }

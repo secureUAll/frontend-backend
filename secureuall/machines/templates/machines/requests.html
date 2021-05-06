@@ -1,0 +1,114 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Subscription Requests</title>
+{% endblock meta %}
+
+{% block headerClass %}{% endblock headerClass %}
+
+{% block header %}
+<div class="header text-center my-auto">
+    <h2 class="title">Subscription Requests</h2>
+</div>  
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+<!-- Vulnerabilities Report -->
+<div class="row">
+    <div class="card card-chart">
+        <div class="card-header">
+            <h5 class="card-category"></h5>
+            <h4 class="card-title">Requests</h4>
+            <div class="dropdown">
+                <button type="button"
+                    class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                    data-toggle="dropdown">
+                    <i class="now-ui-icons loader_gear"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
+                    <a class="dropdown-item" href="#">Last 14 days</a>
+                    <a class="dropdown-item" href="#">Last month</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-discreet" id="requestsTable">
+                    <thead class=" text-primary">
+                        <th>E-mail</th>
+                        <th>Machine</th>
+                        <th>Motive</th>
+                        <th>Approval</th>
+                    </thead>
+                    <tbody>
+                    {% for request in requests %}
+                        <tr>
+                            <td class="email">{{request.subscriber}}</td>
+                            <td>
+                                <p>{{request.ip}}</p>
+                                <p>
+                                {% for domain in request.domains %}
+                                    <span>{{domain}}</span><br>
+                                {% endfor %}
+                                </p>
+                            </td>
+                            <td>{{request.motive}}</td>
+                            <td>
+                                <div class="d-flex justify-content-around">
+                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><span>No pending requests.</span></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">1</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="card-footer">
+            <div class="stats">
+                <i class="now-ui-icons arrows-1_refresh-69"></i> Updated 2 minutes ago
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Cooments for the vulnerability.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    <!-- End Modal -->
+</div>
+<!-- End Vulnerabilities Report -->
+{% endblock content %}

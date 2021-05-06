@@ -1,16 +1,19 @@
 from django.shortcuts import render
 from django.views import View
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 import workers.dataContext as dataContext
 
 # Create your views here.
-class WorkersView(View):
+
+
+class WorkersView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = dataContext.workersContext
         return render(request, "workers/workers.html", context)
 
-class NewWorkerView(View):
+
+class NewWorkerView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {

@@ -46,13 +46,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="icons.html">
-                            <p>
-                                Icons
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="typography.html">
                             <p>
                                 Typography
@@ -60,14 +53,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="buttons.html">
+                        <a class="nav-link" href="#">
                             <p>
                                 Buttons
                             </p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="cards.html">
                             <p>
                                 Cards
                             </p>
@@ -117,89 +110,30 @@
     <!-- Header -->
     <div class="panel-header">
         <div class="header text-center">
-            <h2 class="title">Cards</h2>
-            <p class="category"></a></p>
+            <h2 class="title">Buttons</h2>
+            <p class="category">Use Bootstrap classes to colorize your buttons!</a></p>
         </div>
     </div>
     <!-- End Header -->
 
     <!-- Page Content -->
     <div class="content col-10 mx-auto">
-        <!-- Row of Cards -->
-        <div class="row">
-            <!-- Normal Card -->
-            <div class="col-lg-6">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category">Category</h5>
-                        <h4 class="card-title">This is a normal card</h4>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            Simple as this.
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <p class="text-secondary">Footer information</p>
-                    </div>
+        <!-- Main card -->
+        <div class="col-md-6 mx-auto">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h4 class="card-title">Simple buttons</h4>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary col-12">.btn-primary</button>
+                    <button class="btn btn-info col-12">.btn-info</button>
+                    <button class="btn btn-success col-12">.btn-success</button>
+                    <button class="btn btn-warning col-12">.btn-warning</button>
+                    <button class="btn btn-danger col-12">.btn-danger</button>
                 </div>
             </div>
-            <!-- End Normal Card -->
-            <!-- Card With Settings -->
-            <div class="col-lg-6">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category">Category</h5>
-                        <h4 class="card-title">This is a card with settings</h4>
-                        <div class="dropdown">
-                            <button type="button"
-                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                                data-toggle="dropdown">
-                                <i class="now-ui-icons loader_gear"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            The settings menu can be used to let the user change the card context.
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <p class="text-secondary">Footer information</p>
-                    </div>
-                </div>
-            </div>
-            <!-- End Card With Settings -->
-            <!-- Card With Footer Update Information -->
-            <div class="col-lg-6">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category">Category</h5>
-                        <h4 class="card-title">This is a card with update information</h4>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            You can use it to give the user some feedback about the information status or timespan. 
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                        </div>
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card With Footer Update Information -->
         </div>
+        <!-- End Main card -->
     </div>
 
     <!--   Core JS Files   -->
