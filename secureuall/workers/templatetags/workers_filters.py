@@ -3,6 +3,7 @@ from django import template
 register = template.Library()
 
 
+@register.filter
 def color(value):
     """Removes all values of arg from the given string"""
     if value.lower() in ['active']:
@@ -12,4 +13,3 @@ def color(value):
 
     return 'dark'
 
-register.filter('color', color)

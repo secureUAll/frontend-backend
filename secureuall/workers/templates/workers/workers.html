@@ -1,4 +1,15 @@
 {% extends "dashboard/base.html" %}
+
+{% comment "About" %}
+
+    This template renders workers list and for each a list of the machines associated.
+
+    -- Context
+    workers             workers.models.Worker[]                         A list of workers
+    machinesAdded       Object {worker: name:str, machines: int}        For success notification when added machines to worker.
+
+{% endcomment %}
+
 {% load static %}
 {% load workers_filters %}
 
@@ -88,7 +99,7 @@
                                 </table>
                             </div>
                         {% else %}
-                        <div class="my-auto text-center">
+                        <div class="my-auto p-5 text-center">
                             <h5 class="">No machines associated.</h5>
                             <a href="/workers/{{worker.name}}/machines/add">
                                 <button class="btn btn-outline-primary">
@@ -116,4 +127,15 @@
     <!-- Custom JS -->
     <script src="{% static 'workers/tables.js' %}"></script>
     <script src="{% static 'assets/js/refresh.js' %}"></script>
+
+    <script>
+        {% if machinesAdded %}
+            showNotification(
+                "Machines added to worker "+{{machinesAdded.worker}},
+                "A total of " + {{machinesAdded.machines}} + " where associated to this worker with success!",
+                "success",
+                ""
+            );
+        {% endif %}
+    </script>
 {% endblock scripts %}

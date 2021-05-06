@@ -1,0 +1,136 @@
+{% extends "dashboard/base.html" %}
+
+{% comment "About" %}
+
+    This template renders a table for user to insert/update machines.
+
+    -- Context
+    title               str                                             The page title
+    worker              str                                             Worker name
+    add                 bool                                            Adding or editing?
+    machines            machines.models.Machine[]                       List of machines for editing
+    ignored             int                                             Number of invalid machines (after submission) for user feedback
+    validated           bool                                            Tells if form has been validated (to show error notification and column on table)
+
+{% endcomment %}
+
+{% load static %}
+{% load dashboard_filters %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Workers | {{title}}</title>
+{% endblock meta %}
+
+{% block header %}
+    <div class="header text-center my-auto">
+        <h2 class="title mb-0">Worker {{worker.name}} | {{title}}</h2>
+    </div>
+{% endblock header %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block content %}
+
+    <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% if add %}
+                            <h4 class="card-title">Please validate the machines list</h4>
+                            <p class="">You can edit and fill new information.</p>
+                        {% else %}
+                            <p>EDIT</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="validateMachines" value="validateMachines" />
+
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableAddRemoved">
+                                    <thead class=" text-primary">
+                                        <th>IP address</th>
+                                        <th>DNS</th>
+                                        <th>Location</th>
+                                        <th>Scan level</th>
+                                        <th>Scan periodicity</th>
+                                        {% if validated %}<th></th>{% endif %}
+                                    </thead>
+                                    <tbody>
+                                        {% for machine in machines %}
+                                            <tr>
+                                                <td>
+                                                    <input name="ip{{forloop.counter0}}" type="text" class="form-control" placeholder="" value="{{machine.ip|default_if_none:''}}">
+                                                </td>
+                                                <td>
+                                                    <input name="dns{{forloop.counter0}}" type="text" class="form-control" placeholder="" value="{{machine.dns|default_if_none:''}}">
+                                                </td>
+                                                <td>
+                                                    <input name="location{{forloop.counter0}}" maxlength="30" type="text" class="form-control" placeholder="" value="{{machine.location|default_if_none:''}}">
+                                                </td>
+                                                <td>
+                                                    <select name="scanLevel{{forloop.counter0}}">
+                                                        {% for op in machine|get_choices:"scanLevel" %}
+                                                            <option value="{{op.0}}">{{op.1}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select name="periodicity{{forloop.counter0}}">
+                                                        {% for op in machine|get_choices:"periodicity" %}
+                                                            <option value="{{op.0}}" {% ifequal op.0 "W" %}selected="true"{% endifequal %}>{{op.1}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                {% if validated %}
+                                                <td>
+                                                    {% if machine.invalid %}
+                                                        <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" title="Invalid line"></i>
+                                                    {% endif %}
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row m-0 d-flex flex-row flex-nowrap">
+                                <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">Edit machines list input</btn>
+                                <button class="btn btn-primary col-8" type="submit">
+                                    {% if add %}
+                                        Add machines
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    {% if ignored %}
+        showNotification(
+            "Invalid machines!",
+            "A total of {{ignored}} entries were ignored, as they do not represent any valid IP addresses or DNS names. To go back to the machines input list click the left button.",
+            "warning",
+            ""
+        );
+    {% endif %}
+    {% if validated %}
+        showNotification(
+            "Invalid machines!",
+            "There is at a list a machine with invalid data. Please check the table before submitting.",
+            "danger",
+            ""
+        );
+    {% endif %}
+</script>
+{% endblock scripts %}
