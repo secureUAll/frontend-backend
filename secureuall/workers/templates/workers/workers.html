@@ -6,7 +6,7 @@
 
     -- Context
     workers             workers.models.Worker[]                         A list of workers
-    machinesAdded       Object {worker: name:str, machines: int, edited:int}
+    machinesAdded       Object {worker: name:str, machines: int, edited: int, disassociated: int}
                                                                         For success notification when added machines to worker.
 
 {% endcomment %}
@@ -132,8 +132,8 @@
     <script>
         {% if machinesAdded %}
             showNotification(
-                "Machines added to worker "+{{machinesAdded.worker}},
-                "{{machinesAdded.machines}} machines where associated to worker {{worker.name}} and {{machinesAdded.edited}} were edited with success!",
+                "Changes applied to worker {{machinesAdded.worker}}!",
+                "{{machinesAdded.machines}} machines where associated, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
                 "success",
                 ""
             );

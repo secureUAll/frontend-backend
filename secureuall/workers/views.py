@@ -47,10 +47,10 @@ class AddMachinesView(LoginRequiredMixin, View):
         elif 'validateMachines' in request.POST and request.POST['validateMachines']:
             self.context['validated'] = True
             form = MachineHandler.gatherFormByNumber(request.POST)
-            self.context['machines'], self.context['alreadyAssociated'], success = MachineHandler.machinesDetailsForm(form, self.context['worker'])
+            self.context['machines'], self.context['alreadyAssociated'], self.context['disassociated'], success = MachineHandler.machinesDetailsForm(form, self.context['worker'])
             # 3. Redirect to workers list on success
             if success:
-                request.session['machinesAdded'] = {'worker':id, 'machines':len(self.context['machines'])-self.context['alreadyAssociated'], 'edited': self.context['alreadyAssociated']}
+                request.session['machinesAdded'] = {'worker':id, 'machines':len(self.context['machines'])-self.context['alreadyAssociated'], 'edited': self.context['alreadyAssociated'], 'disassociated': self.context['disassociated']}
                 return redirect('workers:workers')
             self.template_name = "workers/editMachines.html"
         return render(request, self.template_name, self.context)

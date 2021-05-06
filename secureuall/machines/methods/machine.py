@@ -101,6 +101,7 @@ class MachineHandler:
         -- Returns
         machinesList        machines.models.Machine[]
         alreadyAssociated   int                             Number of machines that were already associated with worker
+        disassociated       int                             Number of machines disassociated to worker
         success             bool
         """
         machinesList = []
@@ -124,7 +125,7 @@ class MachineHandler:
             machinesList.append(mobj)
         # If any invalid, return list with error flag
         if invalid:
-            return machinesList, alreadyAssociated, False
+            return machinesList, alreadyAssociated, 0, False
         # If they are all valid, store to the db
         finalList = []
         for m in machinesList:
@@ -144,7 +145,11 @@ class MachineHandler:
             if not MachineWorker.objects.filter(machine=m, worker=worker).exists():
                 MachineWorker.objects.create(machine=m, worker=worker)
             finalList.append(m)
-        return finalList, alreadyAssociated, True
+        # Check what machines are not on final list and remove them from worker
+        todelete = MachineWorker.objects.filter(worker=worker).exclude(machine__id__in=[m.id for m in finalList])
+        for mw in todelete:
+            mw.delete()
+        return finalList, alreadyAssociated, len(todelete), True
 
 
 

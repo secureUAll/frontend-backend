@@ -54,16 +54,22 @@
                             <div class="table-responsive">
                                 <table class="table table-discreet" id="latestChangesTableAddRemoved">
                                     <thead class=" text-primary">
+                                        {% if not add %}<th></th>{% endif %}
                                         <th>IP address</th>
                                         <th>DNS</th>
                                         <th>Location</th>
                                         <th>Scan level</th>
                                         <th>Scan periodicity</th>
-                                        <th></th>
+                                        {% if machine.invalid or machine.edit or machine.alreadyAssociated %}<th></th>{% endif %}
                                     </thead>
                                     <tbody>
                                         {% for machine in machines %}
                                             <tr>
+                                                {% if not add %}
+                                                    <td>
+                                                        <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" onClick="removeMachine({{machine.id|default:'null'}}, '{{worker.name}}', '{{machine.dns|default:'null'}}', '{{machine.ip|default:'null'}}', '{{add}}')" title="Remove from worker."></i>
+                                                    </td>
+                                                {% endif %}
                                                 <td>
                                                     <input
                                                             name="ip{{forloop.counter0}}"
@@ -107,17 +113,19 @@
                                                         {% endfor %}
                                                     </select>
                                                 </td>
-                                                <td>
-                                                    {% if machine.invalid %}
-                                                        <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" title="Invalid line"></i>
-                                                    {% endif %}
-                                                    {% if machine.edit %}
-                                                        <i class="now-ui-icons ui-2_settings-90 text-warning fw-bold" title="Already exists on the database. Editing."></i>
-                                                    {% endif %}
-                                                    {% if machine.alreadyAssociated %}
-                                                        <i class="now-ui-icons design-2_ruler-pencil text-warning fw-bold" title="Already associated to worker. Editing."></i>
-                                                    {% endif %}
-                                                </td>
+                                                {% if machine.invalid or machine.edit or machine.alreadyAssociated %}
+                                                    <td>
+                                                        {% if machine.invalid %}
+                                                            <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" title="Invalid line"></i>
+                                                        {% endif %}
+                                                        {% if machine.edit %}
+                                                            <i class="now-ui-icons ui-2_settings-90 text-warning fw-bold" title="Already exists on the database. Editing."></i>
+                                                        {% endif %}
+                                                        {% if machine.alreadyAssociated %}
+                                                            <i class="now-ui-icons design-2_ruler-pencil text-warning fw-bold" title="Already associated to worker. Editing."></i>
+                                                        {% endif %}
+                                                    </td>
+                                                {% endif %}
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -150,6 +158,7 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="{% static 'workers/workersMachines.js' %}"></script>
 <script>
     {% if ignored %}
         showNotification(
