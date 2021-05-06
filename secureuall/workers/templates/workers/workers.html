@@ -130,12 +130,20 @@
     <script src="{% static 'assets/js/refresh.js' %}"></script>
 
     <script>
+        {% if machinesWithoutWorker %}
+            showNotification(
+                "There are {{machinesWithoutWorker}} machines without a worker!",
+                "To see the full list and associate them to a worker click <a class=\"text-white\" href=\"#\">here</a>.",
+                "warning",
+                "loader_gear"
+            );
+        {% endif %}
         {% if machinesAdded %}
             showNotification(
                 "Changes applied to worker {{machinesAdded.worker}}!",
                 "{{machinesAdded.machines}} machines where associated, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
                 "success",
-                ""
+                "tech_laptop"
             );
         {% endif %}
     </script>

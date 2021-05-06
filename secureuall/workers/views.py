@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-import re
 
 from .models import Worker
 from machines.models import Machine
@@ -16,7 +15,8 @@ class WorkersView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
             'workers': Worker.objects.all().order_by('-created'),
-            'machinesAdded': request.session['machinesAdded'] if 'machinesAdded' in request.session else None
+            'machinesAdded': request.session['machinesAdded'] if 'machinesAdded' in request.session else None,
+            'machinesWithoutWorker': Machine.objects.filter(workers=None).count()
         }
         # Remove session data after adding to context
         if 'machinesAdded' in request.session:
