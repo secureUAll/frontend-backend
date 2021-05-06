@@ -36,7 +36,7 @@ class AddMachinesView(LoginRequiredMixin, View):
         self.getContext(id)
         # 1. Receive user input and create machines for validation (without saving to database)
         if 'machinesList' in request.POST and 'machines' in request.POST and request.POST['machines']:
-            self.context['machines'], self.context['ignored'] = MachineHandler.machinesFromInput(request.POST['machines'])
+            self.context['machines'], self.context['ignored'], self.context['alreadyAssociated'], self.context['edit']  = MachineHandler.machinesFromInput(request.POST['machines'], self.context['worker'])
             # User input allows user to edit input
             self.context['userInput'] = request.POST['machines']
             # If some were valid, pass to step 2
@@ -46,10 +46,10 @@ class AddMachinesView(LoginRequiredMixin, View):
         elif 'validateMachines' in request.POST and request.POST['validateMachines']:
             self.context['validated'] = True
             form = MachineHandler.gatherFormByNumber(request.POST)
-            self.context['machines'], success = MachineHandler.machinesDetailsForm(form, self.context['worker'])
+            self.context['machines'], self.context['alreadyAssociated'], success = MachineHandler.machinesDetailsForm(form, self.context['worker'])
             # 3. Redirect to workers list on success
             if success:
-                request.session['machinesAdded'] = {'worker':id, 'machines':len(self.context['machines'])}
+                request.session['machinesAdded'] = {'worker':id, 'machines':len(self.context['machines'])-self.context['alreadyAssociated'], 'edited': self.context['alreadyAssociated']}
                 return redirect('workers:workers')
             self.template_name = "workers/editMachines.html"
         return render(request, self.template_name, self.context)

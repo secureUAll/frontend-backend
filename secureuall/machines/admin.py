@@ -17,3 +17,11 @@ class MachineAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Machine, MachineAdmin)
+
+
+class MachineWorkerAdmin(admin.ModelAdmin):
+    list_display = ['machine', 'worker']
+    list_filter = ['machine', 'worker']
+
+
+admin.site.register(MachineWorker, MachineWorkerAdmin)

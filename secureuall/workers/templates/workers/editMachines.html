@@ -10,7 +10,9 @@
     add                 bool                                            Adding or editing?
     machines            machines.models.Machine[]                       List of machines for editing
     ignored             int                                             Number of invalid machines (after submission) for user feedback
+    alreadyAssociated   int                                             Number of machines that were already associated with worker
     validated           bool                                            Tells if form has been validated (to show error notification and column on table)
+    edit                bool                                            Tells if form has machines on db (to show warning notification and column on table)
 
 {% endcomment %}
 
@@ -56,16 +58,30 @@
                                         <th>Location</th>
                                         <th>Scan level</th>
                                         <th>Scan periodicity</th>
-                                        {% if validated %}<th></th>{% endif %}
+                                        <th></th>
                                     </thead>
                                     <tbody>
                                         {% for machine in machines %}
                                             <tr>
                                                 <td>
-                                                    <input name="ip{{forloop.counter0}}" type="text" class="form-control" placeholder="" value="{{machine.ip|default_if_none:''}}">
+                                                    <input
+                                                            name="ip{{forloop.counter0}}"
+                                                            type="text"
+                                                            class="form-control"
+                                                            placeholder=""
+                                                            value="{{machine.ip|default_if_none:''}}"
+                                                            {% if machine.edit %}readonly="readonly"{% endif %}
+                                                    >
                                                 </td>
                                                 <td>
-                                                    <input name="dns{{forloop.counter0}}" type="text" class="form-control" placeholder="" value="{{machine.dns|default_if_none:''}}">
+                                                    <input
+                                                            name="dns{{forloop.counter0}}"
+                                                            type="text"
+                                                            class="form-control"
+                                                            placeholder=""
+                                                            value="{{machine.dns|default_if_none:''}}"
+                                                            {% if machine.edit %}readonly="readonly"{% endif %}
+                                                    >
                                                 </td>
                                                 <td>
                                                     <input name="location{{forloop.counter0}}" maxlength="30" type="text" class="form-control" placeholder="" value="{{machine.location|default_if_none:''}}">
@@ -73,24 +89,34 @@
                                                 <td>
                                                     <select name="scanLevel{{forloop.counter0}}">
                                                         {% for op in machine|get_choices:"scanLevel" %}
-                                                            <option value="{{op.0}}">{{op.1}}</option>
+                                                            <option value="{{op.0}}" {% ifequal op.0 machine.scanLevel %}selected="true"{% endifequal %}>{{op.1}}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </td>
                                                 <td>
                                                     <select name="periodicity{{forloop.counter0}}">
                                                         {% for op in machine|get_choices:"periodicity" %}
-                                                            <option value="{{op.0}}" {% ifequal op.0 "W" %}selected="true"{% endifequal %}>{{op.1}}</option>
+                                                            <option value="{{op.0}}"
+                                                                {% if machine.periodicity %}
+                                                                    {% ifequal op.0 machine.periodicity %}selected="true"{% endifequal %}
+                                                                {% else %}
+                                                                    {% ifequal op.0 "W" %}selected="true"{% endifequal %}
+                                                                {% endif %}
+                                                            >{{op.1}}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </td>
-                                                {% if validated %}
                                                 <td>
                                                     {% if machine.invalid %}
                                                         <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" title="Invalid line"></i>
                                                     {% endif %}
+                                                    {% if machine.edit %}
+                                                        <i class="now-ui-icons ui-2_settings-90 text-warning fw-bold" title="Already exists on the database. Editing."></i>
+                                                    {% endif %}
+                                                    {% if machine.alreadyAssociated %}
+                                                        <i class="now-ui-icons design-2_ruler-pencil text-warning fw-bold" title="Already associated to worker. Editing."></i>
+                                                    {% endif %}
                                                 </td>
-                                                {% endif %}
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -127,9 +153,25 @@
     {% if validated %}
         showNotification(
             "Invalid machines!",
-            "There is at a list a machine with invalid data. Please check the table before submitting.",
+            "There is at least a machine with invalid data. Please check the table before submitting.",
             "danger",
             ""
+        );
+    {% endif %}
+    {% if edit %}
+        showNotification(
+            "You have inserted machines that already exist in the database!",
+            "These machines are identified with a warning icon. Changes made here will apply to all workers.",
+            "warning",
+            "ui-2_settings-90"
+        );
+    {% endif %}
+    {% if alreadyAssociated %}
+        showNotification(
+            "You have inserted machines that are already associated to worker {{worker.name}}!",
+            "They are identified with an information icon. You can still edit their information.",
+            "warning",
+            "design-2_ruler-pencil"
         );
     {% endif %}
 </script>

@@ -30,7 +30,7 @@ class Machine(models.Model):
     nextScan = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.ip or self.dns
+        return self.ip or self.dns or "Invalid!"
 
     class Meta:
         # must have ip or dns (or both)!

@@ -1,6 +1,6 @@
 const showNotification = (title, message, color="primary", icon="") => {
     $.notify({
-        icon: icon,
+        icon: "now-ui-icons " + icon,
         message: `<b>${title}</b><br/>${message}`
 
     }, {

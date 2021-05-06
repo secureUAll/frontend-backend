@@ -1,4 +1,7 @@
 import re
+
+from django.db.models import Q
+
 from ..models import Machine, MachineWorker
 
 
@@ -17,19 +20,17 @@ class MachineHandler:
         -- Returns
         valid               bool
         """
-        print(machine)
         if not machine.dns and not machine.ip:
             return False
         if machine.ip and not re.fullmatch(MachineHandler.ipRegex, machine.ip):
             return False
         if machine.dns and not re.fullmatch(MachineHandler.dnsRegex, machine.dns):
             return False
-        print("VALID")
         return True
 
 
     @staticmethod
-    def machinesFromInput(input:str):
+    def machinesFromInput(input:str, worker):
         """
         Convert text input to Machine objects (without saving to the database)
         -- Parameters
@@ -37,19 +38,32 @@ class MachineHandler:
         -- Returns
         machinesList        machines.models.Machine[]
         ignored             int                             Number of invalid machines in input
+        alreadyAssociated   int                             Number of machines that were already associated with worker
+        edit                bool                            Does any machine match any at the db?
         """
+        machines = []
         # Split input
-        original = [m.strip() for m in re.split(MachineHandler.inputRegex, input)]
+        original = [m.strip() for m in re.split(MachineHandler.inputRegex, input.strip())]
         # Create Machine objects
-        machines = [
-            Machine(
-                ip=m if re.match(MachineHandler.ipRegex, m) else None,
-                dns=m if re.match(MachineHandler.dnsRegex,m) else None
-            ) for m in original
-        ]
-        # A Machine must have a dns or ip!
-        machines = [m for m in machines if MachineHandler.machineValid(m)]
-        return machines, len(original)-len(machines)
+        edit = False
+        alreadyAssociated = 0
+        for m in original:
+            mobj = Machine(
+                ip=m if re.fullmatch(MachineHandler.ipRegex, m) else None,
+                dns=m if re.fullmatch(MachineHandler.dnsRegex,m) else None
+            )
+            if not MachineHandler.machineValid(mobj):
+                continue
+            dbQuery = Machine.objects.filter((Q(dns=mobj.dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=mobj.ip) & Q(ip__isnull=False) & ~Q(ip="")))
+            if dbQuery.exists():
+                mobj = dbQuery.first()
+                mobj.edit = True
+                edit = True
+                if MachineWorker.objects.filter(machine=dbQuery.first(), worker=worker).exists():
+                    mobj.alreadyAssociated = True
+                    alreadyAssociated += 1
+            machines.append(mobj)
+        return machines, len(original)-len(machines), alreadyAssociated, edit
 
 
     @staticmethod
@@ -86,10 +100,12 @@ class MachineHandler:
         worker              workers.models.Worker       The worker do associate machines with
         -- Returns
         machinesList        machines.models.Machine[]
+        alreadyAssociated   int                             Number of machines that were already associated with worker
         success             bool
         """
         machinesList = []
         invalid = False
+        alreadyAssociated = 0
         # For machine dict, create Machine object
         for id, m in machinesData.items():
             mobj = Machine(**m)
@@ -97,16 +113,38 @@ class MachineHandler:
             if not MachineHandler.machineValid(mobj):
                 mobj.invalid = True
                 invalid = True
+            # Check if already exists
+            dbQuery = Machine.objects.filter((Q(dns=mobj.dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=mobj.ip) & Q(ip__isnull=False) & ~Q(ip="")))
+            if dbQuery.exists():
+                mobj.edit = True
+                if MachineWorker.objects.filter(machine=dbQuery.first(), worker=worker).exists():
+                    mobj.alreadyAssociated = True
+                    alreadyAssociated += 1
             # Add to list
             machinesList.append(mobj)
         # If any invalid, return list with error flag
         if invalid:
-            return machinesList, False
+            return machinesList, alreadyAssociated, False
         # If they are all valid, store to the db
+        finalList = []
         for m in machinesList:
-            m.save()
-            MachineWorker.objects.create(machine=m, worker=worker)
-        return machinesList, True
+            # If already exists, update parameters
+            dbQuery = Machine.objects.filter((Q(dns=m.dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=m.ip) & Q(ip__isnull=False) & ~Q(ip="")))
+            if dbQuery.exists():
+                dbMachine = dbQuery.first()
+                dbMachine.scanLevel = m.scanLevel
+                dbMachine.periodicity = m.periodicity
+                dbMachine.location = m.location
+                dbMachine.save()
+                m=dbMachine
+            # Else, create new object
+            else:
+                m.save()
+            # If not associated to worker yet, associate
+            if not MachineWorker.objects.filter(machine=m, worker=worker).exists():
+                MachineWorker.objects.create(machine=m, worker=worker)
+            finalList.append(m)
+        return finalList, alreadyAssociated, True
 
 
 
