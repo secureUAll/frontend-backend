@@ -27,6 +27,7 @@ class WorkersView(LoginRequiredMixin, View):
 class AddMachinesView(LoginRequiredMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
+    edit = False
 
     def get(self, request, id=None, *args, **kwargs):
         self.getContext(id)
@@ -55,9 +56,16 @@ class AddMachinesView(LoginRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def getContext(self, id):
+        w = Worker.objects.get(name=id)
         self.context = {
             'title': 'Add machines',
-            'worker': Worker.objects.get(name=id),
-            'add': True,
+            'worker': w,
+            'add': not self.edit,
             'ignored': 0
         }
+
+        if self.edit:
+            self.context['machines'] = Machine.objects.filter(workers__worker=w).order_by('dns', 'ip')
+            self.template_name = "workers/editMachines.html"
+            self.context['title'] = "Edit machines list"
+

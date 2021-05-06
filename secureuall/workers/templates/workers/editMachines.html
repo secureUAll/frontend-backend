@@ -42,7 +42,8 @@
                             <h4 class="card-title">Please validate the machines list</h4>
                             <p class="">You can edit and fill new information.</p>
                         {% else %}
-                            <p>EDIT</p>
+                            <h4 class="card-title">You can change the unlocked fields.</h4>
+                            <p class="">When you finish, submit the changes.</p>
                         {% endif %}
                     </div>
                     <div class="card-body">
@@ -70,7 +71,7 @@
                                                             class="form-control"
                                                             placeholder=""
                                                             value="{{machine.ip|default_if_none:''}}"
-                                                            {% if machine.edit %}readonly="readonly"{% endif %}
+                                                            {% if machine.edit or not add %}readonly="readonly"{% endif %}
                                                     >
                                                 </td>
                                                 <td>
@@ -80,7 +81,7 @@
                                                             class="form-control"
                                                             placeholder=""
                                                             value="{{machine.dns|default_if_none:''}}"
-                                                            {% if machine.edit %}readonly="readonly"{% endif %}
+                                                            {% if machine.edit or not add %}readonly="readonly"{% endif %}
                                                     >
                                                 </td>
                                                 <td>
@@ -124,10 +125,18 @@
                             </div>
 
                             <div class="row m-0 d-flex flex-row flex-nowrap">
-                                <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">Edit machines list input</btn>
+                                <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">
+                                    {% if add %}
+                                        Edit machines list input
+                                    {% else %}
+                                        Go back to workers list
+                                    {% endif %}
+                                </btn>
                                 <button class="btn btn-primary col-8" type="submit">
                                     {% if add %}
                                         Add machines
+                                    {% else %}
+                                        Submit changes
                                     {% endif %}
                                 </button>
                             </div>
