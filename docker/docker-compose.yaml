@@ -17,7 +17,7 @@ services:
             dockerfile: docker/frontend/Dockerfile
             context: ../
         environment:
-            - RUNNING_MODE=docker
+            - RUNNING_MODE=production
             - DB_NAME=secureuall
             - DB_USER=frontend
             - DB_PASSWORD=abc
@@ -32,11 +32,13 @@ services:
     nginx:
         image: nginx
         ports:
-            - 8000:80 # Development
-            # - 80:80 # Production
+            - 80:80 # Production
+            - 443:443 # SSL
         volumes:
             - ../secureuall/static:/var/www/html/static # Django static files
-            - ./interface/nginx.conf:/etc/nginx/nginx.conf
+            - ./interface/nginx.conf:/etc/nginx/nginx.conf # nginx configuration
+            - ./interface/sslCerts/ssl:/etc/ssl # SSL certificates
+            - ./interface/sslCerts/snippets:/etc/nginx/snippets # SSL snippets
         depends_on:
             - "frontend"
 
