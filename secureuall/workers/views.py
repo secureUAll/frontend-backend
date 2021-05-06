@@ -3,13 +3,15 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 import workers.dataContext as dataContext
 
+from .models import Worker
+
 # Create your views here.
 
 
 class WorkersView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        context = dataContext.workersContext
+        context = {'workers': Worker.objects.all().order_by('-created')}
         return render(request, "workers/workers.html", context)
 
 
