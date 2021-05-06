@@ -38,6 +38,10 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
+                        <div class="progress mb-4">
+                          <div class="progress-bar bg-blur-primary me-2" role="progressbar" style="width: {% if add %}66%{% else %}50%{% endif %};" aria-valuenow="{% if add %}66%{% else %}50%{% endif %}" aria-valuemin="0" aria-valuemax="100"></div
+                          <span>{% if add %}66%{% else %}50%{% endif %}</span>
+                        </div>
                         {% if add %}
                             <h4 class="card-title">Please validate the machines list</h4>
                             <p class="">You can edit and fill new information.</p>
@@ -57,8 +61,28 @@
                                         {% if not add %}<th></th>{% endif %}
                                         <th>IP address</th>
                                         <th>DNS</th>
-                                        <th>Location</th>
-                                        <th>Scan level</th>
+                                        <th>
+                                            Location
+                                            <small>
+                                                <i
+                                                    class="now-ui-icons travel_info text-primary"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="This is only for your information. Does not interfere with the system."
+                                                ></i>
+                                            </small>
+                                        </th>
+                                        <th>
+                                            Scan level
+                                            <small>
+                                                <i
+                                                    class="now-ui-icons travel_info text-primary"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="The higher the level, the more intrusive the scanning. Find more on documentation."
+                                                ></i>
+                                            </small>
+                                        </th>
                                         <th>Scan periodicity</th>
                                         {% if machine.invalid or machine.edit or machine.alreadyAssociated %}<th></th>{% endif %}
                                     </thead>
@@ -67,7 +91,13 @@
                                             <tr>
                                                 {% if not add %}
                                                     <td>
-                                                        <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" onClick="removeMachine({{machine.id|default:'null'}}, '{{worker.name}}', '{{machine.dns|default:'null'}}', '{{machine.ip|default:'null'}}', '{{add}}')" title="Remove from worker."></i>
+                                                        <i
+                                                            class="now-ui-icons ui-1_simple-remove text-danger fw-bold"
+                                                            onClick="removeMachine({{machine.id|default:'null'}}, '{{worker.name}}', '{{machine.dns|default:'null'}}', '{{machine.ip|default:'null'}}', '{{add}}')"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Remove from worker."
+                                                        ></i>
                                                     </td>
                                                 {% endif %}
                                                 <td>
@@ -116,13 +146,28 @@
                                                 {% if machine.invalid or machine.edit or machine.alreadyAssociated %}
                                                     <td>
                                                         {% if machine.invalid %}
-                                                            <i class="now-ui-icons ui-1_simple-remove text-danger fw-bold" title="Invalid line"></i>
+                                                            <i
+                                                                class="now-ui-icons ui-1_simple-remove text-danger fw-bold"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Invalid line"
+                                                            ></i>
                                                         {% endif %}
                                                         {% if machine.edit %}
-                                                            <i class="now-ui-icons ui-2_settings-90 text-warning fw-bold" title="Already exists on the database. Editing."></i>
+                                                            <i
+                                                                class="now-ui-icons ui-2_settings-90 text-warning fw-bold"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Already exists on the database. Editing."
+                                                            ></i>
                                                         {% endif %}
                                                         {% if machine.alreadyAssociated %}
-                                                            <i class="now-ui-icons design-2_ruler-pencil text-warning fw-bold" title="Already associated to worker. Editing."></i>
+                                                            <i
+                                                                class="now-ui-icons design-2_ruler-pencil text-warning fw-bold"
+                                                                data-bs-toggle="tooltip"
+                                                                data-bs-placement="top"
+                                                                title="Already associated to worker. Editing."
+                                                            ></i>
                                                         {% endif %}
                                                     </td>
                                                 {% endif %}

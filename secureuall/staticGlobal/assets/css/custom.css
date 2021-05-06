@@ -305,6 +305,8 @@ fieldset[disabled] .btn-danger.active {
 .bg-4 { background-color: #344d00 !important }
 .bg-5 { background-color: #111a00 !important }
 
+.bg-blur-primary { background-color: rgba(146, 212, 0, .6)!important;}
+
 .bg-outline-primary { color: #92d400; border: 1px solid #92d400; transition: .15s;}
 a.bg-outline-primary:hover { color: #ffffff!important; background-color: #92d400; border: 1px solid #92d400; }
 
@@ -449,4 +451,25 @@ dl.dl-12 dd {width: 75%}
 /* Login */
 .panel-login {
     min-height: 100vh;
+}
+
+/* Progress */
+@-webkit-keyframes .progress {
+   0% { width: 0; }
+}
+@-moz-keyframes .progress {
+   0% { width: 0; }
+}
+keyframes .progress {
+   0% { width: 0; }
+}
+
+.progress > .progress-bar {
+  -webkit-animation: progress-bar 2s;
+  -moz-animation: progress-bar 2s;
+  animation: progress-bar 2s;
+}
+
+@keyframes progress-bar {
+   0% { width: 0; }
 }
