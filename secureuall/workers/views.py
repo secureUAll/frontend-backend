@@ -30,13 +30,13 @@ class AddMachinesView(LoginRequiredMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
+    MachineFormSet = formset_factory(MachineForm, extra=0)
 
     def get(self, request, id=None, *args, **kwargs):
         self.getContext(id)
         return render(request, self.template_name, self.context)
 
     def post(self, request, id=None, *args, **kwargs):
-        MachineFormSet = formset_factory(MachineForm, extra=0)
         self.getContext(id)
         print("\nPOST", request.POST)
         # 1. Receive user input and create machines for validation (without saving to database)
@@ -48,12 +48,12 @@ class AddMachinesView(LoginRequiredMixin, View):
             # If valid, proceed to step 2
             if valid:
                 self.template_name = "workers/editMachines.html"
-                self.context['formset'] = MachineFormSet(initial=[vars(m) for m in self.context['machines']])
+                self.context['formset'] = self.MachineFormSet(initial=[vars(m) for m in self.context['machines']])
         # 2. Process machines details form
         elif 'validateMachines' in request.POST and request.POST['validateMachines']:
             self.template_name = "workers/editMachines.html"
             # Build form with inserted data
-            self.context['formset'] = MachineFormSet(request.POST)
+            self.context['formset'] = self.MachineFormSet(request.POST)
             valid = self.context['formset'].is_valid()
             if valid:
                 # Store session data for success feedback on workers list
@@ -95,7 +95,7 @@ class AddMachinesView(LoginRequiredMixin, View):
         }
 
         if self.edit:
-            self.context['machines'] = Machine.objects.filter(workers__worker=w).order_by('dns', 'ip')
+            self.context['formset'] = self.MachineFormSet(initial=[vars(m) for m in Machine.objects.filter(workers__worker=w).order_by('dns', 'ip')])
             self.template_name = "workers/editMachines.html"
             self.context['title'] = "Edit machines list"
 

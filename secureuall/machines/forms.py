@@ -66,20 +66,22 @@ class MachineForm(forms.Form):
         max_length=15,
         required=False,
         validators=[validate_ip],
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="IP address"
     )
     dns = forms.CharField(
         max_length=255,
         required=False,
         validators=[validate_dns],
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label = "DNS"
     )
     location = forms.CharField(
         max_length=30,
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    scanLevel = forms.ChoiceField(choices=Machine.scanLevelOps, required=False)
+    scanLevel = forms.ChoiceField(choices=Machine.scanLevelOps, required=False, label="Scan level")
     periodicity = forms.ChoiceField(choices=Machine.periodicityOps, required=False)
     # Control variables
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
