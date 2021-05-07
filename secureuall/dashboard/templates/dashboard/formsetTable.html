@@ -34,7 +34,7 @@
           <tr>
                 {% for field in form.visible_fields %}
                 <td>
-                    <div class="h-100 w-100">
+                    <div class="d-flex">
                         {% if field.field.widget.input_type == 'checkbox' %}<label class="checkbox">{% endif %}
 
                         {{ field }}

@@ -101,15 +101,23 @@ class MachineForm(forms.Form):
     def clean(self):
         cleaned_data = super(MachineForm, self).clean()
         # If does not have IP or DNS, throw error
-        if 'ip' in self.cleaned_data and self.cleaned_data['ip']:
-            return cleaned_data
-        if 'dns' in self.cleaned_data and self.cleaned_data['dns']:
-            return cleaned_data
-
+        if not(('ip' in self.cleaned_data and self.cleaned_data['ip']) or ('dns' in self.cleaned_data and self.cleaned_data['dns'])):
+            for k in ['dns', 'ip']:
+                if k not in self._errors:
+                    self._errors[k] = ErrorList()
+                self._errors[k].append('A machine must have an IP and/or DNS name.')
+        # If DNS and IP already on DB, check that don't collide with other existing
         for k in ['dns', 'ip']:
-            if k not in self._errors:
-                self._errors[k] = ErrorList()
-            self._errors[k].append('A machine must have an IP and/or DNS name.')
+            if k in self.cleaned_data and self.cleaned_data[k]:
+                filterdict = {k: self.cleaned_data[k]}
+                query = Machine.objects.filter(**filterdict)
+                # If there is a match
+                if query.count()>0:
+                    # Check that id is not of the machine (on edition)
+                    if 'id' not in self.cleaned_data or not self.cleaned_data['id'] or self.cleaned_data['id'] not in query.values_list('id', flat=True):
+                        if k not in self._errors:
+                            self._errors[k] = ErrorList()
+                        self._errors[k].append(f"There is already a machine with this {k.upper()}. You can't have two machines with the same!")
         return cleaned_data
 
     def is_valid(self):
