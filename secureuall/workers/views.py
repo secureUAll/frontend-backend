@@ -38,7 +38,6 @@ class AddMachinesView(LoginRequiredMixin, View):
 
     def post(self, request, id=None, *args, **kwargs):
         self.getContext(id)
-        print("\nPOST", request.POST)
         # 1. Receive user input and create machines for validation (without saving to database)
         if 'batch' in request.POST:
             # Build form, validate it and update context
