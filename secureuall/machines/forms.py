@@ -1,6 +1,8 @@
 from django import forms
+from django.forms.utils import ErrorList
 import re
 
+from .validators import *
 from .models import Machine, MachineWorker
 
 # Global variables
@@ -25,7 +27,7 @@ class MachineWorkerBatchInputForm(forms.Form):
 
     def validate_custom(self, worker):
         # Validate with default validator
-        if not self.is_valid():
+        if not super(MachineWorkerBatchInputForm, self).is_valid():
             return False
         # Start variables
         self.cleaned_data['machines'] = []
@@ -36,12 +38,12 @@ class MachineWorkerBatchInputForm(forms.Form):
         # For each entry
         for m in original:
             # If m is not a valid DNS nor IP, ignore...
-            if not (Machine.is_ip(m) or Machine.is_dns(m)):
+            if not (validate_ip(m) or validate_dns(m)):
                 continue
             # Create Machine objects
             mobj = Machine(
-                ip=m if Machine.is_ip(m) else None,
-                dns=m if Machine.is_dns(m) else None
+                ip=m if validate_ip(m) else None,
+                dns=m if validate_dns(m) else None
             )
             # Check if already exists in the database
             dbquery = Machine.exists(mobj.ip, mobj.dns)
@@ -57,3 +59,70 @@ class MachineWorkerBatchInputForm(forms.Form):
         self.cleaned_data['ignored'] = len(original) - len(self.cleaned_data['machines'])
         # Check if any machine is valid
         return len(self.cleaned_data['machines'])>0
+
+
+class MachineForm(forms.Form):
+    ip = forms.CharField(
+        max_length=15,
+        required=False,
+        validators=[validate_ip],
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    dns = forms.CharField(
+        max_length=255,
+        required=False,
+        validators=[validate_dns],
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    location = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    scanLevel = forms.ChoiceField(choices=Machine.scanLevelOps, required=False)
+    periodicity = forms.ChoiceField(choices=Machine.periodicityOps, required=False)
+    # Control variables
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    def clean_ip(self):
+        ip = self.cleaned_data['ip']
+        if not validate_ip(ip):
+            raise ValidationError('IP address is not valid.')
+        return ip
+
+    def clean_dns(self):
+        dns = self.cleaned_data['dns']
+        if not validate_dns(dns):
+            raise ValidationError('DNS name is not valid.')
+        return dns
+
+    def clean(self):
+        cleaned_data = super(MachineForm, self).clean()
+        # If does not have IP or DNS, throw error
+        if 'ip' in self.cleaned_data and self.cleaned_data['ip']:
+            return cleaned_data
+        if 'dns' in self.cleaned_data and self.cleaned_data['dns']:
+            return cleaned_data
+
+        for k in ['dns', 'ip']:
+            if k not in self._errors:
+                self._errors[k] = ErrorList()
+            self._errors[k].append('A machine must have an IP and/or DNS name.')
+        return cleaned_data
+
+    def is_valid(self):
+        # Validate with default validator
+        if not super(MachineForm, self).is_valid():
+            return False
+        # Add extra attributes
+        dbquery = Machine.exists(self.cleaned_data['ip'], self.cleaned_data['dns'])
+        if dbquery.exists():
+            self.cleaned_data['id'] = dbquery.first().id
+        return True
+
+
+
+
+
+
+

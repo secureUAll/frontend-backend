@@ -22,7 +22,7 @@ class Machine(models.Model):
     )
 
     ip = models.CharField(max_length=15, null=True, blank=True, validators=[validate_ip])
-    dns = models.TextField(max_length=255, null=True, blank=True, validators=[validate_dns])
+    dns = models.CharField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
     scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
@@ -31,7 +31,11 @@ class Machine(models.Model):
     nextScan = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.ip or self.dns or "Invalid!"
+        if not self.ip and not self.dns:
+            return "Invalid!"
+        if self.ip and self.dns:
+            return f"{self.ip} / {self.dns}"
+        return self.ip or self.dns
 
     class Meta:
         # must have ip or dns (or both)!
