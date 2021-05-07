@@ -92,12 +92,13 @@ class MachineHandler:
         return numbers
 
     @staticmethod
-    def machinesDetailsForm(machinesData, worker):
+    def machinesDetailsForm(machinesData, worker, edit):
         """
         Processes a machines detail form
         -- Parameters
         machinesData        dict                        Object { id: {ip: , dns: , location: , scanLevel: , periodicity: } }
         worker              workers.models.Worker       The worker do associate machines with
+        edit                bool                        Editing? If so, delete those that are not sent
         -- Returns
         machinesList        machines.models.Machine[]
         alreadyAssociated   int                             Number of machines that were already associated with worker
@@ -147,8 +148,11 @@ class MachineHandler:
             finalList.append(m)
         # Check what machines are not on final list and remove them from worker
         todelete = MachineWorker.objects.filter(worker=worker).exclude(machine__id__in=[m.id for m in finalList])
-        for mw in todelete:
-            mw.delete()
+        if edit:
+            for mw in todelete:
+                mw.delete()
+        else:
+            todelete = []
         return finalList, alreadyAssociated, len(todelete), True
 
 
