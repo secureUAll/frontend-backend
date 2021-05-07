@@ -3,10 +3,11 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Worker
-from machines.models import Machine
+from machines.models import Machine, MachineWorker
 
 from machines.methods.machine import MachineHandler
-from machines.forms import MachineWorkerBatchInputForm
+from machines.forms import MachineWorkerBatchInputForm, MachineForm
+from django.forms import formset_factory
 
 # Create your views here.
 
@@ -35,26 +36,52 @@ class AddMachinesView(LoginRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def post(self, request, id=None, *args, **kwargs):
+        MachineFormSet = formset_factory(MachineForm, extra=0)
         self.getContext(id)
+        print("\nPOST", request.POST)
         # 1. Receive user input and create machines for validation (without saving to database)
         if 'batch' in request.POST:
-            # Build form and validate it
+            # Build form, validate it and update context
             self.context['form'] = MachineWorkerBatchInputForm(request.POST)
-            # If valid, proceed to step 2
-            if self.context['form'].validate_custom(self.context['worker']):
-                self.template_name = "workers/editMachines.html"
-            # Update context with form processed data
+            valid = self.context['form'].validate_custom(self.context['worker'])
             self.context.update(self.context['form'].cleaned_data)
+            # If valid, proceed to step 2
+            if valid:
+                self.template_name = "workers/editMachines.html"
+                self.context['formset'] = MachineFormSet(initial=[vars(m) for m in self.context['machines']])
         # 2. Process machines details form
         elif 'validateMachines' in request.POST and request.POST['validateMachines']:
-            self.context['validated'] = True
-            form = MachineHandler.gatherFormByNumber(request.POST)
-            self.context['machines'], self.context['alreadyAssociated'], self.context['disassociated'], success = MachineHandler.machinesDetailsForm(form, self.context['worker'], self.edit)
-            # 3. Redirect to workers list on success
-            if success:
-                request.session['machinesAdded'] = {'worker':id, 'machines':len(self.context['machines'])-self.context['alreadyAssociated'], 'edited': self.context['alreadyAssociated'], 'disassociated': self.context['disassociated']}
-                return redirect('workers:workers')
             self.template_name = "workers/editMachines.html"
+            # Build form with inserted data
+            self.context['formset'] = MachineFormSet(request.POST)
+            valid = self.context['formset'].is_valid()
+            if valid:
+                # Store session data for success feedback on workers list
+                request.session['machinesAdded'] = {'worker': id, 'machines': 0, 'new': 0, 'edited': 0, 'disassociated': 0}
+                # Same form to db
+                for f in self.context['formset']:
+                    f = f.cleaned_data
+                    mach = None
+                    # If exists on db, get it
+                    if 'id' in f and f['id'] and Machine.objects.filter(id=f['id']).exists():
+                        mach = Machine.objects.get(id=f['id'])
+                        mach.dns = f['dns']
+                        mach.ip = f['ip']
+                        request.session['machinesAdded']['edited'] += 1
+                    # Else, create it
+                    else:
+                        mach = Machine.objects.create(ip=f['ip'], dns=f['dns'])
+                        request.session['machinesAdded']['new'] += 1
+                    # Edit attributes
+                    mach.scanLevel = f['scanLevel']
+                    mach.periodicity = f['periodicity']
+                    mach.location = f['location']
+                    mach.save()
+                    # Associate to worker
+                    if not MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
+                        MachineWorker.objects.create(worker=self.context['worker'], machine=mach)
+                        request.session['machinesAdded']['machines'] += 1
+                return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
     def getContext(self, id):

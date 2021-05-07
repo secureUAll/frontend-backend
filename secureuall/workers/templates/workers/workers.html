@@ -84,7 +84,7 @@
                                             {% for machineworker in worker.machines.all|dictsort:"machine.nextScan" %}
                                                 {% with machine=machineworker.machine %}
                                                     <tr title="See machine page">
-                                                        <td>{% if machine.ip %}{{machine.ip}}{% else %}{{machine.dns}}{% endif %}</td>
+                                                        <td>{{machine}}</td>
                                                         <td>{% if machine.location %}{{machine.location}}{% endif %}</td>
                                                         <td>
                                                             {% if machine.risk %}
@@ -141,7 +141,7 @@
         {% if machinesAdded %}
             showNotification(
                 "Changes applied to worker {{machinesAdded.worker}}!",
-                "{{machinesAdded.machines}} machines where associated, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
+                "{{machinesAdded.machines}} machines where associated, {{machinesAdded.new}} new machine was created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
                 "success",
                 "tech_laptop"
             );
