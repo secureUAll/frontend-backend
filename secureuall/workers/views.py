@@ -6,6 +6,7 @@ from .models import Worker
 from machines.models import Machine
 
 from machines.methods.machine import MachineHandler
+from machines.forms import MachineWorkerBatchInputForm
 
 # Create your views here.
 
@@ -36,13 +37,14 @@ class AddMachinesView(LoginRequiredMixin, View):
     def post(self, request, id=None, *args, **kwargs):
         self.getContext(id)
         # 1. Receive user input and create machines for validation (without saving to database)
-        if 'machinesList' in request.POST and 'machines' in request.POST and request.POST['machines']:
-            self.context['machines'], self.context['ignored'], self.context['alreadyAssociated'], self.context['edit']  = MachineHandler.machinesFromInput(request.POST['machines'], self.context['worker'])
-            # User input allows user to edit input
-            self.context['userInput'] = request.POST['machines']
-            # If some were valid, pass to step 2
-            if len(self.context['machines']) > 0:
+        if 'batch' in request.POST:
+            # Build form and validate it
+            self.context['form'] = MachineWorkerBatchInputForm(request.POST)
+            # If valid, proceed to step 2
+            if self.context['form'].validate_custom(self.context['worker']):
                 self.template_name = "workers/editMachines.html"
+            # Update context with form processed data
+            self.context.update(self.context['form'].cleaned_data)
         # 2. Process machines details form
         elif 'validateMachines' in request.POST and request.POST['validateMachines']:
             self.context['validated'] = True
@@ -58,6 +60,7 @@ class AddMachinesView(LoginRequiredMixin, View):
     def getContext(self, id):
         w = Worker.objects.get(name=id)
         self.context = {
+            'form': MachineWorkerBatchInputForm(),
             'title': 'Add machines',
             'worker': w,
             'add': not self.edit,

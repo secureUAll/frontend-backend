@@ -387,6 +387,14 @@ select {
 }
 select:hover {cursor:pointer;}
 
+form.form-lg label {width:100%;}
+form.form-lg textarea {width:100%;}
+form ul.errorlist {
+    list-style: none;
+    color:#f0592a;
+    padding: 0;
+}
+
 /* General elements */
 body {
     background-color: #ebecf1;

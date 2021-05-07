@@ -41,22 +41,10 @@
                         <p class="">Insert IP addresses and or DNS names separated by one of the following symbols: ; , \n</p>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" class="form-lg">
                             {% csrf_token %}
-                            <input type="hidden" name="machinesList" value="machinesList" />
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Machines list</label>
-                                        <textarea
-                                            rows="10"
-                                            cols="80"
-                                            class="form-control"
-                                            placeholder="Write your list here"
-                                            name="machines"
-                                        >{{userInput}}</textarea>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                {{form}}
                             </div>
                             <div class="row m-0 d-flex flex-row flex-nowrap">
                                 <a href="/workers" class="btn btn-outline-primary col-4">Go back to workers</a>
