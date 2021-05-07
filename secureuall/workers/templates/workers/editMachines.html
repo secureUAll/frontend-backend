@@ -59,7 +59,9 @@
                                 <table class="table table-discreet" id="latestChangesTableAddRemoved">
                                     <thead class=" text-primary">
                                         {% if not add %}<th></th>{% endif %}
-                                        <th>IP address</th>
+                                        <th>
+                                            IP address
+                                        </th>
                                         <th>DNS</th>
                                         <th>
                                             Location
@@ -101,24 +103,48 @@
                                                     </td>
                                                 {% endif %}
                                                 <td>
-                                                    <input
-                                                            name="ip{{forloop.counter0}}"
-                                                            type="text"
-                                                            class="form-control"
-                                                            placeholder=""
-                                                            value="{{machine.ip|default_if_none:''}}"
-                                                            {% if machine.edit or not add %}readonly="readonly"{% endif %}
-                                                    >
+                                                    <div class="d-flex">
+                                                        <input
+                                                                name="ip{{forloop.counter0}}"
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder=""
+                                                                value="{{machine.ip|default_if_none:''}}"
+                                                                {% if machine.edit or not add %}readonly="readonly"{% endif %}
+                                                        >
+                                                        {% if machine.edit or not add %}
+                                                            <small>
+                                                                <i
+                                                                    class="now-ui-icons travel_info text-primary"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    title="To edit this field go to the machine page."
+                                                                ></i>
+                                                            </small>
+                                                        {% endif %}
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <input
-                                                            name="dns{{forloop.counter0}}"
-                                                            type="text"
-                                                            class="form-control"
-                                                            placeholder=""
-                                                            value="{{machine.dns|default_if_none:''}}"
-                                                            {% if machine.edit or not add %}readonly="readonly"{% endif %}
-                                                    >
+                                                    <div class="d-flex">
+                                                        <input
+                                                                name="dns{{forloop.counter0}}"
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder=""
+                                                                value="{{machine.dns|default_if_none:''}}"
+                                                                {% if machine.edit or not add %}readonly="readonly"{% endif %}
+                                                        >
+                                                        {% if machine.edit or not add %}
+                                                            <small>
+                                                                <i
+                                                                    class="now-ui-icons travel_info text-primary"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    title="To edit this field go to the machine page."
+                                                                ></i>
+                                                            </small>
+                                                        {% endif %}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <input name="location{{forloop.counter0}}" maxlength="30" type="text" class="form-control" placeholder="" value="{{machine.location|default_if_none:''}}">
@@ -160,6 +186,7 @@
                                                                 data-bs-placement="top"
                                                                 title="Already exists on the database. Editing."
                                                             ></i>
+                                                            <input type="hidden" name="editId{{forloop.counter0}}" value="{{machine.id}}" />
                                                         {% endif %}
                                                         {% if machine.alreadyAssociated %}
                                                             <i
