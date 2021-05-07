@@ -9,6 +9,7 @@
 
     -- Context
     formset             FormSet                     The Django FormSet instance
+    deleteRewrite       String (Optional)           String to replace "Delete" header on table
 
 {% endcomment %}
 
@@ -18,7 +19,12 @@
           {% if forloop.first %}
               <thead class="text-primary">
                 {% for field in form.visible_fields %}
-                    <th>{{ field.label|capfirst }}</th>
+                    {# Translate delete #}
+                    {% if field.label == "Delete" and deleteRewrite %}
+                        <th>{{deleteRewrite}}</th>
+                    {% else %}
+                        <th>{{ field.label|capfirst }}</th>
+                    {% endif %}
                 {% endfor %}
                 {% if form.hidden_fields %}
                     <th></th>
@@ -28,8 +34,15 @@
           <tr>
                 {% for field in form.visible_fields %}
                 <td>
-                    <div class="d-flex">
+                    <div class="h-100 w-100">
+                        {% if field.field.widget.input_type == 'checkbox' %}<label class="checkbox">{% endif %}
+
                         {{ field }}
+
+                        {# Add span to style checkbox #}
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <span class="checkmark"></span>
+                        {% endif %}
 
                         {# ERRORS #}
                         {% if field.errors %}
@@ -44,6 +57,8 @@
                             </small>
                             {% endfor %}
                         {% endif %}
+
+                        {% if field.field.widget.input_type == 'checkbox' %}</label>{% endif %}
                     </div>
                 </td>
                 {% endfor %}

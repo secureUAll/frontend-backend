@@ -30,7 +30,7 @@ class AddMachinesView(LoginRequiredMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
-    MachineFormSet = formset_factory(MachineForm, extra=0)
+    MachineFormSet = formset_factory(MachineForm, extra=0, can_delete=True)
 
     def get(self, request, id=None, *args, **kwargs):
         self.getContext(id)
@@ -61,26 +61,32 @@ class AddMachinesView(LoginRequiredMixin, View):
                 # Same form to db
                 for f in self.context['formset']:
                     f = f.cleaned_data
-                    mach = None
-                    # If exists on db, get it
-                    if 'id' in f and f['id'] and Machine.objects.filter(id=f['id']).exists():
-                        mach = Machine.objects.get(id=f['id'])
-                        mach.dns = f['dns']
-                        mach.ip = f['ip']
-                        request.session['machinesAdded']['edited'] += 1
-                    # Else, create it
-                    else:
-                        mach = Machine.objects.create(ip=f['ip'], dns=f['dns'])
-                        request.session['machinesAdded']['new'] += 1
-                    # Edit attributes
-                    mach.scanLevel = f['scanLevel']
-                    mach.periodicity = f['periodicity']
-                    mach.location = f['location']
-                    mach.save()
+                    # Get machine to db, if exists
+                    mach = Machine.objects.get(id=f['id']) if Machine.objects.filter(id=f['id']).exists() else None
+                    # If not for delete
+                    if not f['DELETE']:
+                        # If exists, update dns and ip
+                        if mach:
+                            mach.dns = f['dns']
+                            mach.ip = f['ip']
+                            request.session['machinesAdded']['edited'] += 1
+                        # Else, create it
+                        else:
+                            mach = Machine.objects.create(ip=f['ip'], dns=f['dns'])
+                            request.session['machinesAdded']['new'] += 1
+                        # Edit attributes
+                        mach.scanLevel = f['scanLevel']
+                        mach.periodicity = f['periodicity']
+                        mach.location = f['location']
+                        mach.save()
                     # Associate to worker
-                    if not MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
+                    if mach and not f['DELETE'] and not MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
                         MachineWorker.objects.create(worker=self.context['worker'], machine=mach)
                         request.session['machinesAdded']['machines'] += 1
+                    # If exists and to disassociate, remove MachineWorker
+                    elif mach and f['DELETE'] and MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
+                        MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).delete()
+                        request.session['machinesAdded']['disassociated'] += 1
                 return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 

@@ -395,6 +395,56 @@ form ul.errorlist {
     padding: 0;
 }
 
+/* Forms // checkbox styling */
+label.checkbox {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    line-height: 26px;
+    margin-bottom: 0;
+    transition: color .3s linear;
+    font-size: .8571em;
+    width: 26px;
+    height: 26px;
+}
+label.checkbox>input[type="checkbox"], label.checkbox>input[type="radio"] {
+    opacity: 0;
+    z-index: 10;
+    position: absolute;
+    box-sizing: border-box;
+    padding: 0;
+    overflow: visible;
+}
+label.checkbox>input[type="checkbox"]+span.checkmark::after, label.checkbox>input[type="checkbox"]+span.checkmark::before {
+    content: " ";
+    display: inline-block;
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 0;
+    cursor: pointer;
+    border-radius: 3px;
+    top: 0;
+    background-color: transparent;
+    border: 1px solid #e3e3e3;
+    transition: opacity .3s linear;
+    box-sizing: border-box;
+}
+label.checkbox>input[type="checkbox"]+span.checkmark::after {
+    font-family: Nucleo Outline;
+    content: "\ea22";
+    top: 0;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0;
+    color: #555;
+    border: 0;
+    background-color: inherit;
+}
+label.checkbox>input[type="checkbox"]:checked+span.checkmark::after {
+    opacity: 1;
+}
+
 /* General elements */
 body {
     background-color: #ebecf1;
