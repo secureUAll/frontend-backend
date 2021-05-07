@@ -1,5 +1,6 @@
 from django.db import models
-import re
+from django.db.models import Q
+from .validators import *
 
 class Machine(models.Model):
     riskLevelsOps = (
@@ -20,8 +21,8 @@ class Machine(models.Model):
         ('M', 'Monthly')
     )
 
-    ip = models.CharField(max_length=15, null=True, blank=True)
-    dns = models.TextField(max_length=255, null=True, blank=True)
+    ip = models.CharField(max_length=15, null=True, blank=True, validators=[validate_ip])
+    dns = models.TextField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
     scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
@@ -44,6 +45,19 @@ class Machine(models.Model):
                 ),
             )
         ]
+
+    @staticmethod
+    def is_ip(ip):
+        return validate_ip(ip)
+
+    @staticmethod
+    def is_dns(dns):
+        return validate_dns(dns)
+
+    @staticmethod
+    def exists(ip, dns):
+        return Machine.objects.filter((Q(dns=dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=ip) & Q(ip__isnull=False) & ~Q(ip="")))
+
 
 
 class MachineUser(models.Model):

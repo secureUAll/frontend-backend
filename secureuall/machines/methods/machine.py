@@ -30,43 +30,6 @@ class MachineHandler:
 
 
     @staticmethod
-    def machinesFromInput(input:str, worker):
-        """
-        Convert text input to Machine objects (without saving to the database)
-        -- Parameters
-        input               String
-        -- Returns
-        machinesList        machines.models.Machine[]
-        ignored             int                             Number of invalid machines in input
-        alreadyAssociated   int                             Number of machines that were already associated with worker
-        edit                bool                            Does any machine match any at the db?
-        """
-        machines = []
-        # Split input
-        original = [m.strip() for m in re.split(MachineHandler.inputRegex, input.strip())]
-        # Create Machine objects
-        edit = False
-        alreadyAssociated = 0
-        for m in original:
-            mobj = Machine(
-                ip=m if re.fullmatch(MachineHandler.ipRegex, m) else None,
-                dns=m if re.fullmatch(MachineHandler.dnsRegex,m) else None
-            )
-            if not MachineHandler.machineValid(mobj):
-                continue
-            dbQuery = Machine.objects.filter((Q(dns=mobj.dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=mobj.ip) & Q(ip__isnull=False) & ~Q(ip="")))
-            if dbQuery.exists():
-                mobj = dbQuery.first()
-                mobj.edit = True
-                edit = True
-                if MachineWorker.objects.filter(machine=dbQuery.first(), worker=worker).exists():
-                    mobj.alreadyAssociated = True
-                    alreadyAssociated += 1
-            machines.append(mobj)
-        return machines, len(original)-len(machines), alreadyAssociated, edit
-
-
-    @staticmethod
     def gatherFormByNumber(request):
         """
         Gathers form attributes with numbers together
