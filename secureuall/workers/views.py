@@ -5,7 +5,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Worker
 from machines.models import Machine, MachineWorker
 
-from machines.methods.machine import MachineHandler
 from machines.forms import MachineWorkerBatchInputForm, MachineForm
 from django.forms import formset_factory
 
