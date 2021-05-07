@@ -11,7 +11,7 @@ class MachineWorkerInline(admin.TabularInline):
 
 
 class MachineAdmin(admin.ModelAdmin):
-    list_display = ['ip', 'dns', 'scanLevel', 'location', 'nextScan']
+    list_display = ['__str__', 'ip', 'dns', 'scanLevel', 'location', 'nextScan']
     list_filter = ['location', 'scanLevel', 'nextScan']
     inlines = [MachineWorkerInline]
 
