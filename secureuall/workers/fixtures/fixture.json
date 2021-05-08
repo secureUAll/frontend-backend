@@ -1,1 +1,0 @@
-[{"model": "workers.worker", "pk": "1", "fields": {"status": "A", "failures": 0, "created": "2021-05-06T11:09:23.020Z"}}, {"model": "workers.worker", "pk": "2", "fields": {"status": "I", "failures": 0, "created": "2021-05-06T11:10:16.367Z"}}, {"model": "workers.worker", "pk": "3", "fields": {"status": "I", "failures": 0, "created": "2021-05-06T12:13:08.674Z"}}]
