@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.db.models import Q
+from .validators import *
 
 class Machine(models.Model):
     riskLevelsOps = (
@@ -20,16 +21,20 @@ class Machine(models.Model):
         ('M', 'Monthly')
     )
 
-    ip = models.CharField(max_length=15, null=True, blank=True)
-    dns = models.TextField(max_length=255, null=True, blank=True)
+    ip = models.CharField(max_length=15, null=True, blank=True, validators=[validate_ip])
+    dns = models.CharField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
-    scanLevel = models.IntegerField(max_length=1, choices=scanLevelOps, null=True, blank=True)
+    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
+        if not self.ip and not self.dns:
+            return "Invalid!"
+        if self.ip and self.dns:
+            return f"{self.ip} / {self.dns}"
         return self.ip or self.dns
 
     class Meta:
@@ -44,6 +49,19 @@ class Machine(models.Model):
                 ),
             )
         ]
+
+    @staticmethod
+    def is_ip(ip):
+        return validate_ip(ip)
+
+    @staticmethod
+    def is_dns(dns):
+        return validate_dns(dns)
+
+    @staticmethod
+    def exists(ip, dns):
+        return Machine.objects.filter((Q(dns=dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=ip) & Q(ip__isnull=False) & ~Q(ip="")))
+
 
 
 class MachineUser(models.Model):
@@ -65,7 +83,7 @@ class Subscription(models.Model):
     notificationEmail = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
 
-    def _str_(self):
+    def __str__(self):
         return self.description
 
 
@@ -92,7 +110,7 @@ class MachinePort(models.Model):
     port = models.IntegerField()
     service = models.ForeignKey(MachineService, on_delete=models.CASCADE)
 
-    def _str_(self):
+    def __str__(self):
         return self.service + " (" + str(self.port) + ")"
 
     class Meta:
@@ -107,7 +125,7 @@ class Vulnerability(models.Model):
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
 
-    def _str_(self):
+    def __str__(self):
         return "(" + self.risk + ") " + self.description
 
 
@@ -116,7 +134,7 @@ class VulnerabilityComment(models.Model):
     user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=256)
 
-    def _str_(self):
+    def __str__(self):
         return self.comment
 
 

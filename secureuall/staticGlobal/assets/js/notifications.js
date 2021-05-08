@@ -1,16 +1,14 @@
-const showNotification = (from, align) => {
-    color = 'primary';
-
+const showNotification = (title, message, color="primary", icon="") => {
     $.notify({
-        icon: "now-ui-icons ui-1_bell-53",
-        message: "Welcome to <b>Now Ui Dashboard</b> - a beautiful freebie for every web developer."
+        icon: "now-ui-icons " + icon,
+        message: `<b>${title}</b><br/>${message}`
 
     }, {
         type: color,
         timer: 8000,
         placement: {
-            from: from,
-            align: align
+            from: "top",
+            align: "center"
         }
     });
 }
