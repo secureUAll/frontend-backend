@@ -79,9 +79,15 @@ class MachineForm(forms.Form):
     location = forms.CharField(
         max_length=30,
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text="This is only for your information. Does not interfere with the system."
     )
-    scanLevel = forms.ChoiceField(choices=Machine.scanLevelOps, required=False, label="Scan level")
+    scanLevel = forms.ChoiceField(
+        choices=Machine.scanLevelOps,
+        required=False,
+        label="Scan level",
+        help_text="The higher the level, the more intrusive the scanning. Find more on documentation."
+    )
     periodicity = forms.ChoiceField(choices=Machine.periodicityOps, required=False)
     # Control variables
     id = forms.IntegerField(widget=forms.HiddenInput(), required=False)

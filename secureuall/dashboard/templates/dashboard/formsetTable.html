@@ -19,12 +19,25 @@
           {% if forloop.first %}
               <thead class="text-primary">
                 {% for field in form.visible_fields %}
-                    {# Translate delete #}
-                    {% if field.label == "Delete" and deleteRewrite %}
-                        <th>{{deleteRewrite}}</th>
-                    {% else %}
-                        <th>{{ field.label|capfirst }}</th>
-                    {% endif %}
+                    <th>
+                        {# Translate delete #}
+                        {% if field.label == "Delete" and deleteRewrite %}
+                            {{deleteRewrite}}
+                        {% else %}
+                            {{ field.label|capfirst }}
+                        {% endif %}
+                        {# Help text #}
+                        {% if field.help_text %}
+                            <small>
+                                <i
+                                    class="now-ui-icons travel_info text-primary"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="{{field.help_text}}"
+                                ></i>
+                            </small>
+                        {% endif %}
+                    </th>
                 {% endfor %}
                 {% if form.hidden_fields %}
                     <th></th>
