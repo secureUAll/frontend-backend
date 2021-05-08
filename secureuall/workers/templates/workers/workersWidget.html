@@ -1,0 +1,50 @@
+{% comment "About" %}
+
+    This widget renders a card with a table with the list of workers with general data about each.
+
+    -- Context
+    workers             workers.models.Worker[]
+    class               String                      Class names to append to main card (for dimensioning essentially)
+
+{% endcomment %}
+
+{% load workers_filters %}
+
+<!-- Workers Table -->
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Workers</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-discreet" id="workersTable">
+                <thead class=" text-primary">
+                    <th>Worker</th>
+                    <th>Status</th>
+                    <th>Failures</th>
+                    <th>Machines on Schedule</th>
+                </thead>
+                <tbody>
+                    {% for w in workers %}
+                        <tr>
+                            <td>
+                                {{w.name}}
+                            </td>
+                            <td>
+                                <span class="badge p-2 bg-{{w.get_status_display|color}}">{{w.get_status_display}}</span>
+                            </td>
+                            <td>
+                                <span class="text-primary">{{w.failures}}</span>
+                            </td>
+                            <td>
+                                {{w.machines.all|length}}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+<!-- End Right Side Tables Row -->
+</div>
+<!-- End Workers Table -->
