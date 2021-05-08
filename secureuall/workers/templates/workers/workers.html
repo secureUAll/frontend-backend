@@ -82,10 +82,9 @@
                                         <th>Next scan</th>
                                     </thead>
                                     <tbody>
-
                                             {% for machineworker in worker.machines.all|dictsort:"machine.nextScan" %}
                                                 {% with machine=machineworker.machine %}
-                                                    <tr title="See machine page">
+                                                    <tr title="See machine page" onClick="window.location='/machines/{{machine.id}}'">
                                                         <td>{{machine}}</td>
                                                         <td>{% if machine.location %}{{machine.location}}{% endif %}</td>
                                                         <td><span class="badge p-2 bg-{{machine.scanLevel}}">{{machine.get_scanLevel_display}}</span></td>
