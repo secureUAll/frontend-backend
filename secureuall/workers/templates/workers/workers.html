@@ -34,7 +34,7 @@
     <!-- Row of Tables -->
     <div class="row">
         {% for worker in workers %}
-            <div class="col-lg-6 d-flex mx-auto">
+            <div class="col-lg-6 d-flex mx-auto" id="worker{{worker.id}}">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header d-flex">
                         <h4 class="card-title">Worker {{worker.name}}</h4>
@@ -72,7 +72,7 @@
                         <!-- Machines table -->
                         {% if worker.machines.all %}
                             <div class="table-responsive col-12 my-4">
-                                <table class="table table-discreet workersTable" id="table{{forloop.counter}}">
+                                <table class="table table-discreet workersTable" id="table{{worker.id}}">
                                     <thead class=" text-primary">
                                         <th>Machine</th>
                                         <th>Location</th>
@@ -129,7 +129,7 @@
     <!-- Data Tables Script -->
     <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
     <!-- Custom JS -->
-    <script src="{% static 'workers/tables.js' %}"></script>
+    <script src="{% static 'workers/workers.js' %}"></script>
     <script src="{% static 'assets/js/refresh.js' %}"></script>
 
     <script>

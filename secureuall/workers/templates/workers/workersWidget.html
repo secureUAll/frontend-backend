@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                     {% for w in workers %}
-                        <tr>
+                        <tr onClick="window.location='/workers/?worker={{w.id}}'">
                             <td>
                                 {{w.name}}
                             </td>
