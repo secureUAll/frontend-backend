@@ -4,7 +4,7 @@ $(document).ready(function () {
         $(".workersTable").each(function(){
             $(this).DataTable({
                 "lengthMenu": [ 5, 10, 25 ],
-                "order": [[ 3, "asc" ]]
+                "order": [[ 5, "asc" ]]
             });
         });
 
