@@ -1,0 +1,121 @@
+{% extends "dashboard/base.html" %}
+
+{% comment "About" %}
+
+    This template renders a table for user to insert/update machines.
+
+    -- Context
+    title               str                                             The page title
+    worker              str                                             Worker name
+    add                 bool                                            Adding or editing?
+    ignored             int                                             Number of invalid machines (after redirect from batch) for user feedback
+    alreadyAssociated   int                                             Number of machines (after redirect from batch) that were already associated with worker
+    edit                bool                                            Tells (after redirect from batch) if form has machines on db (to show warning notification and column on table)
+
+{% endcomment %}
+
+{% load static %}
+{% load dashboard_filters %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Workers | {{title}}</title>
+{% endblock meta %}
+
+{% block header %}
+    <div class="header text-center my-auto">
+        <h2 class="title mb-0">Worker {{worker.name}} | {{title}}</h2>
+    </div>
+{% endblock header %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block content %}
+
+    <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="progress mb-4">
+                          <div class="progress-bar bg-blur-primary me-2" role="progressbar" style="width: {% if add %}66%{% else %}50%{% endif %};" aria-valuenow="{% if add %}66%{% else %}50%{% endif %}" aria-valuemin="0" aria-valuemax="100"></div
+                          <span>{% if add %}66%{% else %}50%{% endif %}</span>
+                        </div>
+                        {% if add %}
+                            <h4 class="card-title">Please validate the machines list</h4>
+                            <p class="">You can edit and fill new information.</p>
+                        {% else %}
+                            <h4 class="card-title">You can edit every machine information.</h4>
+                            <p class="">When you finish, submit the changes.</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="validateMachines" value="validateMachines" />
+
+                            {% include "dashboard/formsetTable.html" with form=form deleteRewrite="Disassociate" %}
+
+                            <div class="row m-0 d-flex flex-row flex-nowrap">
+                                <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">
+                                    {% if add %}
+                                        Edit machines list input
+                                    {% else %}
+                                        Go back to workers list
+                                    {% endif %}
+                                </btn>
+                                <button class="btn btn-primary col-8" type="submit">
+                                    {% if add %}
+                                        Add machines
+                                    {% else %}
+                                        Submit changes
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    {# Notifications to show on redirect from batch input  form #}
+    {% if ignored %}
+        showNotification(
+            "Invalid machines!",
+            "A total of {{ignored}} entries were ignored, as they do not represent any valid IP addresses or DNS names. To go back to the machines input list click the left button.",
+            "warning",
+            "ui-2_settings-90"
+        );
+    {% endif %}
+    {% if edit %}
+        showNotification(
+            "You have inserted machines that already exist in the database!",
+            "These machines are identified with a warning icon. Changes made here will apply to all workers.",
+            "warning",
+            "ui-2_settings-90"
+        );
+    {% endif %}
+    {% if alreadyAssociated %}
+        showNotification(
+            "You have inserted {{alreadyAssociated}} machines that are already associated to worker {{worker.name}}!",
+            "You can still edit their information.",
+            "warning",
+            "design-2_ruler-pencil"
+        );
+    {% endif %}
+
+    {# Notifications for form validation #}
+    {% if formset.total_error_count %}
+        showNotification(
+            "Invalid machines!",
+            "There are some machines with invalid information. Please verify the signed fields and try again.",
+            "danger",
+            "ui-2_settings-90"
+        );
+    {% endif %}
+</script>
+{% endblock scripts %}
