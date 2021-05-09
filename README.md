@@ -2,6 +2,16 @@
 
 
 
+- [SSL Certificate for deploy environment](SSL-Certificate-for-deploy-environment)
+
+
+
+## SSL Certificate for deploy environment
+
+On deploy environment, nginx runs with a certificate issued by a custom CA. For the browser to trust it, it must be installed first. See how on [ssl/README.md](ssl/README.md).
+
+
+
 ## Authentication and database
 
 The method for authentication in production is the UA IdP. However, as it redirects to the server URL, it is not suitable for testing and development. To allow local testing it was developed a simple authentication method that resumes to introducing the email address.
