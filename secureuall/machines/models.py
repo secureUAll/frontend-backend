@@ -125,9 +125,10 @@ class Vulnerability(models.Model):
     location = models.CharField(max_length=30)
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='vulnerabilities')
 
     def __str__(self):
-        return "(" + self.risk + ") " + self.description
+        return "(" + str(self.risk) + ") " + self.description
 
 
 class VulnerabilityComment(models.Model):
