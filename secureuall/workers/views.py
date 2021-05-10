@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -89,7 +89,7 @@ class AddMachinesView(LoginRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def getContext(self, id):
-        w = Worker.objects.get(name=id)
+        w = get_object_or_404(Worker, id=id)
         self.context = {
             'form': MachineWorkerBatchInputForm(),
             'title': 'Add machines',
