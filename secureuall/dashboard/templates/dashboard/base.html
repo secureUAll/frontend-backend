@@ -46,7 +46,7 @@
     {% endblock styles %}
 </head>
 
-<body>
+<body class="d-flex flex-column">
 
     <!-- Navbar -->
     {% include "dashboard/navbar.html" %}
@@ -72,6 +72,8 @@
     <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
     <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
     <script src="{% static 'assets/js/plugins/perfect-scrollbar.jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/notifications.js' %}"></script>
+    <script src="{% static 'assets/js/tooltips.js' %}"></script>
     <!--  Notifications Plugin    -->
     <script src="{% static 'assets/js/plugins/bootstrap-notify.js' %}"></script>
     <!-- Aditional scripts -->
