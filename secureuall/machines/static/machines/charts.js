@@ -4,7 +4,7 @@ const initCharts = () => {
     initVulsRiskLevelChart();
 }
 
-
+console.log("oi goncalo! :)");
 
 const initVulnsByGroupChart = () => {
     // Get element from DOM
@@ -125,7 +125,7 @@ const initVulsRiskLevelChart = () => {
                 }
             },
             tooltips: {
-                 enabled: true
+                 enabled: false
             }
         },
     };
