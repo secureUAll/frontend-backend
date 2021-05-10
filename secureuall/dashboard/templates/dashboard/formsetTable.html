@@ -1,0 +1,88 @@
+{% comment "About" %}
+
+    This template renders a table for a Django FormSet
+    See https://docs.djangoproject.com/en/3.2/topics/forms/formsets/ for documentation on Django FormSets
+
+    Usage with include template tag: https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#include
+
+    Based on https://www.djangosnippets.org/snippets/1442/
+
+    -- Context
+    formset             FormSet                     The Django FormSet instance
+    deleteRewrite       String (Optional)           String to replace "Delete" header on table
+
+{% endcomment %}
+
+{{ formset.management_form }}
+<table class="table table-discreet">
+    {% for form in formset.forms %}
+          {% if forloop.first %}
+              <thead class="text-primary">
+                {% for field in form.visible_fields %}
+                    {# Translate delete #}
+                    {% if field.label == "Delete" and deleteRewrite %}
+                        <th>{{deleteRewrite}}</th>
+                    {% else %}
+                        <th>{{ field.label|capfirst }}</th>
+                    {% endif %}
+                {% endfor %}
+                {% if form.hidden_fields %}
+                    <th></th>
+                {% endif %}
+              </thead>
+          {% endif %}
+          <tr>
+                {% for field in form.visible_fields %}
+                <td>
+                    <div class="d-flex">
+                        {% if field.field.widget.input_type == 'checkbox' %}<label class="checkbox">{% endif %}
+
+                        {{ field }}
+
+                        {# Add span to style checkbox #}
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <span class="checkmark"></span>
+                        {% endif %}
+
+                        {# ERRORS #}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                            <small class="my-auto ms-2">
+                                <i
+                                    class="now-ui-icons travel_info text-danger"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="{{error}}"
+                                ></i>
+                            </small>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if field.field.widget.input_type == 'checkbox' %}</label>{% endif %}
+                    </div>
+                </td>
+                {% endfor %}
+
+                {# Hidden fields #}
+                {% if form.hidden_fields %}
+                    <td>
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+
+                            {# Show icon if icon matches any of the available #}
+                            {% if "Id" in hidden.label and hidden.value %}
+                                <i
+                                    class="now-ui-icons ui-2_settings-90 text-warning fw-bold"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Already exists on the database. Editing."
+                                ></i>
+                            {% endif %}
+
+                        {% endfor %}
+                    </td>
+                {% endif %}
+          </tr>
+    {% endfor %}
+</table>
+

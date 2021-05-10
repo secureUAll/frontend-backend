@@ -2,15 +2,40 @@
 
 
 
-- [SSL Certificate for deploy environment](SSL-Certificate-for-deploy-environment)
+## Table of contents
+
+- [How to run?](#How-to-run) 
+- [SSL Certificate for deploy environment](#SSL-Certificate-for-deploy-environment)
+- [Authentication and database](#Authentication-and-database)
+- [Sample data](#sample-data)
+- [Reset data](#reset-data)
+
+
+
+## How to run?
+
+### Standalone
+
+To run Django with a local SQLite database and no integration with external services, just run `python manage.py runserver`.
+
+To ease the process of set up (migrations, collect static files, ...) and populate the database with sample data, just run the [`standalone.sh`](standalone.sh) script. It will execute all the necessary commands, since starting the virtual environment to running the local server.
+
+```bash
+$ chmod +x standalone.sh
+$ ./standalone.sh
+```
+
+
+
+### Docker
+
+The integration of Django with other services is handled by Docker, that deploys all of the necessary stuff in containers and creates the connections needed. To run Django with Docker see the tutorial al [docker/README.md](docker/README.md).
 
 
 
 ## SSL Certificate for deploy environment
 
 On deploy environment, nginx runs with a certificate issued by a custom CA. For the browser to trust it, it must be installed first. See how on [ssl/README.md](ssl/README.md).
-
-
 
 ## Authentication and database
 
@@ -25,58 +50,35 @@ To allow the combination of all this approaches Django reads the value of `RUNNI
 | IdP                       | RUNNING_MODE=production | -       |
 | Local authentication      | RUNNING_MODE=docker     | Default |
 
- 
 
 
+## Sample data
 
-## How to run locally?
+Sample data is stored at `fixtures/fixture.json` folder inside every app. 
 
-> This tutorial only runs the frontend, without integration with other services like the database or nginx. To run it with those services, go to [docker/README.md](docker/README.md).
+To load this data, just run the command below. Django will look for all `fixtures` folders inside every app and map that data to the database.
 
-
-
-### First time
-
-1. Create a virtual environment on the project root;
+> This process is done by [`standalone.sh`](standalone.sh) by default.
 
 ```bash
-$ virtualenv -p python venv
+$ python manage.py loaddata fixture
 ```
 
-2. Initialize the venv;
+New data can be added through the Django admin (/admin). To map it to the files inside the `fixtures` folder, just run the command below.
 
 ```bash
-$ source venv/bin/activate
-```
-
-3. Install the project requirements;
-
-```bash
-$ pip install -r requirements.txt
-```
-
-4. Apply the project migrations;
-
-```bash
-$ python manage.py makemigrations
-$ python manage.py migrate
-```
-
-5. Run the project in a local server
-
-```bash
-$ python manage.py runserver
+# Save tables for app workers in workers/fixtures/fixture.json
+$ python manage.py dumpdata workers --output workers/fixtures/fixture.json
 ```
 
 
 
-### Next times
+## Reset data
 
-Just initialize the vend (step 2) and run the project (step 5).
+To reset the data and remove the migrations, just run [`resetdata.sh`](resetdata.sh) script.
 
 ```bash
-$ source venv/bin/activate
-$ python manage.py runserver
+$ chmod +x ./resetdata.sh
+$ ./resetdata.sh
 ```
 
-If changes to the mode were made, apply the project migrations (step 4) before running it.
