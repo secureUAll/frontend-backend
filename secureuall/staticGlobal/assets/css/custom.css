@@ -1,7 +1,6 @@
 /* Content */
 body{min-height: 100vh}
 .content { min-height: 0!important; }
-small, .small { font-size: 60%!important; }
 
 /* Navbar */
 .navbar-collapse {
