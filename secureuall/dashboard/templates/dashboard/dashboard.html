@@ -326,156 +326,134 @@
 
         <!-- Right Side Tables Row -->
         <div class="col-lg-8">
-
-            {% include "machines/machinesWidget.html" %}
-
-            <!-- Workers Table -->
+            <!-- Machines Table -->
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Workers</h4>
+                    <h4 class="card-title">Machines</h4>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-discreet" id="workersTable">
+                        <table class="table table-discreet" id="machinesTable">
                             <thead class=" text-primary">
                                 <th>
-                                    Worker
+                                    Machine
                                 </th>
                                 <th>
-                                    Status
+                                    Risk Level
                                 </th>
                                 <th>
-                                    Failures
-                                </th>
-                                <th>
-                                    Machines on Schedule
+                                    Owner
                                 </th>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-1">1</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       335
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        abc
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-2">2</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       282
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        www
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-4">4</span>
                                     </td>
                                     <td>
-                                        <span class="text-danger">1</span>
-                                    </td>
-                                    <td>
-                                       312
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-danger">Idle</span>
+                                        <span class="badge p-2 bg-3">3</span>
                                     </td>
                                     <td>
-                                        <span class="text-danger">3</span>
-                                    </td>
-                                    <td>
-                                       0
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-1">1</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       335
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-2">2</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       335
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-1">1</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       335
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-2">2</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
-                                    </td>
-                                    <td>
-                                       335
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        xyz
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                        <span class="badge p-2 bg-primary">Active</span>
+                                        <span class="badge p-2 bg-5">5</span>
                                     </td>
                                     <td>
-                                        <span class="text-primary">0</span>
+                                        abc@ua.pt
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        127.001.100.037
                                     </td>
                                     <td>
-                                       335
+                                        <span class="badge p-2 bg-3">3</span>
+                                    </td>
+                                    <td>
+                                        abc@ua.pt
                                     </td>
                                 </tr>
                             </tbody>
@@ -483,9 +461,11 @@
                     </div>
                 </div>
             </div>
-            <!-- End Right Side Tables Row -->
+            <!-- End Machines Table -->
+
+            {% include "workers/workersWidget.html" %}
+
         </div>
-        <!-- End Workers Table -->
 
 
 

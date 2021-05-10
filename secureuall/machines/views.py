@@ -4,28 +4,18 @@ from kafka import KafkaProducer
 from django.http import HttpResponse
 import logging
 import json
-from django.core import serializers
 import machines.dataContext as dataContext
-
-from .models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
 
 logging.basicConfig(level=logging.DEBUG)
 # Create your views here.
+context = dataContext.machineContext
 
 @login_required
-def MachinesView(request, id):
-    try:
-        machine = Machine.objects.get(id=id)
-        context = {
-            'machine': machine
-        }
-    except Machine.DoesNotExist:
-        raise Http404('Machine does not exist')
+def MachinesView(request, *args, **kwargs):
     return render(request, "machines/machines.html", context)
 
 @login_required
 def RequestsView(request, *args, **kwargs):
-    context = dataContext.machineContext
     return render(request, "machines/requests.html", context)
 
 @login_required
@@ -42,6 +32,6 @@ def kafka_test(request):
                             api_version=(2,7,0),
                             value_serializer=lambda m: json.dumps(m).encode('latin'))
 
-    producer.send('FRONTEND', key=b'SCAN', value={"MACHINE":"127.0.1.3"})
+    producer.send('SCAN_REQUEST', value={"teste":"teste"})
     producer.flush()
     return HttpResponse(200)
