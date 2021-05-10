@@ -1,1 +1,78 @@
-[{"model": "machines.machine", "pk": 1, "fields": {"ip": "127.0.1.2", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 2, "fields": {"ip": "", "dns": "ua.pt", "os": null, "risk": null, "scanLevel": "3", "location": "STIC", "periodicity": "M", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 3, "fields": {"ip": "125.3.5.78", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 4, "fields": {"ip": "", "dns": "nei.web.ua.pt", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 5, "fields": {"ip": "176.103.66.73", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 6, "fields": {"ip": "193.200.69.65", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 7, "fields": {"ip": "193.200.69.242", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 8, "fields": {"ip": "147.78.3.252", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 9, "fields": {"ip": "176.103.66.101", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machine", "pk": 10, "fields": {"ip": "31.129.186.43", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-08"}}, {"model": "machines.machineworker", "pk": 1, "fields": {"machine": 1, "worker": 3}}, {"model": "machines.machineworker", "pk": 2, "fields": {"machine": 2, "worker": 3}}, {"model": "machines.machineworker", "pk": 3, "fields": {"machine": 3, "worker": 3}}, {"model": "machines.machineworker", "pk": 5, "fields": {"machine": 5, "worker": 3}}, {"model": "machines.machineworker", "pk": 6, "fields": {"machine": 6, "worker": 3}}, {"model": "machines.machineworker", "pk": 7, "fields": {"machine": 7, "worker": 3}}, {"model": "machines.machineworker", "pk": 8, "fields": {"machine": 8, "worker": 3}}, {"model": "machines.machineworker", "pk": 9, "fields": {"machine": 9, "worker": 3}}, {"model": "machines.machineworker", "pk": 10, "fields": {"machine": 10, "worker": 3}}, {"model": "machines.machineworker", "pk": 12, "fields": {"machine": 2, "worker": 2}}]
+[
+    {
+        "model": "machines.machine", "pk": 29, "fields": {"ip": "127.0.1.2", "dns": "xcoa.ua.pt", "os": null, "risk": null, "scanLevel": "4", "location": "ABC", "periodicity": "D", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 30, "fields": {"ip": "", "dns": "ua.pt", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}},
+    {
+        "model": "machines.machine", "pk": 31, "fields": {"ip": "125.3.5.78", "dns": "", "os": null, "risk": null, "scanLevel": "3", "location": "", "periodicity": "M", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 32, "fields": {"ip": "", "dns": "nei.web.ua.pt", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 34, "fields": {"ip": "176.103.66.101", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "AVEIRO MAGAZINE", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 35, "fields": {"ip": "176.103.66.73", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 36, "fields": {"ip": "193.200.69.65", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 37, "fields": {"ip": "193.200.69.242", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 38, "fields": {"ip": "147.78.3.252", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 39, "fields": {"ip": "31.129.186.43", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
+    },
+    {
+        "model": "machines.machine", "pk": 41, "fields": {"ip": "127.0.0.101", "dns": "www.teste.ua.pt", "os": "macOS Big Sur", "risk": 1, "scanLevel": "2", "location": "TESTE", "periodicity": "W", "nextScan": "2021-05-10"}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 101, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/courses", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 102, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/seminars", "status": "Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 103, "fields": {"risk":1, "type":"XXE", "description": "Poorly configured XML documents.", "location": "www.teste.ua.pt/courses", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 104, "fields": {"risk":3, "type":"XSS", "description": "untrusted data in a new web page without proper validation", "location": "www.teste.ua.pt/?page=3", "status": "Fixing", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 105, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/?page=3", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 106, "fields": {"risk":1, "type":"Injection", "description": "Attack that makes it possible to execute malicious NoSQL statements.", "location": "www.teste.ua.pt/?page=5", "status": "Invalid", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 107, "fields": {"risk":5, "type":"Broken Authentication", "description": "Authentication and session management implemented incorrectly, allowing attackers to compromise passwords, keys, or session tokens.", "location": "www.teste.ua.pt/?page=9", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 108, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/seminars", "status": "Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.machineservice", "pk": 109, "fields": {"service": "http", "version": "2. HTTP/3"}
+    },
+    {
+        "model": "machines.machineport", "pk": 110, "fields": {"machine":41, "port":"80", "service": 109, "scanEnabled": true}
+    },
+    {
+        "model": "machines.machineservice", "pk": 111, "fields": {"service": "ssh", "version": "SSH"}
+    },
+    {
+        "model": "machines.machineport", "pk": 112, "fields": {"machine":41, "port":"22", "service": 111, "scanEnabled": true}
+    },
+    {
+        "model": "machines.machineservice", "pk": 113, "fields": {"service": "pop3", "version": "POP3 version 3"}
+    },
+    {
+        "model": "machines.machineport", "pk": 114, "fields": {"machine":41, "port":"110", "service": 113, "scanEnabled": true}
+    },
+    {"model": "machines.machineworker", "pk": 68, "fields": {"machine": 29, "worker": "1"}}, {"model": "machines.machineworker", "pk": 70, "fields": {"machine": 31, "worker": "1"}}, {"model": "machines.machineworker", "pk": 71, "fields": {"machine": 32, "worker": "1"}}, {"model": "machines.machineworker", "pk": 72, "fields": {"machine": 35, "worker": "1"}}, {"model": "machines.machineworker", "pk": 73, "fields": {"machine": 36, "worker": "1"}}, {"model": "machines.machineworker", "pk": 75, "fields": {"machine": 38, "worker": "1"}}, {"model": "machines.machineworker", "pk": 76, "fields": {"machine": 34, "worker": "1"}}, {"model": "machines.machineworker", "pk": 77, "fields": {"machine": 39, "worker": "1"}},
+    {"model": "machines.machineworker", "pk": 78, "fields": {"machine": 41, "worker": "1"}}
+]

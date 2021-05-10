@@ -19,7 +19,7 @@
 
 {% block content %}
 <!-- Infos and Graphs -->
-<div class="row align-items-center">
+<div class="row align-items-stretch">
     <!-- Left Side Row - Latest Changes Table -->
     <div class="col-lg-6 d-flex">
         <div class="card d-flex">
@@ -38,15 +38,17 @@
                                 <dt>DNS</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
-                                        <table class="table">                                  
+                                        <table class="table">
                                             <tbody>
-                                            {% for domain in machine.domains %}
-                                                <tr><td>{{domain}}</td></tr>
-                                            {% endfor %}
+                                            {% if machine.dns %}
+                                                <tr><td>{{machine.dns}}</td></tr>
+                                            {% else %}
+                                            <tr><td>No dns.</td></tr>
+                                            {% endif %}
                                             </tbody>
                                         </table>
                                     </div>
-                                </dd> 
+                                </dd>
                             </dl>
                             <dl class="col-md-6">
                                 <dt>OS</dt>
@@ -54,18 +56,16 @@
                                 <dt>Scan Level</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
-                                    {% if machine.scanLevel == '1' %}
-                                        <span><button class="btn btn-primary">1</button></span>
-                                    {% elif machine.scanLevel == '2' %}
-                                        <span><button class="btn btn-warning">2</button></span>
+                                    {% if machine.scanLevel == '2' %}
+                                        <span><button class="btn btn-primary">2</button></span>
                                     {% elif machine.scanLevel == '3' %}
-                                        <span><button class="btn btn-danger">3</button></span>
+                                        <span><button class="btn btn-warning">3</button></span>
                                     {% elif machine.scanLevel == '4' %}
                                         <span><button class="btn btn-danger">3</button></span>
                                     {% endif %}
                                     </div>
                                 </dd>
-                            </dl>           
+                            </dl>
                         </div>
                     </div>
                 </div>
@@ -82,13 +82,13 @@
                                 <th class="col-3">Scan port</th>
                             </thead>
                             <tbody>
-                            {% for port in machine.openPorts %}
+                            {% for port in machine.ports.all %}
                                 <tr>
-                                    <td>{{port.number}}</td>
-                                    <td>{{port.description}}</td>
+                                    <td>{{port.port}}</td>
+                                    <td>{{port.service.service}}</td>
                                     <td>
                                         <div class="d-flex justify-content-around">
-                                            {% if machine.scanEnabled %}
+                                            {% if port.scanEnabled %}
                                                 <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
                                             {% else %}
                                                 <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
@@ -113,10 +113,10 @@
                                 <th>Version</th>
                             </thead>
                             <tbody>
-                                {% for port in machine.openPorts %}
+                                {% for port in machine.ports.all %}
                                     <tr>
-                                        <td>{{port.description}}</td>
-                                        <td>{{port.version}}</td>
+                                        <td>{{port.service.service}}</td>
+                                        <td>{{port.service.version}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -134,10 +134,12 @@
                                 <dt>Owners</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
-                                        <table class="table">                                  
+                                        <table class="table">
                                             <tbody>
-                                            {% for owner in machine.owners %}
+                                            {% for owner in machine.users.all %}
                                                 <tr><td>{{owner}}</td></tr>
+                                            {% empty %}
+                                                <span>No owners yet.</span>
                                             {% endfor %}
                                             </tbody>
                                         </table>
@@ -149,17 +151,19 @@
                                 <dt>Subscribers</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
-                                        <table class="table">             
+                                        <table class="table">
                                             <tbody>
-                                            {% for subscriber in machine.subscribers %}
+                                            {% for subscriber in machine.subscriptions.all %}
                                                 <tr><td>{{subscriber}}</td></tr>
+                                            {% empty %}
+                                                <span>No subscribers yet.</span>
                                             {% endfor %}
                                             </tbody>
                                         </table>
                                     </div>
                                     <button class="btn btn-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
                                 </dd>
-                            </dl>           
+                            </dl>
                         </div>
                     </div>
                 </div>
@@ -176,11 +180,11 @@
     <!-- End Left Side Row - Latest Changes Table -->
 
     <!-- Right Side Row -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 d-flex flex-column">
         <!-- Row Graph 1 -->
-        <div class="row">
+        <div class="row d-flex flex-grow-1">
             <div class="d-flex">
-                <div class="card card-chart">
+                <div class="card card-chart d-flex flex-column">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
                         <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
@@ -199,7 +203,7 @@
                     </div>
                     <div class="card-body my-auto d-flex">
                         <div class="chart-area my-auto">
-                            <canvas id="vulnerabilitiesNumbersChart"></canvas>
+                            <canvas id="vulnerabilitiesByRiskLevel"></canvas>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -213,9 +217,9 @@
         <!-- End Graph 1 -->
 
         <!-- Row Graph 2 -->
-        <div class="row">
+        <div class="row d-flex flex-grow-1">
             <div class="d-flex">
-                <div class="card card-chart">
+                <div class="card card-chart d-flex flex-column">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
                         <h4 class="card-title">Vulnerabilities by Group</h4>
@@ -246,48 +250,13 @@
             </div>
         </div>
         <!-- End Row Graph 2 -->
-
-        <!-- Row Graph 3 -->
-        <div class="row">
-            <div class="d-flex">
-                <div class="card card-chart">
-                    <div class="card-header">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
-                        <div class="dropdown">
-                            <button type="button"
-                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                                data-toggle="dropdown">
-                                <i class="now-ui-icons loader_gear"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                                <a class="dropdown-item" href="#">Last 14 days</a>
-                                <a class="dropdown-item" href="#">Last month</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body my-auto d-flex">
-                        <div class="chart-area my-auto">
-                            <canvas id="machinesRiskLevelChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Row Graph 3 -->
     </div>
     <!-- End Right Side Row -->
 </div>
 <!-- End Infos and Graphs -->
 
 <!-- Vulnerabilities Report -->
-<div class="row">
+<div class="row mx-0">
     <div class="card card-chart">
         <div class="card-header">
             <h5 class="card-category"></h5>
@@ -309,7 +278,7 @@
             <!-- Row Next Scan -->
             <div class="row">
                 <div class="d-flex justify-content-center text-secondary my-auto">
-                    <span class="fw-bold fs-4 px-4">Next Scan:</span><span class="border border-secondary rounded-pill fs-5 px-4 py-1">07/05/2021</span>
+                    <span class="fw-bold fs-4 px-4">Next Scan:</span><span class="border border-secondary rounded-pill fs-5 px-4 py-1">{{machine.nextScan}}</span>
                 </div>
             </div>
             <!-- End Row Next Scan -->
@@ -324,7 +293,7 @@
                         <th>Comments</th>
                     </thead>
                     <tbody>
-                        {% for vuln in machine.vulnerabilities %}
+                        {% for vuln in machine.vulnerabilities.all %}
                         <tr>
                             <td>
                             {% if vuln.risk == 1 %}
@@ -352,7 +321,7 @@
                             {% endif %}
                             </td>
                             <td>
-                            {% if vuln.comments %}
+                            {% if vuln.comments.all %}
                                 <p>
                                     <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
                                     <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Show</a>
@@ -369,24 +338,13 @@
                 </table>
             </div>
         </div>
-        <div class="row">
-            <nav aria-label="...">
-                <ul class="pagination pagination-sm justify-content-center">
-                    <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">1</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                </ul>
-            </nav>
-        </div>
         <div class="card-footer">
             <div class="d-flex justify-content-between">
                 <div class="stats">
                     <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
                 </div>
                 <div class="stats">
-                    Scan done by worker <span class="text-muted font-weight-bold">xyz</span> 0 erros reported.
+                    Scan done by worker <span class="text-muted font-weight-bold">{{machine.scans.last}}</span> 0 erros reported.
                 </div>
             </div>
         </div>
@@ -429,9 +387,7 @@
     <!-- Activate charts -->
     <script>
         // Define charts values
-        const vulnsNumbersLabels = ["08 APR", "09 APR", "10 APR", "11 APR", "12 APR", "13 APR", "14 APR", "15 APR", "16 APR", "17 APR", "18 APR", "19 APR"];
-        const vulnsNumbersValues = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
-        const machinesRiskLevelChartValues = [43, 16, 25, 6, 10];
+        const vulsRiskLevelChartValues = [43, 16, 25, 6, 10];
         const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
         const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
         // Start charts
