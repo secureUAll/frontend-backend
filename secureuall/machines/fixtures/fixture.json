@@ -29,13 +29,31 @@
         "model": "machines.machine", "pk": 39, "fields": {"ip": "31.129.186.43", "dns": "", "os": null, "risk": null, "scanLevel": "2", "location": "", "periodicity": "W", "nextScan": "2021-05-06"}
     }, 
     {
-        "model": "machines.machine", "pk": 100, "fields": {"ip": "127.0.0.101", "dns": "www.teste.ua.pt", "os": "macOS Big Sur", "risk": 1, "scanLevel": "2", "location": "TESTE", "periodicity": "W", "nextScan": "2021-05-10"}
+        "model": "machines.machine", "pk": 41, "fields": {"ip": "127.0.0.101", "dns": "www.teste.ua.pt", "os": "macOS Big Sur", "risk": 1, "scanLevel": "2", "location": "TESTE", "periodicity": "W", "nextScan": "2021-05-10"}
     },
     {
         "model": "machines.vulnerability", "pk": 101, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/courses", "status": "Not Fixed", "machine": 41}
     },
     {
         "model": "machines.vulnerability", "pk": 102, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/seminars", "status": "Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 103, "fields": {"risk":1, "type":"XXE", "description": "Poorly configured XML documents.", "location": "www.teste.ua.pt/courses", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 104, "fields": {"risk":3, "type":"XSS", "description": "untrusted data in a new web page without proper validation", "location": "www.teste.ua.pt/?page=3", "status": "Fixing", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 105, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/?page=3", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 106, "fields": {"risk":1, "type":"Injection", "description": "Attack that makes it possible to execute malicious NoSQL statements.", "location": "www.teste.ua.pt/?page=5", "status": "Invalid", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 107, "fields": {"risk":5, "type":"Broken Authentication", "description": "Authentication and session management implemented incorrectly, allowing attackers to compromise passwords, keys, or session tokens.", "location": "www.teste.ua.pt/?page=9", "status": "Not Fixed", "machine": 41}
+    },
+    {
+        "model": "machines.vulnerability", "pk": 108, "fields": {"risk":2, "type":"Injection", "description": "Attack that makes it possible to execute malicious SQL statements.", "location": "www.teste.ua.pt/seminars", "status": "Fixed", "machine": 41}
     },
     {"model": "machines.machineworker", "pk": 68, "fields": {"machine": 29, "worker": "1"}}, {"model": "machines.machineworker", "pk": 70, "fields": {"machine": 31, "worker": "1"}}, {"model": "machines.machineworker", "pk": 71, "fields": {"machine": 32, "worker": "1"}}, {"model": "machines.machineworker", "pk": 72, "fields": {"machine": 35, "worker": "1"}}, {"model": "machines.machineworker", "pk": 73, "fields": {"machine": 36, "worker": "1"}}, {"model": "machines.machineworker", "pk": 75, "fields": {"machine": 38, "worker": "1"}}, {"model": "machines.machineworker", "pk": 76, "fields": {"machine": 34, "worker": "1"}}, {"model": "machines.machineworker", "pk": 77, "fields": {"machine": 39, "worker": "1"}},
     {"model": "machines.machineworker", "pk": 78, "fields": {"machine": 41, "worker": "1"}}
