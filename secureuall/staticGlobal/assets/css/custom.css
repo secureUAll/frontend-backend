@@ -531,3 +531,6 @@ keyframes .progress {
 @keyframes progress-bar {
    0% { width: 0; }
 }
+
+/* Charts */
+.card-chart .chart-area {height:auto!important}
