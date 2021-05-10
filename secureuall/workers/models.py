@@ -8,7 +8,7 @@ class Worker(models.Model):
         ('D', 'Down'),
     )
 
-    name = models.CharField(max_length=12)
+    name = models.CharField(max_length=12, primary_key=True)
     status = models.CharField(max_length=1, choices=statusOps, default='I')
     failures = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)

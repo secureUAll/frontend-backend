@@ -99,7 +99,7 @@ class MachineService(models.Model):
     version = models.CharField(max_length=12)
 
     def _str_(self):
-        return self.service + " (" + str(self.version) + ")"
+        return str(self.service) + " (" + str(self.version) + ")"
 
     class Meta:
         unique_together = (("service", "version"),)
@@ -109,12 +109,13 @@ class MachinePort(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='ports')
     port = models.IntegerField()
     service = models.ForeignKey(MachineService, on_delete=models.CASCADE)
+    scanEnabled = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.service + " (" + str(self.port) + ")"
+        return str(self.service) + " (" + str(self.port) + ")"
 
     class Meta:
-        unique_together = (("machine", "port"),)
+        unique_together = (("machine", "port", "scanEnabled"),)
 
 
 class Vulnerability(models.Model):
