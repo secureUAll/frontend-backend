@@ -89,7 +89,7 @@ class AddMachinesView(LoginRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def getContext(self, id):
-        w = Worker.objects.get(name=id)
+        w = Worker.objects.get(id=id)
         self.context = {
             'form': MachineWorkerBatchInputForm(),
             'title': 'Add machines',

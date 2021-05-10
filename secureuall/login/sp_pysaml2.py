@@ -76,5 +76,5 @@ SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
 SAML_ATTRIBUTE_MAPPING = {
     'givenName' : ('first_name',),
     'sn': ('last_name',),
-    'mail': ('email',),
+    'mail': ('email','username'),
 }

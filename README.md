@@ -4,7 +4,8 @@
 
 ## Table of contents
 
-- [How to run?](#How-to-run?) 
+- [How to run?](#How-to-run) 
+- [SSL Certificate for deploy environment](#SSL-Certificate-for-deploy-environment)
 - [Authentication and database](#Authentication-and-database)
 - [Sample data](#sample-data)
 - [Reset data](#reset-data)
@@ -31,6 +32,10 @@ $ ./standalone.sh
 The integration of Django with other services is handled by Docker, that deploys all of the necessary stuff in containers and creates the connections needed. To run Django with Docker see the tutorial al [docker/README.md](docker/README.md).
 
 
+
+## SSL Certificate for deploy environment
+
+On deploy environment, nginx runs with a certificate issued by a custom CA. For the browser to trust it, it must be installed first. See how on [ssl/README.md](ssl/README.md).
 
 ## Authentication and database
 

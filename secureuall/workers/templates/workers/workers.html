@@ -40,8 +40,8 @@
                         <h4 class="card-title">Worker {{worker.name}}</h4>
                         {% if worker.machines.all %}
                         <div class="ms-auto">
-                            <a href="/workers/{{worker.name}}/machines/add"><button class="btn btn-sm btn-outline-primary" title="Add machines"><i class="now-ui-icons ui-1_simple-add"></i></button></a>
-                            <a href="/workers/{{worker.name}}/machines/edit"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
+                            <a href="/workers/{{worker.id}}/machines/add"><button class="btn btn-sm btn-outline-primary" title="Add machines"><i class="now-ui-icons ui-1_simple-add"></i></button></a>
+                            <a href="/workers/{{worker.id}}/machines/edit"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
                         </div>
                         {% endif %}
                     </div>
@@ -49,7 +49,7 @@
                         <!-- Worker data -->
                         <div class="d-flex col-12 text-secondary">
                             <dl class="col-6">
-                                <dt>ID</dt>
+                                <dt>Name</dt>
                                 <dd>{{worker.name}}</dd>
                                 <dt>Failures</dt>
                                 <dd>{{worker.failures}}</dd>
@@ -102,7 +102,7 @@
                         {% else %}
                         <div class="my-auto p-5 text-center">
                             <h5 class="">No machines associated.</h5>
-                            <a href="/workers/{{worker.name}}/machines/add">
+                            <a href="/workers/{{worker.id}}/machines/add">
                                 <button class="btn btn-outline-primary">
                                     <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add machines
                                 </button>
