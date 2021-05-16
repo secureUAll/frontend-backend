@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import formset_factory
 from django.shortcuts import render
 from django.views import View
 from django.shortcuts import redirect
@@ -47,3 +49,17 @@ class LogoutView(View):
         # In development, log user out on Django only
         logout(request)
         return redirect('login:login')
+
+
+class WelcomeView(LoginRequiredMixin, View):
+    context = {}
+    template_name = "login/welcome.html"
+    MachineNameFormSet = formset_factory(MachineNameForm, extra=5, min_num=1)
+
+    def get(self, request, *args, **kwargs):
+        self.getcontext()
+        return render(request, self.template_name, self.context)
+    def getcontext(self):
+        # If user has access, redirect to home
+        if User.has_access(self.request.user):
+            return redirect('dashboard:dashboard')

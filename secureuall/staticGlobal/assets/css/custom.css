@@ -510,6 +510,7 @@ dl.dl-12 dd {width: 75%}
 /* Login */
 .panel-login {
     min-height: 100vh;
+    overflow-y: scroll;
 }
 
 /* Progress */
