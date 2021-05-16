@@ -3,7 +3,7 @@ from django.views import View
 from django.shortcuts import redirect
 
 from secureuall.settings import PRODUCTION
-from django.contrib.auth.models import User
+from login.models import User
 from django.contrib.auth import login, logout
 
 # Create your views here.
