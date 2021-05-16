@@ -1,21 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-class UserType(models.Model):
-    name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
+from django.contrib.auth.models import AbstractUser
 
 
-class SecureuallUser(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name='secureuallUser',
-    )
-    userType = models.ForeignKey(UserType, on_delete=models.CASCADE, related_name='users')
+class User(AbstractUser):
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.get_full_name()
