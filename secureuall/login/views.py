@@ -54,12 +54,13 @@ class LogoutView(View):
 class WelcomeView(LoginRequiredMixin, View):
     context = {}
     template_name = "login/welcome.html"
-    MachineNameFormSet = formset_factory(MachineNameForm, extra=5, min_num=1)
 
     def get(self, request, *args, **kwargs):
-        self.getcontext()
-        return render(request, self.template_name, self.context)
-    def getcontext(self):
         # If user has access, redirect to home
         if User.has_access(self.request.user):
             return redirect('dashboard:dashboard')
+        self.getcontext()
+        return render(request, self.template_name, self.context)
+
+    def getcontext(self):
+        pass
