@@ -6,7 +6,7 @@ echo "Removing old migrations..."
 cd ../secureuall
 ./resetdata.sh
 
-echo
-echo "Building docker-compose..."
 cd ../docker
-docker-compose up -d --build
+echo
+echo "Docker clean up has finished! Run the command below now:"
+echo "$ docker-compose up -d --build"
