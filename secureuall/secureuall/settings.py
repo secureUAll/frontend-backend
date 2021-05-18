@@ -165,7 +165,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -------------------
 # |  AUTHORIZATION  |
 # -------------------
-# AUTH_USER_MODEL = 'django.contrib.auth.models.User'
+AUTH_USER_MODEL = 'login.User'
 
 AUTHENTICATION_BACKENDS = [
     # 'user_aut.backends.CustomUserAuth',

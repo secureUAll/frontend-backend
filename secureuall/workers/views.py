@@ -1,17 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
+from login.models import User
 from .models import Worker
 from machines.models import Machine, MachineWorker
 
 from machines.forms import MachineWorkerBatchInputForm, MachineForm
 from django.forms import formset_factory
 
+from login.validators import UserHasAccessMixin
+
 # Create your views here.
 
 
-class WorkersView(LoginRequiredMixin, View):
+class WorkersView(LoginRequiredMixin, UserHasAccessMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -25,7 +28,7 @@ class WorkersView(LoginRequiredMixin, View):
         return render(request, "workers/workers.html", context)
 
 
-class AddMachinesView(LoginRequiredMixin, View):
+class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
@@ -103,3 +106,5 @@ class AddMachinesView(LoginRequiredMixin, View):
             self.template_name = "workers/editMachines.html"
             self.context['title'] = "Edit machines list"
 
+    def test_func(self):
+        return User.has_access(self.request.user)

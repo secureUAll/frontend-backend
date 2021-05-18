@@ -65,9 +65,14 @@ class Machine(models.Model):
 
 
 class MachineUser(models.Model):
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='machines')
+    userType = (
+        ('S', 'Subscriber'),
+        ('O', 'Owner'),
+    )
+
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='machines')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='users')
-    userType = models.ForeignKey('login.UserType', on_delete=models.CASCADE, related_name='machineUsers')
+    userType = models.CharField(max_length=1, choices=userType)
 
     class Meta:
         unique_together = (("user", "machine"),)
@@ -78,7 +83,7 @@ class MachineWorker(models.Model):
     worker = models.ForeignKey('workers.worker', on_delete=models.CASCADE, related_name='machines')
 
 class Subscription(models.Model):
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='subscriptions')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='subscriptions')
     notificationEmail = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
@@ -133,7 +138,7 @@ class Vulnerability(models.Model):
 
 class VulnerabilityComment(models.Model):
     vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=256)
 
     def __str__(self):
