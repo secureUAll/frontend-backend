@@ -11,6 +11,8 @@ from django.forms import formset_factory
 
 from login.validators import UserHasAccessMixin
 
+from services.kakfa import KafkaService
+
 # Create your views here.
 
 
@@ -62,7 +64,7 @@ class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
                 # Same form to db
                 for f in self.context['formset']:
                     f = f.cleaned_data
-                    # Get machine to db, if exists
+                    # Get machine from db, if exists
                     mach = Machine.objects.get(id=f['id']) if Machine.objects.filter(id=f['id']).exists() else None
                     # If not for delete
                     if not f['DELETE']:
@@ -88,6 +90,8 @@ class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
                     elif mach and f['DELETE'] and MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
                         MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).delete()
                         request.session['machinesAdded']['disassociated'] += 1
+                    # Notify colector of changes
+                    KafkaService().send(topic='FRONTEND', key=b'WORKERSCHANGE', value={'worker': self.context['worker'].id})
                 return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
