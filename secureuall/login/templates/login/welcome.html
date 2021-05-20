@@ -43,7 +43,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for r in user.accessRequest.all|dictsort:"created_at" %}
+                                {% for r in user.accessRequest.all|dictsortreversed:"created_at" %}
                                     <tr>
                                         <td>{{r.created_at}}</td>
                                         <td>
