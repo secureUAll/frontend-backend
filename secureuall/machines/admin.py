@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Machine, MachineWorker, Vulnerability
+from .models import Machine, MachineWorker, Vulnerability, MachineUser
+
 
 # Machine
 
@@ -15,10 +16,15 @@ class VulnerabilityInline(admin.TabularInline):
     extra = 0
 
 
+class MachineUserInline(admin.TabularInline):
+    model = MachineUser
+    extra = 0
+
+
 class MachineAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'ip', 'dns', 'scanLevel', 'location', 'nextScan']
     list_filter = ['location', 'scanLevel', 'nextScan']
-    inlines = [MachineWorkerInline, VulnerabilityInline]
+    inlines = [MachineWorkerInline, VulnerabilityInline, MachineUserInline]
 
 
 admin.site.register(Machine, MachineAdmin)

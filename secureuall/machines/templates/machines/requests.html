@@ -47,15 +47,16 @@
                             <th>Machine(s)</th>
                             <th>Motive</th>
                             {% if filter not in "pending" %}
+                                <th>Notes</th>
                                 <th>Status</th>
                             {% endif %}
-                            {% if filter in "all,pending" %}
+                            {% if filter in "pending" %}
                                 <th>Approval</th>
                             {% endif %}
                         </thead>
                         <tbody>
                         {% for request in requests|dictsortreversed:"created_at" %}
-                            <tr>
+                            <tr id="requestRow{{request.id}}">
                                 <td>{{request.user}}<br/>{{request.user.email}}</td>
                                 <td>
                                     {% for m in request.get_machines %}
@@ -64,9 +65,21 @@
                                 </td>
                                 <td>{{request.motive}}</td>
                                 {% if filter not in "pending" %}
-                                    <td>{{request.get_status}}</td>
+                                    <td>{{request.notes}}</td>
+                                    <td>
+                                        {{request.get_status}}
+                                        {% if request.pending %}
+                                            <i
+                                                class="now-ui-icons travel_info text-primary"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title=""
+                                                data-original-title="To accept/deny a pending request, filter only by pending requests."
+                                            ></i>
+                                        {% endif %}
+                                    </td>
                                 {% endif %}
-                                {% if filter in "all,pending" and request.pending %}
+                                {% if filter in "pending" and request.pending %}
                                     <td>
                                         <div class="d-flex justify-content-around">
                                             <i
@@ -77,6 +90,7 @@
                                                 data-approve="True"
                                                 data-user="{{request.user.email}}"
                                                 data-machines="{{request.get_machines}}"
+                                                data-id="{{request.id}}"
                                             ></i>
                                             <i
                                                 class="fas fa-times text-danger tooltip-test"
@@ -86,6 +100,7 @@
                                                 data-approve="False"
                                                 data-user="{{request.user.email}}"
                                                 data-machines="{{request.get_machines}}"
+                                                data-id="{{request.id}}"
                                             ></i>
                                         </div>
                                     </td>
@@ -126,8 +141,10 @@
                 </dl>
                 <p>Fill the form below to change the status.</p>
                 <form method="POST" id="changeRequestStatusForm">
-                    <div class="form-group d-flex">
-                        <label class="checkbox mb-3">
+                    {% csrf_token %}
+                    <input type="text" readonly="readonly" name="request" value="" id="requestid" class="d-none" />
+                    <div class="form-group d-flex mb-3">
+                        <label class="checkbox d-flex">
                             <input type="radio" name="approve" id="approveRequest" value="true">
                             <span class="checkmark"></span>
                         </label>
