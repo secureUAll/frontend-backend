@@ -69,7 +69,24 @@
                                 {% if filter in "all,pending" and request.pending %}
                                     <td>
                                         <div class="d-flex justify-content-around">
-                                            <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
+                                            <i
+                                                class="fas fa-check text-primary tooltip-test"
+                                                title="Approve request"
+                                                data-toggle="modal"
+                                                data-target="#changeRequestStatusModal"
+                                                data-approve="True"
+                                                data-user="{{request.user.email}}"
+                                                data-machines="{{request.get_machines}}"
+                                            ></i>
+                                            <i
+                                                class="fas fa-times text-danger tooltip-test"
+                                                title="Deny request"
+                                                data-toggle="modal"
+                                                data-target="#changeRequestStatusModal"
+                                                data-approve="False"
+                                                data-user="{{request.user.email}}"
+                                                data-machines="{{request.get_machines}}"
+                                            ></i>
                                         </div>
                                     </td>
                                 {% endif %}
@@ -90,20 +107,53 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="changeRequestStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeRequestStatusModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Change request status</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Cooments for the vulnerability.
+                <p>You are changing the status of the following access request.</p>
+                <dl class="dl-12 mb-3">
+                    <dt>User</dt>
+                    <dd id="user"></dd>
+                    <dt>Machine(s)</dt>
+                    <dd id="machines"></dd>
+                </dl>
+                <p>Fill the form below to change the status.</p>
+                <form method="POST" id="changeRequestStatusForm">
+                    <div class="form-group d-flex">
+                        <label class="checkbox mb-3">
+                            <input type="radio" name="approve" id="approveRequest" value="true">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label for="approveRequest" class="my-auto mx-2">Approve</label>
+                        <label class="checkbox">
+                            <input type="radio" name="approve" id="denyRequest" value="false">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label for="denyRequest" class="my-auto mx-2">Reject</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            rows="4"
+                            cols="80"
+                            class="form-control"
+                            placeholder="Here you can leave some notes about the approval/denial of the request."
+                            value=""
+                            name="notes"
+                        ></textarea>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-outline-primary"data-dismiss="modal" aria-label="Close">Close</button>
+                <button type="button" class="btn btn-primary" id="changeRequestStatusSubmit">Change request status</button>
             </div>
             </div>
         </div>
@@ -115,5 +165,8 @@
 
 
 {% block scripts %}
+    <!-- Assets -->
     <script src="{% static 'assets/js/refresh.js' %}"></script>
+    <!-- Page scripts -->
+    <script src="{% static 'machines/requests.js' %}"></script>
 {% endblock scripts %}
