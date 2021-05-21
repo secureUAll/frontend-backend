@@ -26,3 +26,10 @@ class UserAccessRequest(models.Model):
 
     def get_machines(self):
         return self.machines.split(";")
+
+    def get_status(self):
+        if self.pending:
+            return "Pending approval"
+        elif not self.approved:
+            return "Denied"
+        return "Approved"

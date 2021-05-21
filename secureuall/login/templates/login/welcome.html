@@ -52,13 +52,7 @@
                                             {% endfor %}
                                         </td>
                                         <td>
-                                            {% if r.pending and not r.approved %}
-                                                Pending approval
-                                            {% elif not r.pending and not r.approved %}
-                                                Denied
-                                            {% else %}
-                                                Approved
-                                            {% endif %}
+                                            {{r.get_status}}
                                         </td>
                                         <td>{{r.notes}}</td>
                                     </tr>

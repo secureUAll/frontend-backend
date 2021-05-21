@@ -23,7 +23,7 @@
     <div class="card card-chart">
         <div class="card-header">
             <h5 class="card-category"></h5>
-            <h4 class="card-title">Requests</h4>
+            <h4 class="card-title">Requests ({{filter}})</h4>
             <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -31,61 +31,61 @@
                     <i class="now-ui-icons loader_gear"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                    <a class="dropdown-item" href="#">Last 14 days</a>
-                    <a class="dropdown-item" href="#">Last month</a>
+                    <a class="dropdown-item {% if filter == 'all' %}text-primary{% endif %}" href="?filter=all">All</a>
+                    <a class="dropdown-item {% if filter == 'pending' %}text-primary{% endif %}" href="?filter=pending">Pending</a>
+                    <a class="dropdown-item {% if filter == 'approved' %}text-primary{% endif %}" href="?filter=approved">Approved</a>
+                    <a class="dropdown-item {% if filter == 'denied' %}text-primary{% endif %}" href="?filter=denied">Denied</a>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-discreet" id="requestsTable">
-                    <thead class=" text-primary">
-                        <th>E-mail</th>
-                        <th>Machine</th>
-                        <th>Motive</th>
-                        <th>Approval</th>
-                    </thead>
-                    <tbody>
-                    {% for request in requests %}
-                        <tr>
-                            <td class="email">{{request.subscriber}}</td>
-                            <td>
-                                <p>{{request.ip}}</p>
-                                <p>
-                                {% for domain in request.domains %}
-                                    <span>{{domain}}</span><br>
-                                {% endfor %}
-                                </p>
-                            </td>
-                            <td>{{request.motive}}</td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr><span>No pending requests.</span></tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="row">
-            <nav aria-label="...">
-                <ul class="pagination pagination-sm justify-content-center">
-                    <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">1</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                </ul>
-            </nav>
+            {% if requests %}
+                <div class="table-responsive">
+                    <table class="table table-discreet" id="requestsTable">
+                        <thead class=" text-primary">
+                            <th>User</th>
+                            <th>Machine(s)</th>
+                            <th>Motive</th>
+                            {% if filter not in "pending" %}
+                                <th>Status</th>
+                            {% endif %}
+                            {% if filter in "all,pending" %}
+                                <th>Approval</th>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                        {% for request in requests|dictsortreversed:"created_at" %}
+                            <tr>
+                                <td>{{request.user}}<br/>{{request.user.email}}</td>
+                                <td>
+                                    {% for m in request.get_machines %}
+                                        <span class="col-12">{{m}}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>{{request.motive}}</td>
+                                {% if filter not in "pending" %}
+                                    <td>{{request.get_status}}</td>
+                                {% endif %}
+                                {% if filter in "all,pending" and request.pending %}
+                                    <td>
+                                        <div class="d-flex justify-content-around">
+                                            <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
+                                        </div>
+                                    </td>
+                                {% endif %}
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>There are no requests for filter {{filter}}.</p>
+            {% endif %}
         </div>
         <div class="card-footer">
             <div class="stats">
-                <i class="now-ui-icons arrows-1_refresh-69"></i> Updated 2 minutes ago
+                <i class="now-ui-icons arrows-1_refresh-69"></i> <span class="refresh-counter"></span>
             </div>
         </div>
     </div>
@@ -112,3 +112,8 @@
 </div>
 <!-- End Vulnerabilities Report -->
 {% endblock content %}
+
+
+{% block scripts %}
+    <script src="{% static 'assets/js/refresh.js' %}"></script>
+{% endblock scripts %}

@@ -9,6 +9,7 @@ import machines.dataContext as dataContext
 from login.models import User
 
 from .models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from login.models import UserAccessRequest
 
 logging.basicConfig(level=logging.DEBUG)
 # Create your views here.
@@ -30,7 +31,23 @@ def MachinesView(request, id):
 @login_required
 @user_passes_test(User.has_access, login_url="/welcome")
 def RequestsView(request, *args, **kwargs):
-    context = dataContext.machineContext
+    requests = UserAccessRequest.objects.all()
+    # Build context with request parameters
+    if 'filter' in request.GET and request.GET['filter']:
+        filter = request.GET.get('filter')
+    else:
+        filter = 'pending'
+    print("FILTER", filter)
+    if filter == 'pending':
+        requests = requests.filter(pending=True)
+    elif filter == 'approved':
+        requests = requests.filter(pending=False, approved=True)
+    elif filter == 'denied':
+        requests = requests.filter(pending=False, approved=False)
+    context = {
+        'requests': requests.order_by('pending'),
+        'filter': filter
+    }
     return render(request, "machines/requests.html", context)
 
 
