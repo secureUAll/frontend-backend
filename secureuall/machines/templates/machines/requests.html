@@ -43,6 +43,7 @@
                 <div class="table-responsive">
                     <table class="table table-discreet" id="requestsTable">
                         <thead class=" text-primary">
+                            <th>Created</th>
                             <th>User</th>
                             <th>Machine(s)</th>
                             <th>Role</th>
@@ -58,6 +59,7 @@
                         <tbody>
                         {% for request in requests|dictsortreversed:"created_at" %}
                             <tr id="requestRow{{request.id}}">
+                                <td>{{request.created_at}}</td>
                                 <td>{{request.user}}<br/>{{request.user.email}}</td>
                                 <td>
                                     {% for m in request.get_machines %}
