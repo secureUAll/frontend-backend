@@ -514,6 +514,8 @@ dd {
 }
 dl.dl-12 dt {width: 25%}
 dl.dl-12 dd {width: 75%}
+dl.dl-line dt {width: 100%}
+dl.dl-line dd {width: 100%}
 /* Login */
 .panel-login {
     min-height: 100vh;

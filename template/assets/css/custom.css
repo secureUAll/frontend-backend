@@ -398,3 +398,29 @@ label.checkbox>input[type="checkbox"]:checked+span.checkmark::after,
 label.checkbox>input[type="radio"]:checked+span.checkmark::after {
     opacity: 1;
 }
+
+
+/* Dictionaries */
+/* Based on https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line */
+dl {
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 0
+}
+dt {
+    float: left;
+    width: 50%;
+    padding: 0;
+    margin: 0
+}
+dd {
+    float: left;
+    width: 50%;
+    padding: 0;
+    margin: 0
+}
+dl.dl-12 dt {width: 25%}
+dl.dl-12 dd {width: 75%}
+dl.dl-line dt {width: 100%}
+dl.dl-line dd {width: 100%}
