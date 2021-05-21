@@ -545,3 +545,7 @@ keyframes .progress {
 
 /* Charts */
 .card-chart .chart-area {height:auto!important}
+
+/* Modals */
+.modal-header {border-bottom: none!important;}
+.modal-footer {border-top: none!important;}
