@@ -38,6 +38,7 @@
                                 <tr>
                                     <th>Created</th>
                                     <th>Machines</th>
+                                    <th>Role</th>
                                     <th>Status</th>
                                     <th>Notes</th>
                                 </tr>
@@ -48,9 +49,10 @@
                                         <td>{{r.created_at}}</td>
                                         <td>
                                             {% for m in r.get_machines %}
-                                            <span class="col-12">{{m}}</span>
+                                            <span>{{m}}</span><br/>
                                             {% endfor %}
                                         </td>
+                                        <td>{{r.get_role_display}}</td>
                                         <td>
                                             {{r.get_status}}
                                         </td>

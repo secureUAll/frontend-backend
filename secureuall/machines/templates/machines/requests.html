@@ -45,6 +45,7 @@
                         <thead class=" text-primary">
                             <th>User</th>
                             <th>Machine(s)</th>
+                            <th>Role</th>
                             <th>Motive</th>
                             {% if filter not in "pending" %}
                                 <th>Notes</th>
@@ -60,9 +61,10 @@
                                 <td>{{request.user}}<br/>{{request.user.email}}</td>
                                 <td>
                                     {% for m in request.get_machines %}
-                                        <span class="col-12">{{m}}</span>
+                                        <span>{{m}}</span><br/>
                                     {% endfor %}
                                 </td>
+                                <td>{{request.get_role_display}}</td>
                                 <td>{{request.motive}}</td>
                                 {% if filter not in "pending" %}
                                     <td>{{request.notes}}</td>

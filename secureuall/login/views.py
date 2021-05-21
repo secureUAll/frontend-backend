@@ -89,7 +89,8 @@ class WelcomeView(LoginRequiredMixin, View):
             UserAccessRequest.objects.create(
                 user=self.request.user,
                 motive=self.context['formRequest'].cleaned_data['motive'],
-                machines=machines
+                machines=machines,
+                role=self.context['formRequest'].cleaned_data['role']
             )
             request.session['requestSuccess'] = True
             return redirect('login:welcome')

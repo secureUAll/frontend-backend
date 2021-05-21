@@ -13,8 +13,8 @@ admin.site.register(User, UserAdmin)
 
 
 class UserAccessRequestAdmin(admin.ModelAdmin):
-    list_display = ['user', 'created_at', 'pending', 'approved']
-    list_filter = ['user', 'pending', 'approved']
+    list_display = ['user', 'created_at', 'pending', 'approved', 'role']
+    list_filter = ['user', 'pending', 'approved', 'role']
 
 
 admin.site.register(UserAccessRequest, UserAccessRequestAdmin)

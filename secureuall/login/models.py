@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from machines.models import MachineUser
+
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
@@ -16,7 +18,13 @@ class User(AbstractUser):
 
 
 class UserAccessRequest(models.Model):
+    userType = (
+        ('S', 'Subscriber'),
+        ('O', 'Owner'),
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accessRequest')
+    role = models.CharField(max_length=1, choices=userType, null=False, blank=False)
     motive = models.TextField()
     machines = models.TextField()  # Separated by semicollon
     created_at = models.DateTimeField(auto_now=True)

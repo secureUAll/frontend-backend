@@ -12,6 +12,10 @@ class RequestAccessForm(forms.Form):
         label="Motive",
         widget=forms.Textarea(attrs={'placeholder': 'Why should you have access to the machine(s)?', 'class': 'form-control', 'rows':5})
     )
+    role = forms.ChoiceField(
+        choices=UserAccessRequest.userType,
+        widget = forms.Select(attrs={'class': 'col-12'}),
+    )
 
 
 class UserAccessRequestApprovalForm(forms.Form):

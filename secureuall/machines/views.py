@@ -62,7 +62,7 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
                         elif 'dns' in mform.cleaned_data and mform.cleaned_data['dns']:
                             machinedb = Machine.objects.create(dns=mform.cleaned_data['dns'])
                     # Associate to user
-                    MachineUser.objects.create(user=req.user, machine=machinedb)
+                    MachineUser.objects.create(user=req.user, machine=machinedb, userType=req.role)
             # Change request status
             req.pending = False
             req.approved = form.cleaned_data['approve']
