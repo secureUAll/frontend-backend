@@ -72,7 +72,7 @@ class MachineUser(models.Model):
 
     user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='machines')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='users')
-    userType = models.CharField(max_length=1, choices=userType)
+    userType = models.CharField(max_length=1, choices=userType, default='S')
 
     class Meta:
         unique_together = (("user", "machine"),)

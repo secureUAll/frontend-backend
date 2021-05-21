@@ -25,7 +25,7 @@ class UserAccessRequest(models.Model):
     notes = models.TextField()
 
     def get_machines(self):
-        return self.machines.split(";")
+        return [m for m in self.machines.split(";") if m]
 
     def get_status(self):
         if self.pending:
