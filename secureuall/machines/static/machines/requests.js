@@ -1,7 +1,9 @@
 $(document).ready(function() {
 
-    // DEBUG
-    // $(".tooltip-test")[0].click();
+    // Datatables
+    $('#requestsTable').DataTable({
+        "lengthMenu": [ 5, 10, 25 ],
+    });
 
     // Fill request modal when click on status change button
     $('#changeRequestStatusModal').on('show.bs.modal', function (event) {

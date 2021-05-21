@@ -9,6 +9,7 @@
 {% endblock header %}
 
 {% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
 {% endblock styles %}
 
 {% block content %}
@@ -94,25 +95,30 @@
 {% endblock content %}
 
 {% block scripts %}
-<script>
-    {# Error on request form #}
-    {% if formRequest.errors|length or formMachines.total_error_count %}
-        showNotification(
-            "Invalid form!",
-            "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
-            "danger",
-            "ui-2_settings-90"
-        );
-    {% endif %}
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Page script -->
+    <script src="{% static 'login/welcome.js' %}"></script>
 
-    {# Success form request sent #}
-    {% if requestSubmitted %}
-        showNotification(
-            "Request submitted!",
-            "An administrator will validate it. You will be notified by email when the request status change.",
-            "success",
-            "travel_info"
-        );
-    {% endif %}
-</script>
+    <script>
+        {# Error on request form #}
+        {% if formRequest.errors|length or formMachines.total_error_count %}
+            showNotification(
+                "Invalid form!",
+                "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
+                "danger",
+                "ui-2_settings-90"
+            );
+        {% endif %}
+
+        {# Success form request sent #}
+        {% if requestSubmitted %}
+            showNotification(
+                "Request submitted!",
+                "An administrator will validate it. You will be notified by email when the request status change.",
+                "success",
+                "travel_info"
+            );
+        {% endif %}
+    </script>
 {% endblock scripts %}
