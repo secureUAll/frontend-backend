@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
 from django.forms import formset_factory
 from django.shortcuts import render
 from django.views import View
@@ -9,6 +10,7 @@ from login.models import User
 from django.contrib.auth import login, logout
 
 from machines.forms import MachineNameForm
+from services.notify.slack import SlackNotify
 from .forms import RequestAccessForm
 
 from .models import UserAccessRequest
@@ -86,12 +88,25 @@ class WelcomeView(LoginRequiredMixin, View):
                 if 'name' in f.cleaned_data:
                     machines += f.cleaned_data['name'] + ";"
             # Save request to the db
-            UserAccessRequest.objects.create(
+            uar = UserAccessRequest.objects.create(
                 user=self.request.user,
                 motive=self.context['formRequest'].cleaned_data['motive'],
                 machines=machines,
                 role=self.context['formRequest'].cleaned_data['role']
             )
+            # Notify admin that it has been created
+            SlackNotify() \
+                .heading("Hello admin,") \
+                .brake() \
+                .text("User", end=" ") \
+                .label(self.request.user.email, end=" ") \
+                .text(f"has just submitted a request to access {len(uar.get_machines())} machines as", end=" ") \
+                .label(uar.get_role_display(), end=".\n") \
+                .brake() \
+                .text("Access", end=" ") \
+                .url(url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]), end=" ") \
+                .text("to approve ou deny it.") \
+                .send(recipients=User.objects.filter(is_admin=True).values_list('email', flat=True))
             request.session['requestSuccess'] = True
             return redirect('login:welcome')
         return render(request, self.template_name, self.context)
