@@ -64,6 +64,14 @@ To load this data, just run the command below. Django will look for all `fixture
 $ python manage.py loaddata fixture [--app <appName>]
 ```
 
+The fixtures load some users to test different functionalities.
+
+| User                     | Usage                                                        |
+| ------------------------ | ------------------------------------------------------------ |
+| secureuall@secureuall.pt | Admin                                                        |
+| usertest@ua.pt           | Authorization access request (one denied and one pending).   |
+| usertest2@ua.pt          | Authorization request accepted  (for two machines, as subscriber and admin). |
+
 New data can be added through the Django admin (/admin). To map it to the files inside the `fixtures` folder, just run the command below.
 
 ```bash

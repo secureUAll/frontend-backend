@@ -23,7 +23,7 @@
     <div class="card card-chart">
         <div class="card-header">
             <h5 class="card-category"></h5>
-            <h4 class="card-title">Requests</h4>
+            <h4 class="card-title">Requests ({{filter}})</h4>
             <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -31,79 +31,150 @@
                     <i class="now-ui-icons loader_gear"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                    <a class="dropdown-item" href="#">Last 14 days</a>
-                    <a class="dropdown-item" href="#">Last month</a>
+                    <a class="dropdown-item {% if filter == 'all' %}text-primary{% endif %}" href="?filter=all">All</a>
+                    <a class="dropdown-item {% if filter == 'pending' %}text-primary{% endif %}" href="?filter=pending">Pending</a>
+                    <a class="dropdown-item {% if filter == 'approved' %}text-primary{% endif %}" href="?filter=approved">Approved</a>
+                    <a class="dropdown-item {% if filter == 'denied' %}text-primary{% endif %}" href="?filter=denied">Denied</a>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-discreet" id="requestsTable">
-                    <thead class=" text-primary">
-                        <th>E-mail</th>
-                        <th>Machine</th>
-                        <th>Motive</th>
-                        <th>Approval</th>
-                    </thead>
-                    <tbody>
-                    {% for request in requests %}
-                        <tr>
-                            <td class="email">{{request.subscriber}}</td>
-                            <td>
-                                <p>{{request.ip}}</p>
-                                <p>
-                                {% for domain in request.domains %}
-                                    <span>{{domain}}</span><br>
-                                {% endfor %}
-                                </p>
-                            </td>
-                            <td>{{request.motive}}</td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <i class="fas fa-check text-primary tooltip-test" title="Approve request"></i><i class="fas fa-times text-danger tooltip-test" title="Deny request"></i>
-                                </div>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr><span>No pending requests.</span></tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="row">
-            <nav aria-label="...">
-                <ul class="pagination pagination-sm justify-content-center">
-                    <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">1</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                </ul>
-            </nav>
+            {% if requests %}
+                <div class="table-responsive">
+                    <table class="table table-discreet" id="requestsTable">
+                        <thead class=" text-primary">
+                            <th>Created</th>
+                            <th>User</th>
+                            <th>Machine(s)</th>
+                            <th>Role</th>
+                            <th>Motive</th>
+                            {% if filter not in "pending" %}
+                                <th>Notes</th>
+                                <th>Status</th>
+                            {% endif %}
+                            {% if filter in "pending" %}
+                                <th>Approval</th>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                        {% for request in requests|dictsortreversed:"created_at" %}
+                            <tr id="requestRow{{request.id}}">
+                                <td>{{request.created_at}}</td>
+                                <td>{{request.user}}<br/>{{request.user.email}}</td>
+                                <td>
+                                    {% for m in request.get_machines %}
+                                        <span>{{m}}</span><br/>
+                                    {% endfor %}
+                                </td>
+                                <td>{{request.get_role_display}}</td>
+                                <td>{{request.motive}}</td>
+                                {% if filter not in "pending" %}
+                                    <td>{{request.notes}}</td>
+                                    <td>
+                                        {{request.get_status}}
+                                        {% if request.pending %}
+                                            <i
+                                                class="now-ui-icons travel_info text-primary"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title=""
+                                                data-original-title="To accept/deny a pending request, filter only by pending requests."
+                                            ></i>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                {% if filter in "pending" and request.pending %}
+                                    <td>
+                                        <div class="d-flex justify-content-around">
+                                            <i
+                                                class="fas fa-check text-primary tooltip-test"
+                                                title="Approve request"
+                                                data-toggle="modal"
+                                                data-target="#changeRequestStatusModal"
+                                                data-approve="True"
+                                                data-user="{{request.user.email}}"
+                                                data-machines="{{request.get_machines}}"
+                                                data-id="{{request.id}}"
+                                            ></i>
+                                            <i
+                                                class="fas fa-times text-danger tooltip-test"
+                                                title="Deny request"
+                                                data-toggle="modal"
+                                                data-target="#changeRequestStatusModal"
+                                                data-approve="False"
+                                                data-user="{{request.user.email}}"
+                                                data-machines="{{request.get_machines}}"
+                                                data-id="{{request.id}}"
+                                            ></i>
+                                        </div>
+                                    </td>
+                                {% endif %}
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>There are no requests for filter {{filter}}.</p>
+            {% endif %}
         </div>
         <div class="card-footer">
             <div class="stats">
-                <i class="now-ui-icons arrows-1_refresh-69"></i> Updated 2 minutes ago
+                <i class="now-ui-icons arrows-1_refresh-69"></i> <span class="refresh-counter"></span>
             </div>
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="changeRequestStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeRequestStatusModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Change request status</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Cooments for the vulnerability.
+                <p>You are changing the status of the following access request.</p>
+                <dl class="dl-12 mb-3">
+                    <dt>User</dt>
+                    <dd id="user"></dd>
+                    <dt>Machine(s)</dt>
+                    <dd id="machines"></dd>
+                </dl>
+                <p>Fill the form below to change the status.</p>
+                <form method="POST" id="changeRequestStatusForm">
+                    {% csrf_token %}
+                    <input type="text" readonly="readonly" name="request" value="" id="requestid" class="d-none" />
+                    <div class="form-group d-flex mb-3">
+                        <label class="checkbox d-flex">
+                            <input type="radio" name="approve" id="approveRequest" value="true">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label for="approveRequest" class="my-auto mx-2">Approve</label>
+                        <label class="checkbox">
+                            <input type="radio" name="approve" id="denyRequest" value="false">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label for="denyRequest" class="my-auto mx-2">Reject</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            rows="4"
+                            cols="80"
+                            class="form-control"
+                            placeholder="Here you can leave some notes about the approval/denial of the request."
+                            value=""
+                            name="notes"
+                        ></textarea>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-outline-primary"data-dismiss="modal" aria-label="Close">Close</button>
+                <button type="button" class="btn btn-primary" id="changeRequestStatusSubmit">Change request status</button>
             </div>
             </div>
         </div>
@@ -112,3 +183,12 @@
 </div>
 <!-- End Vulnerabilities Report -->
 {% endblock content %}
+
+
+{% block scripts %}
+    <!-- Assets -->
+    <script src="{% static 'assets/js/refresh.js' %}"></script>
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Page scripts -->
+    <script src="{% static 'machines/requests.js' %}"></script>
+{% endblock scripts %}

@@ -8,6 +8,11 @@ from secureuall.settings import PRODUCTION
 from login.models import User
 from django.contrib.auth import login, logout
 
+from machines.forms import MachineNameForm
+from .forms import RequestAccessForm
+
+from .models import UserAccessRequest
+
 # Create your views here.
 
 
@@ -54,6 +59,7 @@ class LogoutView(View):
 class WelcomeView(LoginRequiredMixin, View):
     context = {}
     template_name = "login/welcome.html"
+    MachineNameFormSet = formset_factory(MachineNameForm, min_num=1, extra=5)
 
     def get(self, request, *args, **kwargs):
         # If user has access, redirect to home
@@ -62,5 +68,47 @@ class WelcomeView(LoginRequiredMixin, View):
         self.getcontext()
         return render(request, self.template_name, self.context)
 
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+        self.getcontext()
+        # 1. Validate request access form
+        self.context['formMachines'] = self.MachineNameFormSet(request.POST)
+        valid = self.context['formMachines'].is_valid() and self.context['formRequest'].is_valid()
+        print("machines valid?", self.context['formMachines'].is_valid())
+        print("formMachines", self.context['formMachines'].total_form_count())
+        print("request valid?", self.context['formRequest'].is_valid())
+        print("formRequest", self.context['formRequest'].cleaned_data)
+        if valid:
+            print("VALID")
+            # Compute machines list
+            machines = ""
+            for f in self.context['formMachines']:
+                if 'name' in f.cleaned_data:
+                    machines += f.cleaned_data['name'] + ";"
+            # Save request to the db
+            UserAccessRequest.objects.create(
+                user=self.request.user,
+                motive=self.context['formRequest'].cleaned_data['motive'],
+                machines=machines,
+                role=self.context['formRequest'].cleaned_data['role']
+            )
+            request.session['requestSuccess'] = True
+            return redirect('login:welcome')
+        return render(request, self.template_name, self.context)
+
     def getcontext(self):
-        pass
+        # Build context
+        initialformrequest = {'motive': ''} if not self.request.POST else self.request.POST.copy()
+        initialformrequest['email'] = self.request.user.email
+        print("INITIAL", initialformrequest)
+
+        self.context = {
+            'formRequest': RequestAccessForm(initial=initialformrequest) if not self.request.POST else RequestAccessForm(initialformrequest),
+            'formMachines': self.MachineNameFormSet(initial=[]),
+            'requests': {
+                'pending': UserAccessRequest.objects.filter(user=self.request.user, pending=True),
+            },
+            'requestSubmitted': self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else None
+        }
+        # Clear request session
+        if 'requestSuccess' in self.request.session: self.request.session['requestSuccess']=None
