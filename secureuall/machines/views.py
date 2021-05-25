@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,6 +13,7 @@ import machines.dataContext as dataContext
 from login.models import User
 from login.validators import UserHasAccessMixin
 from login.forms import UserAccessRequestApprovalForm
+from services.notify.slack import SlackNotify
 from .forms import MachineNameForm
 
 from .models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
@@ -68,6 +70,26 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             req.approved = form.cleaned_data['approve']
             req.notes = form.cleaned_data['notes']
             req.save()
+            # Notify user that it has changed status
+            notitication = SlackNotify() \
+                .heading(f"Hello {req.user.first_name},") \
+                .brake() \
+                .text(f"Your request to access {len(req.get_machines())} machines submitted {req.created_at}", end=" ")
+            if req.approved:
+                notitication \
+                    .text("has been approved!") \
+                    .brake() \
+                    .text("You can access the machines you were granted access at", end=" ") \
+                    .url(''.join(['http://', get_current_site(self.request).domain, "/"]), end="") \
+                    .text(".")
+            else:
+                notitication \
+                    .text("has been denied!") \
+                    .brake() \
+                    .text("You can check the motive and fill a new request at", end=" ") \
+                    .url(''.join(['http://', get_current_site(self.request).domain, "/"]), end="") \
+                    .text(".")
+            notitication.send(recipients=[req.user.email])
             # Compute JSON answer
             data = {'request': form.cleaned_data['request'], 'approve': form.cleaned_data['approve']}
         else:
