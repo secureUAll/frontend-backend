@@ -21,5 +21,5 @@ python manage.py collectstatic --no-input
 # Run local server
 echo
 echo "Running Django server..."
-python manage.py test
+python manage.py test --verbosity 2
 exit $?
