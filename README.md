@@ -4,7 +4,8 @@
 
 ## Table of contents
 
-- [How to run?](#How-to-run?) 
+- [How to run?](#How-to-run) 
+- [SSL Certificate for deploy environment](#SSL-Certificate-for-deploy-environment)
 - [Authentication and database](#Authentication-and-database)
 - [Sample data](#sample-data)
 - [Reset data](#reset-data)
@@ -32,6 +33,10 @@ The integration of Django with other services is handled by Docker, that deploys
 
 
 
+## SSL Certificate for deploy environment
+
+On deploy environment, nginx runs with a certificate issued by a custom CA. For the browser to trust it, it must be installed first. See how on [ssl/README.md](ssl/README.md).
+
 ## Authentication and database
 
 The method for authentication in production is the UA IdP. However, as it redirects to the server URL, it is not suitable for testing and development. To allow local testing it was developed a simple authentication method that resumes to introducing the email address.
@@ -56,7 +61,7 @@ To load this data, just run the command below. Django will look for all `fixture
 > This process is done by [`standalone.sh`](standalone.sh) by default.
 
 ```bash
-$ python manage.py loaddata fixture
+$ python manage.py loaddata fixture [--app <appName>]
 ```
 
 New data can be added through the Django admin (/admin). To map it to the files inside the `fixtures` folder, just run the command below.

@@ -65,9 +65,14 @@ class Machine(models.Model):
 
 
 class MachineUser(models.Model):
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='machines')
+    userType = (
+        ('S', 'Subscriber'),
+        ('O', 'Owner'),
+    )
+
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='machines')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='users')
-    userType = models.ForeignKey('login.UserType', on_delete=models.CASCADE, related_name='machineUsers')
+    userType = models.CharField(max_length=1, choices=userType)
 
     class Meta:
         unique_together = (("user", "machine"),)
@@ -78,7 +83,7 @@ class MachineWorker(models.Model):
     worker = models.ForeignKey('workers.worker', on_delete=models.CASCADE, related_name='machines')
 
 class Subscription(models.Model):
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='subscriptions')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='subscriptions')
     notificationEmail = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
@@ -99,7 +104,7 @@ class MachineService(models.Model):
     version = models.CharField(max_length=12)
 
     def _str_(self):
-        return self.service + " (" + str(self.version) + ")"
+        return str(self.service) + " (" + str(self.version) + ")"
 
     class Meta:
         unique_together = (("service", "version"),)
@@ -109,12 +114,13 @@ class MachinePort(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='ports')
     port = models.IntegerField()
     service = models.ForeignKey(MachineService, on_delete=models.CASCADE)
+    scanEnabled = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.service + " (" + str(self.port) + ")"
+        return str(self.service) + " (" + str(self.port) + ")"
 
     class Meta:
-        unique_together = (("machine", "port"),)
+        unique_together = (("machine", "port", "scanEnabled"),)
 
 
 class Vulnerability(models.Model):
@@ -124,14 +130,15 @@ class Vulnerability(models.Model):
     location = models.CharField(max_length=30)
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='vulnerabilities')
 
     def __str__(self):
-        return "(" + self.risk + ") " + self.description
+        return "(" + str(self.risk) + ") " + self.description
 
 
 class VulnerabilityComment(models.Model):
     vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey('login.SecureuallUser', on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=256)
 
     def __str__(self):
