@@ -29,9 +29,9 @@ jobs:
       - name: Run a multi-line script
         working-directory: secureuall
         run: |
-          ls -l,
-          cat tests.sh,
-          chmod +x tests.sh,
-          echo "Starting tests...",
+          ls -l
+          cat tests.sh
+          chmod +x tests.sh
+          echo "Starting tests..."
           bash tests.sh
           echo "DONE!"
