@@ -25,16 +25,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Where am I?
-        working-directory: secureuall
-        run: ls -l
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         working-directory: secureuall
         run: |
-          chmod +x tests.sh,
-          echo "Starting tests...",
-          ./tests.sh
+          ls -l
+          cat tests.sh
+          chmod +x tests.sh
+          echo "Starting tests..."
+          bash tests.sh
           echo "DONE!"
