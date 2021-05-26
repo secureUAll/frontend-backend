@@ -22,3 +22,4 @@ python manage.py collectstatic --no-input
 echo
 echo "Running Django server..."
 python manage.py test
+echo "DONE"
