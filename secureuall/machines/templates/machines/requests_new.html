@@ -1,0 +1,63 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(ua)ll | New subscription Requests</title>
+{% endblock meta %}
+
+{% block headerClass %}{% endblock headerClass %}
+
+{% block header %}
+<div class="header text-center my-auto">
+    <h2 class="title mb-3">Subscription Requests | Add new</h2>
+</div>  
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+<!-- Vulnerabilities Report -->
+<div class="row">
+    <div class="card card-chart">
+        <div class="card-header">
+            <h5 class="card-category"></h5>
+            <h4 class="card-title">Fill the form below</h4>
+            <p>When you finish, press "Submit request".</p>
+        </div>
+        <div class="card-body">
+             <form method="POST" class="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{formRequest}}
+                    </div>
+                    {% include "dashboard/formsetTable.html" with formset=formMachines %}
+                    <div class="row m-0 d-flex flex-row flex-nowrap">
+                        <a href="/machines/requests" class="btn btn-outline-primary col-4">Go back to requests</a>
+                        <button class="btn btn-primary col-8" type="submit">Submit request</button>
+                    </div>
+            </form>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+
+</div>
+<!-- End Vulnerabilities Report -->
+{% endblock content %}
+
+
+{% block scripts %}
+    <script>
+        {# Error on request form #}
+        {% if formRequest.errors|length or formMachines.total_error_count %}
+            showNotification(
+                "Invalid form!",
+                "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
+                "danger",
+                "ui-2_settings-90"
+            );
+        {% endif %}
+    </script>
+{% endblock scripts %}

@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
+from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
@@ -12,7 +13,7 @@ from django.core import serializers
 import machines.dataContext as dataContext
 from login.models import User
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
-from login.forms import UserAccessRequestApprovalForm
+from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.slack import SlackNotify
 from .forms import MachineNameForm
 
@@ -123,7 +124,11 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             requests = requests.filter(pending=False, approved=False)
         self.context['requests'] = requests.order_by('pending')
         self.context['filter'] = filter
-
+        # If request submitted, show feedback to user
+        print("requestSUBMITTED?", self.request.session['requestSubmitted'])
+        self.context['requestSuccess'] = self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
+        if 'requestSuccess' in self.request.session:
+            self.request.session['requestSuccess']=None
 
 
 @login_required

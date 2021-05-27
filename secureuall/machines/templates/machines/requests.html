@@ -9,7 +9,10 @@
 
 {% block header %}
 <div class="header text-center my-auto">
-    <h2 class="title">Subscription Requests</h2>
+    <h2 class="title mb-3">Subscription Requests</h2>
+    {% if not user.is_admin %}
+    <a href="/machines/requests/new"><button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add me-3"></i>Submit new request</button></a>
+    {% endif %}
 </div>  
 {% endblock header %}
 
@@ -120,7 +123,7 @@
                     </table>
                 </div>
             {% else %}
-                <p>There are no requests for filter {{filter}}.</p>
+                <p>There are no requests for filter {{filter}}. Change filter on <i class="now-ui-icons loader_gear"></i>.</p>
             {% endif %}
         </div>
         <div class="card-footer">
@@ -195,4 +198,15 @@
     <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
     <!-- Page scripts -->
     <script src="{% static 'machines/requests.js' %}"></script>
+    <script>
+        {# Success form request sent #}
+        {% if requestSuccess %}
+            showNotification(
+                "Request submitted!",
+                "An administrator will validate it. You will be notified by email when the request status change.",
+                "success",
+                "travel_info"
+            );
+        {% endif %}
+    </script>
 {% endblock scripts %}
