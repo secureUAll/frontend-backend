@@ -137,6 +137,38 @@ class MachineForm(forms.Form):
         return True
 
 
+class MachineNameForm(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=True,
+        validators=[validate_ip_or_dns],
+        widget=forms.TextInput(attrs={'placeholder': 'Write the machine DNS or IP address', 'class': 'form-control'}),
+        label="Machines names"
+    )
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not validate_ip_or_dns(name):
+            raise ValidationError('This is not a valid DNS nor IP address.')
+        return name
+
+    def clean(self):
+        cleaned_data = super(MachineNameForm, self).clean()
+        if 'name' not in cleaned_data: return cleaned_data
+        # Check if DNS or IP and register attribute
+        if validate_ip(cleaned_data['name']):
+            cleaned_data['ip'] = cleaned_data['name']
+        elif validate_dns(cleaned_data['name']):
+            cleaned_data['dns'] = cleaned_data['name']
+        # If DNS and IP already on DB, associate id
+        cleaned_data['machine'] = None
+        if 'dns' in cleaned_data and Machine.objects.filter(dns=cleaned_data['dns']).exists():
+            cleaned_data['machine'] = Machine.objects.filter(dns=cleaned_data['dns']).first()
+        elif 'ip' in cleaned_data and Machine.objects.filter(ip=cleaned_data['ip']).exists():
+            cleaned_data['machine'] = Machine.objects.filter(ip=cleaned_data['ip']).first()
+        return cleaned_data
+
+
 
 
 

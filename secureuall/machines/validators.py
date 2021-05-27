@@ -14,3 +14,7 @@ def validate_ip(ip):
     if ip and not re.fullmatch(ipRegex, ip):
         return False
     return True
+
+
+def validate_ip_or_dns(machine):
+    return validate_ip(machine) or validate_dns(machine)

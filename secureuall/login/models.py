@@ -1,21 +1,43 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
-class UserType(models.Model):
-    name = models.CharField(max_length=10)
+from machines.models import MachineUser
+
+
+class User(AbstractUser):
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.get_full_name()
+
+    @staticmethod
+    def has_access(user):
+        if not user or not user.is_authenticated:
+            return False
+        return user.is_admin or user.machines.all().count()
 
 
-class SecureuallUser(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name='secureuallUser',
+class UserAccessRequest(models.Model):
+    userType = (
+        ('S', 'Subscriber'),
+        ('O', 'Owner'),
     )
-    userType = models.ForeignKey(UserType, on_delete=models.CASCADE, related_name='users')
 
-    def __str__(self):
-        return self.name
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accessRequest')
+    role = models.CharField(max_length=1, choices=userType, null=False, blank=False)
+    motive = models.TextField()
+    machines = models.TextField()  # Separated by semicollon
+    created_at = models.DateTimeField(auto_now=True)
+    approved = models.BooleanField(default=False)
+    pending = models.BooleanField(default=True)
+    notes = models.TextField()
+
+    def get_machines(self):
+        return [m for m in self.machines.split(";") if m]
+
+    def get_status(self):
+        if self.pending:
+            return "Pending approval"
+        elif not self.approved:
+            return "Denied"
+        return "Approved"
