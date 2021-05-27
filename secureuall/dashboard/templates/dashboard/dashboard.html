@@ -329,7 +329,9 @@
 
             {% include "machines/machinesWidget.html" %}
 
-            {% include "workers/workersWidget.html" %}
+            {% if user.is_admin %}
+                {% include "workers/workersWidget.html" %}
+            {% endif %}
 
         </div>
 
