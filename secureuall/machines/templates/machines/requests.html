@@ -44,7 +44,9 @@
                     <table class="table table-discreet" id="requestsTable">
                         <thead class=" text-primary">
                             <th>Created</th>
+                            {% if user.is_admin %}
                             <th>User</th>
+                            {% endif %}
                             <th>Machine(s)</th>
                             <th>Role</th>
                             <th>Motive</th>
@@ -52,7 +54,7 @@
                                 <th>Notes</th>
                                 <th>Status</th>
                             {% endif %}
-                            {% if filter in "pending" %}
+                            {% if filter in "pending" and user.is_admin %}
                                 <th>Approval</th>
                             {% endif %}
                         </thead>
@@ -60,7 +62,9 @@
                         {% for request in requests|dictsortreversed:"created_at" %}
                             <tr id="requestRow{{request.id}}">
                                 <td>{{request.created_at}}</td>
+                                {% if user.is_admin %}
                                 <td>{{request.user}}<br/>{{request.user.email}}</td>
+                                {% endif %}
                                 <td>
                                     {% for m in request.get_machines %}
                                         <span>{{m}}</span><br/>
@@ -72,7 +76,7 @@
                                     <td>{{request.notes}}</td>
                                     <td>
                                         {{request.get_status}}
-                                        {% if request.pending %}
+                                        {% if request.pending and user.is_admin %}
                                             <i
                                                 class="now-ui-icons travel_info text-primary"
                                                 data-bs-toggle="tooltip"
@@ -83,7 +87,7 @@
                                         {% endif %}
                                     </td>
                                 {% endif %}
-                                {% if filter in "pending" and request.pending %}
+                                {% if filter in "pending" and request.pending and user.is_admin %}
                                     <td>
                                         <div class="d-flex justify-content-around">
                                             <i

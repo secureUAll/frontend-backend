@@ -40,7 +40,7 @@ def MachinesView(request, id):
     return render(request, "machines/machines.html", context)
 
 
-class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
     context = {}
     template_name = "machines/requests.html"
 
@@ -50,8 +50,9 @@ class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def post(self, request, *args, **kwargs):
         print("POST to requests:", request.POST)
+        data = {'error': 'Invalid request! Check you have permission and try again.'}
         form = UserAccessRequestApprovalForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and self.request.user.is_admin:
             req = UserAccessRequest.objects.get(id=form.cleaned_data['request'])
             # If approved, associate user to machines
             if form.cleaned_data['approve']:
@@ -109,6 +110,9 @@ class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def getContext(self):
         # Build context with request parameters
         requests = UserAccessRequest.objects.all()
+        # If user is not admin, filter by his requests
+        if not self.request.user.is_admin:
+            requests = requests.filter(user=self.request.user)
         filter = self.request.GET.get('filter') if 'filter' in self.request.GET and self.request.GET['filter'] else 'pending'
         print("FILTER", filter)
         if filter == 'pending':
