@@ -125,7 +125,6 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
         self.context['requests'] = requests.order_by('pending')
         self.context['filter'] = filter
         # If request submitted, show feedback to user
-        print("requestSUBMITTED?", self.request.session['requestSubmitted'])
         self.context['requestSuccess'] = self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
         if 'requestSuccess' in self.request.session:
             self.request.session['requestSuccess']=None
