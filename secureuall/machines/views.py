@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
 from kafka import KafkaProducer
@@ -11,7 +11,7 @@ import json
 from django.core import serializers
 import machines.dataContext as dataContext
 from login.models import User
-from login.validators import UserHasAccessMixin
+from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
 from login.forms import UserAccessRequestApprovalForm
 from services.notify.slack import SlackNotify
 from .forms import MachineNameForm
@@ -26,6 +26,10 @@ logging.basicConfig(level=logging.DEBUG)
 @login_required
 @user_passes_test(User.has_access, login_url="/welcome")
 def MachinesView(request, id):
+    # Check that user has access to machine
+    if not request.user.is_admin and not id in request.user.machines.all().values_list('machine', flat=True):
+        return redirect('dashboard:dashboard')
+    # If has access, proceed
     try:
         machine = Machine.objects.get(id=id)
         context = {
@@ -36,7 +40,7 @@ def MachinesView(request, id):
     return render(request, "machines/machines.html", context)
 
 
-class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
+class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "machines/requests.html"
 

@@ -9,14 +9,14 @@ from machines.models import Machine, MachineWorker
 from machines.forms import MachineWorkerBatchInputForm, MachineForm
 from django.forms import formset_factory
 
-from login.validators import UserHasAccessMixin
+from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
 
 from services.kakfa import KafkaService
 
 # Create your views here.
 
 
-class WorkersView(LoginRequiredMixin, UserHasAccessMixin, View):
+class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -30,7 +30,7 @@ class WorkersView(LoginRequiredMixin, UserHasAccessMixin, View):
         return render(request, "workers/workers.html", context)
 
 
-class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
+class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
