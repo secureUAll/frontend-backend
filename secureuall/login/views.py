@@ -62,10 +62,13 @@ class WelcomeView(LoginRequiredMixin, View):
     context = {}
     template_name = "login/welcome.html"
     MachineNameFormSet = formset_factory(MachineNameForm, min_num=1, extra=5)
+    # incoming=True for users on welcome page (can't access portal)
+    # incoming=False for users with access to portal (they are at /machines/requests/new)
+    incoming = True
 
     def get(self, request, *args, **kwargs):
         # If user has access, redirect to home
-        if User.has_access(self.request.user):
+        if self.incoming and User.has_access(self.request.user):
             return redirect('dashboard:dashboard')
         self.getcontext()
         return render(request, self.template_name, self.context)
@@ -108,7 +111,11 @@ class WelcomeView(LoginRequiredMixin, View):
                 .text("to approve ou deny it.") \
                 .send(recipients=User.objects.filter(is_admin=True).values_list('email', flat=True))
             request.session['requestSuccess'] = True
+            if not self.incoming:
+                return redirect('machines:requests')
             return redirect('login:welcome')
+        else:
+            self.context['error'] = True
         return render(request, self.template_name, self.context)
 
     def getcontext(self):

@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
+from django.forms import formset_factory
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
@@ -12,7 +13,7 @@ from django.core import serializers
 import machines.dataContext as dataContext
 from login.models import User
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
-from login.forms import UserAccessRequestApprovalForm
+from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.slack import SlackNotify
 from .forms import MachineNameForm
 
@@ -40,7 +41,7 @@ def MachinesView(request, id):
     return render(request, "machines/machines.html", context)
 
 
-class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
     context = {}
     template_name = "machines/requests.html"
 
@@ -50,8 +51,9 @@ class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def post(self, request, *args, **kwargs):
         print("POST to requests:", request.POST)
+        data = {'error': 'Invalid request! Check you have permission and try again.'}
         form = UserAccessRequestApprovalForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and self.request.user.is_admin:
             req = UserAccessRequest.objects.get(id=form.cleaned_data['request'])
             # If approved, associate user to machines
             if form.cleaned_data['approve']:
@@ -109,6 +111,9 @@ class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def getContext(self):
         # Build context with request parameters
         requests = UserAccessRequest.objects.all()
+        # If user is not admin, filter by his requests
+        if not self.request.user.is_admin:
+            requests = requests.filter(user=self.request.user)
         filter = self.request.GET.get('filter') if 'filter' in self.request.GET and self.request.GET['filter'] else 'pending'
         print("FILTER", filter)
         if filter == 'pending':
@@ -119,7 +124,11 @@ class RequestsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             requests = requests.filter(pending=False, approved=False)
         self.context['requests'] = requests.order_by('pending')
         self.context['filter'] = filter
-
+        # If request submitted, show feedback to user
+        print("requestSUBMITTED?", self.request.session['requestSubmitted'])
+        self.context['requestSuccess'] = self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
+        if 'requestSuccess' in self.request.session:
+            self.request.session['requestSuccess']=None
 
 
 @login_required
