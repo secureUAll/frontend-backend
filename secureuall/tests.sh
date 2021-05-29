@@ -16,7 +16,7 @@ echo
 echo "Running Django server..."
 # python manage.py test --verbosity 2
 coverage erase  # Remove any coverage data from previous runs
-coverage run --omit=venv/*,*/migrations/*,*/tests/*,*/__init__.py,/usr/*,/home/* manage.py test --verbosity 2 # Run the full test suite
+coverage run --omit=venv/*,*/migrations/*,*/tests/*,*/__init__.py,/usr/lib/*,/usr/local/*,/home/runner/* manage.py test --verbosity 2 # Run the full test suite
 var=$?
 coverage report -m
 exit $var
