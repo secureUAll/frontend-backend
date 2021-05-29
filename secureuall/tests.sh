@@ -11,15 +11,12 @@ else
   source venv/bin/activate
 fi
 
-# Set up Django
-echo
-echo "Django set up..."
-python manage.py makemigrations
-python manage.py migrate
-python manage.py collectstatic --no-input
-
-# Run local server
+# Run tests
 echo
 echo "Running Django server..."
-python manage.py test --verbosity 2
-exit $?
+# python manage.py test --verbosity 2
+coverage erase  # Remove any coverage data from previous runs
+coverage run --omit=venv/*,*/migrations/*,*/tests/*,*/__init__.py manage.py test --verbosity 2 # Run the full test suite
+var=$?
+coverage report -m
+exit $var

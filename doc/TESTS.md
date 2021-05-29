@@ -55,3 +55,27 @@ https://docs.djangoproject.com/en/2.1/topics/testing/tools/#assertions
 
 
 
+## Coverage reports
+
+Através da biblioteca [coverage](https://coverage.readthedocs.io/en/latest/) pode ser analisada a cobertura dos testes.
+
+Para fazer a análise, basta correr o comando abaixo, na raiz do projeto (mesma pasta que o ficheiro `manage.py`).
+
+```bash
+# Fazer análise ao projeto
+$ coverage run --omit=venv/*,*/migrations/*,*/tests/*,*/__init__.py manage.py test --verbosity 2
+```
+
+O resultado da análise pode ser visto na bash.
+
+```bash
+# Ver relatório na bash
+$ coverage report [-m] # -m para ver linhas não abrangidas pelos testes
+```
+
+Ou em alternativa, ser gerado um microsite HTML com a informação, o que facilita a sua análise. O site será disponibilizado na pasta `htmlcov/index.html`, a partir do qual pode ser analisado cada ficheiro individualmente.
+
+```bash
+$ coverage html
+```
+

@@ -10,3 +10,4 @@ kafka-python
 django-extensions
 django-cors-headers
 requests
+coverage==5.5
