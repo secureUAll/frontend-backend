@@ -33,7 +33,7 @@ class UserAccessRequest(models.Model):
     notes = models.TextField()
 
     def get_machines(self):
-        return [m for m in self.machines.split(";") if m]
+        return [m.strip() for m in self.machines.split(";") if m]
 
     def get_status(self):
         if self.pending:
@@ -41,3 +41,16 @@ class UserAccessRequest(models.Model):
         elif not self.approved:
             return "Denied"
         return "Approved"
+
+    class Meta:
+        # can't have been approved and have status pending
+        constraints = [
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_if_approved_not_pending",
+                check=(
+                        models.Q(approved=True, pending=False) # Approved
+                        | models.Q(approved=False, pending=True) # Denied
+                        | models.Q(approved=False, pending=False) # Pending
+                ),
+            )
+        ]
