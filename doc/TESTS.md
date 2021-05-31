@@ -2,6 +2,12 @@
 
 > Based on https://developer.mozilla.org/pt-BR/docs/Learn/Server-side/Django/Testing
 
+To run Django tests.
+
+```bash
+$ python manage.py test
+```
+
 
 
 ## Classes de testes
@@ -22,9 +28,9 @@ https://docs.djangoproject.com/en/2.1/topics/testing/tools/#assertions
 
 ### Modelo de dados
 
-- Testar que <u>labels dos campos são válidos</u>;
-- Restrições definidas por nós são respeitadas (por exemplo `max_length`);
-- Testar ainda os métodos escritos por nós!
+- Testar que <u>labels dos campos são válidos</u>; (?)
+- Restrições definidas por nós são respeitadas (por exemplo `max_length`); (?)
+- Métodos escritos por nós!
 
 
 
@@ -84,6 +90,8 @@ $ coverage html
 ## Selenium
 
 > [Documentação Django com exemplo de teste](https://docs.djangoproject.com/en/3.2/topics/testing/tools/#django.test.LiveServerTestCase)
+>
+> [API Webdriver](https://selenium-python.readthedocs.io/api.html?highlight=visible#module-selenium.webdriver.remote.webelement)
 
 ### Set up para Firefox
 
@@ -126,3 +134,10 @@ Para correr os testes, corre-se o comando abaixo.
 $ python manage.py behave
 ```
 
+Para facilitar o desenvolvimento podem ser executados apenas os testes que quisermos. Para tal basta anotar-mos o cenário com `@dev` e na execução acrescenta-se o argumento `--tags=dev`.
+
+> Neste exemplo, `dev` pode ser substituído por outro nome qualquer.
+>
+> Ver mais na [documentação](https://behave.readthedocs.io/en/stable/tutorial.html#controlling-things-with-tags).
+
+XPATH: https://www.guru99.com/xpath-selenium.html#1
