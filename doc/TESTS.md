@@ -79,3 +79,48 @@ Ou em alternativa, ser gerado um microsite HTML com a informação, o que facili
 $ coverage html
 ```
 
+
+
+## Selenium
+
+> [Documentação Django com exemplo de teste](https://docs.djangoproject.com/en/3.2/topics/testing/tools/#django.test.LiveServerTestCase)
+
+### Set up para Firefox
+
+1. Fazer download do driver em https://github.com/mozilla/geckodriver/releases/;
+2. Extrair driver e colocá-lo em `/opt/WebDriver/bin` (por exemplo);
+3. Adicionar localização à variável `$PATH`;
+
+```bash
+export PATH=$PATH:/opt/WebDriver/bin >> ~/.profile
+```
+
+4. Testar que funciona;
+
+```bash
+chromedriver
+```
+
+> Output esperado:
+>
+> ```text
+> Starting ChromeDriver 2.25.426935 (820a95b0b81d33e42712f9198c215f703412e1a1) on port 9515
+> Only local connections are allowed.
+> ```
+
+
+
+### Behave
+
+Para facilitar a escrita dos testes podemos utilizar a biblioteca [Behave](https://behave.readthedocs.io/en/stable/index.html), que permite a escrita dos testes em linguagem natural, de forma análoga ao Cucumber para Java.
+
+Para tal basta criar um ficheiro `XXX.feature` na pasta `features` que se encontra na raiz do projeto (na mesma pasta que o ficheiro `manage.py`). A implementação dos testes é feita dentro da pastas `features/steps`, num ficheiro `.py`, de nome livre.
+
+O tutorial oficial pode ser consultado [aqui](https://behave.readthedocs.io/en/stable/tutorial.html).
+
+Para correr os testes, corre-se o comando abaixo.
+
+```bash
+$ python manage.py behave
+```
+
