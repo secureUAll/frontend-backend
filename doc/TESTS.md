@@ -116,6 +116,8 @@ Para facilitar a escrita dos testes podemos utilizar a biblioteca [Behave](https
 
 Para tal basta criar um ficheiro `XXX.feature` na pasta `features` que se encontra na raiz do projeto (na mesma pasta que o ficheiro `manage.py`). A implementação dos testes é feita dentro da pastas `features/steps`, num ficheiro `.py`, de nome livre.
 
+> Não é necessário escrever os testes de raiz. Uma vez escritos em linguagem natural no ficheiro `.feature`, basta correr o comando dos testes que ele vai identificar as linhas que não estão implementadas e fornecer um esqueleto para o método, que pode ser copiado para os ficheiros dos steps.
+
 O tutorial oficial pode ser consultado [aqui](https://behave.readthedocs.io/en/stable/tutorial.html).
 
 Para correr os testes, corre-se o comando abaixo.
