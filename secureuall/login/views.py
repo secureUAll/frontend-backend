@@ -74,17 +74,11 @@ class WelcomeView(LoginRequiredMixin, View):
         return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         self.getcontext()
         # 1. Validate request access form
         self.context['formMachines'] = self.MachineNameFormSet(request.POST)
         valid = self.context['formMachines'].is_valid() and self.context['formRequest'].is_valid()
-        print("machines valid?", self.context['formMachines'].is_valid())
-        print("formMachines", self.context['formMachines'].total_form_count())
-        print("request valid?", self.context['formRequest'].is_valid())
-        print("formRequest", self.context['formRequest'].cleaned_data)
         if valid:
-            print("VALID")
             # Compute machines list
             machines = ""
             for f in self.context['formMachines']:
@@ -122,7 +116,6 @@ class WelcomeView(LoginRequiredMixin, View):
         # Build context
         initialformrequest = {'motive': ''} if not self.request.POST else self.request.POST.copy()
         initialformrequest['email'] = self.request.user.email
-        print("INITIAL", initialformrequest)
 
         self.context = {
             'formRequest': RequestAccessForm(initial=initialformrequest) if not self.request.POST else RequestAccessForm(initialformrequest),
@@ -130,7 +123,7 @@ class WelcomeView(LoginRequiredMixin, View):
             'requests': {
                 'pending': UserAccessRequest.objects.filter(user=self.request.user, pending=True),
             },
-            'requestSubmitted': self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else None
+            'requestSubmitted': self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
         }
         # Clear request session
         if 'requestSuccess' in self.request.session: self.request.session['requestSuccess']=None

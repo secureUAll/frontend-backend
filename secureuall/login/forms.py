@@ -6,7 +6,7 @@ from .models import UserAccessRequest
 
 class RequestAccessForm(forms.Form):
     email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly':'readonly'}),
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
     )
     motive = forms.CharField(
         label="Motive",
@@ -14,7 +14,7 @@ class RequestAccessForm(forms.Form):
     )
     role = forms.ChoiceField(
         choices=UserAccessRequest.userType,
-        widget = forms.Select(attrs={'class': 'col-12'}),
+        widget=forms.Select(attrs={'class': 'col-12'}),
     )
 
 
@@ -26,6 +26,6 @@ class UserAccessRequestApprovalForm(forms.Form):
     def clean_request(self):
         request = self.cleaned_data['request']
         if not UserAccessRequest.objects.filter(id=request).exists():
-            raise ValidationError("Request is not valid!")
+            raise ValidationError("Request is not valid!", params={'request': request})
         return request
 

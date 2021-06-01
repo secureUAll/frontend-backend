@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     'dashboard',
     'workers',
     'machines',
+    # Testing,
+    'behave_django'
 ]
 
 MIDDLEWARE = [
