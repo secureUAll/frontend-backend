@@ -23,12 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # Checkout the code
 
-      - name: Create venv
-        working-directory: secureuall
-        run: |
-          virtualenv -p python venv
-          source venv/bin/activate
-
       - name: Install project requirements
         working-directory: secureuall
         run: pip install -r requirements.txt
