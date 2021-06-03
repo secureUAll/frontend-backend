@@ -24,20 +24,24 @@ jobs:
       - uses: actions/checkout@v2 # Checkout the code
 
       - name: Create venv
-      - run: |
+        working-directory: secureuall
+        run: |
           virtualenv -p python venv
           source venv/bin/activate
 
       - name: Install project requirements
-      - run: pip install -r requirements.txt
+        working-directory: secureuall
+        run: pip install -r requirements.txt
 
       - name: Set up Django project
-      - run: |
+        working-directory: secureuall
+        run: |
           python manage.py makemigrations
           python manage.py migrate
           python manage.py collectstatic --no-input
 
       - name: Run Django tests
-      - run: |
+        working-directory: secureuall
+        run: |
           python manage.py test --verbosity 2
           exit $?
