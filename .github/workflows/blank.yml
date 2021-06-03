@@ -45,17 +45,8 @@ jobs:
         working-directory: secureuall
         run: |
           python manage.py test --verbosity 2
-          testdjango=$?
 
       - name: Run Django behave tests
         working-directory: secureuall
         run: |
           python manage.py behave
-          testbehave=$?
-          
-      - name: Return status code
-        run: |
-          if [$testdjango] || [$testbehave]; then
-            exit 1
-          fi
-          exit 0
