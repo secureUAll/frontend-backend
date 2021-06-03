@@ -23,13 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # Checkout the code
 
-      - name: Firefox set up
-        run: |
-          echo "geckodriver/firefox"
-          which geckodriver
-          geckodriver --version
-          which firefox
-
       - name: Install project requirements
         working-directory: secureuall
         run: pip install -r requirements.txt

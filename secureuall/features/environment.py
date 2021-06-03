@@ -9,7 +9,6 @@ def browser_firefox(context, timeout=30, **kwargs):
     # Set up selenium
     # If env variable is set, run on headless mode (because of GitHub actions)
     opts = Options()
-    print("HEADLESS?", os.environ.get('behaveHeadless', False))
     if os.environ.get('behaveHeadless', False):
         opts.headless = True
     context.browser = WebDriver(options=opts)
