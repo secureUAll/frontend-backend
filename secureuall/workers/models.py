@@ -19,7 +19,7 @@ class Worker(models.Model):
 
 class WorkerScanComment(models.Model):
     scan = models.ForeignKey('machines.Scan', on_delete=models.CASCADE, related_name='comments')
-    comment = models.CharField(max_length=256)
+    comment = models.TextField()
     user_cod = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='scanComments')
 
     def __str__(self):
