@@ -49,4 +49,5 @@ jobs:
       - name: Run Django behave tests
         working-directory: secureuall
         run: |
+          export behaveHeadless=1
           python manage.py behave
