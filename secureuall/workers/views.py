@@ -38,6 +38,8 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def get(self, request, id=None, *args, **kwargs):
         self.getContext(id)
+        if self.edit and not self.context['worker'].machines.all().exists():
+            return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
     def post(self, request, id=None, *args, **kwargs):
