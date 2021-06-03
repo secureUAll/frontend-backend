@@ -29,10 +29,7 @@ jobs:
 
       - name: Set up Django project
         working-directory: secureuall
-        run: |
-          python manage.py makemigrations
-          python manage.py migrate
-          python manage.py collectstatic --no-input
+        run: python manage.py collectstatic --no-input
 
       - name: Run Django tests
         working-directory: secureuall
