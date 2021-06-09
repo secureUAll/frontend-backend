@@ -33,11 +33,6 @@ python manage.py createsuperuser --noinput
 echo -e "from login.models import User\nimport os\nu=User.objects.get(username=os.environ.get('DJANGO_SUPERUSER_USERNAME', ''))\nu.is_admin=True\nu.save()\nprint(f\"Superuser ({u.username}) with admin status created! :)\")" | python manage.py shell
 python manage.py collectstatic --no-input
 
-# Load sample data
-echo
-echo "Loading sample data..."
-python manage.py loaddata fixture
-
 # Run local server
 echo
 echo "Running Django server..."
