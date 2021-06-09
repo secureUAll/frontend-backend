@@ -114,7 +114,7 @@ class Scan(models.Model):
 
 class MachineService(models.Model):
     service = models.CharField(max_length=24)
-    version = models.CharField(max_length=12)
+    version = models.TextField()
 
     def _str_(self):
         return str(self.service) + " (" + str(self.version) + ")"

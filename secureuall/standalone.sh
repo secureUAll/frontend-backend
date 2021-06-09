@@ -30,8 +30,18 @@ export DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
 export DJANGO_SUPERUSER_USERNAME=secureuall
 export DJANGO_SUPERUSER_EMAIL=secureuall@secureuall.pt
 python manage.py createsuperuser --noinput
-echo -e "from login.models import User\nimport os\nu=User.objects.get(username=os.environ.get('DJANGO_SUPERUSER_USERNAME', ''))\nu.is_admin=True\nu.save()\nprint(f\"Superuser ({u.username}) with admin status created! :)\")" | python manage.py shell
 python manage.py collectstatic --no-input
+
+# Boot script
+echo
+echo "Running boot scripts..."
+python manage.py shell < boot_script.py
+python manage.py dbshell < boot_db.sql
+
+# Load sample data
+echo
+echo "Loading sample data..."
+python manage.py loaddata fixture
 
 # Run local server
 echo

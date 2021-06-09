@@ -9,4 +9,9 @@ psycopg2
 kafka-python
 django-extensions
 django-cors-headers
+requests
+coverage==5.5
+selenium==3.141.0
+behave==1.2.6
+behave-django==1.4.0
 django-model-utils

@@ -35,7 +35,7 @@ LOGOUT_REDIRECT_URL = "/login/"
 
 if PRODUCTION or DOCKER_DEBUG:
     # Update configs as you wish
-    if not DOCKER_DEBUG:
+    if DOCKER_DEBUG:
         print("REST API running in production environment with local authentication.")
     else:
         print("REST API running in production environment with UA IdP authentication.")
@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     'dashboard',
     'workers',
     'machines',
+    # Testing,
+    'behave_django'
 ]
 
 MIDDLEWARE = [

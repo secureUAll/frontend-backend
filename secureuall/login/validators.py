@@ -10,3 +10,11 @@ class UserHasAccessMixin(UserPassesTestMixin):
 
     def handle_no_permission(self):
         return redirect('login:welcome')
+
+
+class UserIsAdminAccessMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_admin
+
+    def handle_no_permission(self):
+        return redirect('dashboard:dashboard')

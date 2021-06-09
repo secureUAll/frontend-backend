@@ -9,6 +9,7 @@
 {% endblock header %}
 
 {% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
 {% endblock styles %}
 
 {% block content %}
@@ -17,13 +18,107 @@
 
         <div class="border border-warning rounded p-2 mb-3">
             <p class="text-warning fw-bold mb-1"><i class="now-ui-icons travel_info mr-2"></i> You don't have access to the dashboard!</p>
-            <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a machine vulnerabilities data.</p>
+            {% if requests.pending %}
+                <p class="mb-0">You have request(s) to access machine(s) pending for approval. When they change status you will be notified by email.</p>
+            {% else %}
+                <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a machine vulnerabilities data.</p>
+            {% endif %}
         </div>
 
-        <p>Soon available...</p>
+        <!-- Requests history -->
+        {% if user.accessRequest.all %}
+            <div class="col-12 d-flex text-dark">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Your requests</h4>
+                    </div>
+                    <div class="card-body my-auto d-flex flex-column">
+                        <table class="table" id="requestsTable">
+                            <thead class=" text-primary">
+                                <tr>
+                                    <th>Created</th>
+                                    <th>Machines</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in user.accessRequest.all|dictsortreversed:"created_at" %}
+                                    <tr>
+                                        <td>{{r.created_at}}</td>
+                                        <td>
+                                            {% for m in r.get_machines %}
+                                            <span>{{m}}</span><br/>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{r.get_role_display}}</td>
+                                        <td>
+                                            {{r.get_status}}
+                                        </td>
+                                        <td>{{r.notes}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <!-- END Requests history -->
+
+        <!-- Card Form Request Machine -->
+        {% if not requests.pending %}
+            <div class="col-12 d-flex text-dark">
+                <div class="card card-chart">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Request access to machines vulnerabilities data</h4>
+                    </div>
+                    <div class="card-body my-auto d-flex flex-column">
+                        <form method="POST" class="">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    {{formRequest}}
+                                </div>
+                                {% include "dashboard/formsetTable.html" with formset=formMachines %}
+                                <button class="btn btn-primary col-12" type="submit">Submit request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <!-- End Card Form Request Machine -->
     </div>
 
 {% endblock content %}
 
 {% block scripts %}
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Page script -->
+    <script src="{% static 'login/welcome.js' %}"></script>
+
+    <script>
+        {# Error on request form #}
+        {% if formRequest.errors|length or formMachines.total_error_count %}
+            showNotification(
+                "Invalid form!",
+                "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
+                "danger",
+                "ui-2_settings-90"
+            );
+        {% endif %}
+
+        {# Success form request sent #}
+        {% if requestSubmitted %}
+            showNotification(
+                "Request submitted!",
+                "An administrator will validate it. You will be notified by email when the request status change.",
+                "success",
+                "travel_info"
+            );
+        {% endif %}
+    </script>
 {% endblock scripts %}

@@ -28,6 +28,12 @@ echo
 echo "Collecting static..."
 python3 manage.py collectstatic --no-input
 
+# Boot script
+echo
+echo "Running boot scripts..."
+python manage.py shell < boot_script.py
+python manage.py dbshell < boot_db.sql
+
 echo
 echo "All set! :) Starting server on port 9000..."
 gunicorn --bind 0.0.0.0:9000 secureuall.wsgi:application --log-level debug --log-file /var/log/frontend_gunicorn.log

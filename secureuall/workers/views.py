@@ -9,12 +9,14 @@ from machines.models import Machine, MachineWorker
 from machines.forms import MachineWorkerBatchInputForm, MachineForm
 from django.forms import formset_factory
 
-from login.validators import UserHasAccessMixin
+from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
+
+from services.kakfa import KafkaService
 
 # Create your views here.
 
 
-class WorkersView(LoginRequiredMixin, UserHasAccessMixin, View):
+class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -28,7 +30,7 @@ class WorkersView(LoginRequiredMixin, UserHasAccessMixin, View):
         return render(request, "workers/workers.html", context)
 
 
-class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
+class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
@@ -62,7 +64,7 @@ class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
                 # Same form to db
                 for f in self.context['formset']:
                     f = f.cleaned_data
-                    # Get machine to db, if exists
+                    # Get machine from db, if exists
                     mach = Machine.objects.get(id=f['id']) if Machine.objects.filter(id=f['id']).exists() else None
                     # If not for delete
                     if not f['DELETE']:
@@ -88,6 +90,8 @@ class AddMachinesView(LoginRequiredMixin, UserHasAccessMixin, View):
                     elif mach and f['DELETE'] and MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
                         MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).delete()
                         request.session['machinesAdded']['disassociated'] += 1
+                # Notify colector of changes
+                KafkaService().send(topic='FRONTEND', key=b'UPDATE', value={'ID': self.context['worker'].id})
                 return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
