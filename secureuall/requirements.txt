@@ -9,3 +9,4 @@ psycopg2
 kafka-python
 django-extensions
 django-cors-headers
+django-model-utils
