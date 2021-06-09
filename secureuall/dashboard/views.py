@@ -64,6 +64,7 @@ def DashboardView(request, *args, **kwargs):
 
     # Calculates number of weeks without vulnerabilities.
     scanset = Scan.objects.all().order_by('-date')
+    weeks_without_vuln = 0
     for scan in scanset:
         if scan.vulnerabilities:
             delta = (date.today()-scan.date)
