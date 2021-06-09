@@ -38,11 +38,6 @@ echo "Running boot scripts..."
 python manage.py shell < boot_script.py
 python manage.py dbshell < boot_db.sql
 
-# Load sample data
-echo
-echo "Loading sample data..."
-python manage.py loaddata fixture
-
 # Run local server
 echo
 echo "Running Django server..."
