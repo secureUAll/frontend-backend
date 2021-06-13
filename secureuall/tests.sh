@@ -1,3 +1,4 @@
+
 # Create new venv
 DIR="./venv"
 if [ ! -d "$DIR" ]; then

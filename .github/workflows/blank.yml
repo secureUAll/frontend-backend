@@ -18,17 +18,29 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Using linux machine
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2 # Checkout the code
 
-      # Runs a set of commands using the runners shell
-      - name: python manage.py test
+      - name: Install project requirements
+        working-directory: secureuall
+        run: pip install -r requirements.txt
+
+      - name: Set up Django project
         working-directory: secureuall
         run: |
-          chmod +x tests.sh
-          bash tests.sh
+          python manage.py makemigrations
+          python manage.py migrate
+          python manage.py collectstatic --no-input
+
+      - name: Run Django tests
+        working-directory: secureuall
+        run: |
+          python manage.py test --verbosity 2
+
+      - name: Run Django behave tests
+        working-directory: secureuall
+        run: |
+          export behaveHeadless=1
+          python manage.py behave
