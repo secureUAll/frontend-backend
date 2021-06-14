@@ -54,3 +54,17 @@ class UserAccessRequest(models.Model):
                 ),
             )
         ]
+
+
+class NotificationType(models.Model):
+    name = models.CharField(max_length=10)
+
+
+class UserNotification(models.Model):
+    type = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    value = models.TextField(null=True, blank=True)
+
+    class Meta:
+        # can't have same notification type for same user
+        unique_together = ('type', 'user')
