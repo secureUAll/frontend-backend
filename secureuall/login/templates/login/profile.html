@@ -1,0 +1,125 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+
+{% block meta %}
+    <title>Secure(ua)ll | Profile</title>
+{% endblock meta %}
+
+{% block headerClass %}{% endblock headerClass %}
+
+{% block header %}
+<div class="header text-center my-auto">
+    <h2 class="title mb-3">Hello, {{user.first_name}}</h2>
+</div>  
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+<!-- User profile -->
+<div class="row">
+    <div class="card card-chart">
+        <div class="card-header">
+            <h5 class="card-category"></h5>
+            <h4 class="card-title">Profile</h4>
+        </div>
+        <div class="card-body d-flex flex-row flex-wrap">
+            <!-- Personal information -->
+            <div class="col-6">
+                <h6 class="mt-5">Personal information</h6>
+                <p class="">You can not change this information, as it is provided by the IdP.</p>
+
+                <dl class="dl-line">
+                    <dt>Name</dt>
+                    <dd>{{user.get_full_name}}</dd>
+                    <dt>Email</dt>
+                    <dd>{{user.email}}</dd>
+                    <dt>Role</dt>
+                    <dd>{% if user.admin %}Administrator{% else %}Subscriber{% endif %}</dd>
+                </dl>
+            </div>
+
+            <!-- Notification preferences -->
+            <div class="col-6">
+                <h6 class="mt-5">Notification preferences</h6>
+                <p class="">Choose the ways we can contact you. Make sure at least one is selected!</p>
+
+                <form method="POST" id="notificationsForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="form-TOTAL_FORMS" value="2" />
+                    <input type="hidden" name="form-INITIAL_FORMS" value="2" />
+                    <table class="table" id="latestChangesTableUpdates">
+                        <thead class=" text-primary">
+                            <th>Notification type</th>
+                            <th>Active</th>
+                            <th>Value</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    Email
+                                    <input type="hidden" name="form-0-type" value="Email" />
+                                </th>
+                                <td>
+                                    <input type="checkbox" name="form-0-active" {% if "Email" in notifications %}checked="checked"{% endif %}/>
+                                </td>
+                                <td>
+                                    {{user.email}}
+                                    <input type="hidden" name="form-0-value" value="{{user.email}}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Microsoft Teams
+                                    <input type="hidden" name="form-1-type" value="Microsoft Teams" />
+                                </th>
+                                <td>
+                                    <input type="checkbox" name="form-1-active" {% if "Microsoft Teams" in notifications %}checked="checked"{% endif %}/>
+                                </td>
+                                <td>
+                                    {% with notifications|get_item:"Microsoft Teams" as not %}
+                                        <input class="form-control"  type="text" name="form-1-value" value="{{not.value}}" placeholder="Webhooks URL">
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <input class="btn btn-outline-primary col-12" type="submit" value="Atualizar notificações" />
+                </form>
+            </div>
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+<!-- End User profile -->
+{% endblock content %}
+
+
+{% block scripts %}
+    <!-- Page scripts -->
+    <script src="{% static 'login/profile.js' %}"></script>
+    <script>
+        {# Success form request sent #}
+        {% if success %}
+            showNotification(
+                "Notifications preferences updated!",
+                "Your preferences were updated with success.",
+                "success",
+                "travel_info"
+            );
+        {% endif %}
+        {# Error form feedback #}
+        {% if error %}
+            showNotification(
+                "Error updating preferences!",
+                "{{error|safe}}",
+                "danger",
+                "ui-2_settings-90"
+            );
+        {% endif %}
+    </script>
+{% endblock scripts %}

@@ -14,3 +14,8 @@ def get_choices(instance, field_name):
     """
     # Based on https://stackoverflow.com/a/48734571/10735382
     return instance._meta.get_field(field_name).choices
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
