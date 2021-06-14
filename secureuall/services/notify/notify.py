@@ -19,44 +19,33 @@ class Notify(ABC):
         pass
 
     @abstractmethod
+    def heading2(self, h2: str, end="\n") -> Notify:
+        pass
+
+    @abstractmethod
     def text(self, text: str, end="\n") -> Notify:
         pass
 
-    @abstractmethod
-    def olist(self, lst: list) -> Notify:
+    def information(self, title: str, info: str, end="\n") -> Notify:
         pass
 
-    @abstractmethod
-    def ulist(self, lst: list) -> Notify:
+    def button(self, url: str, text: str, end="\n") -> Notify:
         pass
 
-    @abstractmethod
-    def citation(self, citation: str, end="\n") -> Notify:
+    def cardStart(self) -> Notify:
         pass
 
-    @abstractmethod
-    def code(self, block: str) -> Notify:
+    def cardEnd(self, end="\n") -> Notify:
         pass
 
-    @abstractmethod
-    def url(self, url: str, end="\n") -> Notify:
-        pass
-
-    @abstractmethod
-    def brake(self) -> Notify:
+    def _spacebelow(self) -> Notify:
         pass
 
     # DECORATION methods
-    @abstractmethod
-    def bold(self, text :str, end="\n") -> Notify:
+    def bold(self, text :str, end="\n") -> str:
         pass
 
-    @abstractmethod
-    def italic(self, text: str, end="\n") -> Notify:
-        pass
-
-    @abstractmethod
-    def label(self, text: str, end="\n") -> Notify:
+    def italic(self, text: str, end="\n") -> str:
         pass
 
     # PARSING

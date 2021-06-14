@@ -18,6 +18,9 @@ class SlackNotify(Notify):
         self._text += f"*{h1}*{end}"
         return self
 
+    def heading2(self, h2: str, end="\n") -> SlackNotify:
+        return self.heading(h2)
+
     def text(self, text: str, end="\n") -> SlackNotify:
         self._text += f"{text}{end}"
         return self
@@ -49,13 +52,11 @@ class SlackNotify(Notify):
         return self
 
     # DECORATION methods
-    def bold(self, text: str, end="\n") -> SlackNotify:
-        self._text += f"*{text}*{end}"
-        return self
+    def bold(self, text: str) -> str:
+        return f"*{text}*"
 
-    def italic(self, text: str, end="\n") -> SlackNotify:
-        self._text += f"_{text}_{end}"
-        return self
+    def italic(self, text: str) -> str:
+        return f"_{text}_"
 
     def label(self, text: str, end="\n") -> SlackNotify:
         self._text += f"`{text}`{end}"
