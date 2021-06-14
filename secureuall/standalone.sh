@@ -29,6 +29,10 @@ python manage.py migrate
 export DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
 export DJANGO_SUPERUSER_USERNAME=secureuall
 export DJANGO_SUPERUSER_EMAIL=secureuall@secureuall.pt
+export EMAIL_HOST=exchange.ua.pt
+export EMAIL_PORT=25
+export EMAIL_USER=deti-vuln-mon@ua.pt
+export EMAIL_PASSWORD=eGdgtY56eF#bve8AxeFe
 python manage.py createsuperuser --noinput
 python manage.py collectstatic --no-input
 

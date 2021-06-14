@@ -26,6 +26,10 @@ services:
             - DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
             - DJANGO_SUPERUSER_USERNAME=secureuall
             - DJANGO_SUPERUSER_EMAIL=gmatos.ferreira@ua.pt
+            - EMAIL_HOST=exchange.ua.pt
+            - EMAIL_PORT=25
+            - EMAIL_USER=deti-vuln-mon@ua.pt
+            - EMAIL_PASSWORD=eGdgtY56eF#bve8AxeFe
         volumes:
             - ../secureuall:/app
         depends_on:
