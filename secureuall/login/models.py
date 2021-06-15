@@ -72,7 +72,6 @@ class UserNotification(models.Model):
 
 def create_user_notification_email(sender, instance, **kwargs):
     if not UserNotification.objects.filter(type='Email', user=instance).exists():
-        print("User created, signal activated to create UserNotification for email!")
         UserNotification.objects.create(
             type='Email',
             user=instance,

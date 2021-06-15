@@ -26,15 +26,12 @@ echo
 echo "Django set up..."
 python manage.py makemigrations
 python manage.py migrate
-export DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
-export DJANGO_SUPERUSER_USERNAME=secureuall
-export DJANGO_SUPERUSER_EMAIL=secureuall@secureuall.pt
-python manage.py createsuperuser --noinput
 python manage.py collectstatic --no-input
 
 # Boot script
 echo
 echo "Running boot scripts..."
+export DJANGO_SUPERUSERS='["secureuall@secureuall.pt"]'
 python manage.py shell < boot_script.py
 python manage.py dbshell < boot_db.sql
 
