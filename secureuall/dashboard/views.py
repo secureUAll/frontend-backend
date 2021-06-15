@@ -107,15 +107,14 @@ def DashboardView(request, *args, **kwargs):
         if "scanLevel" in changes.keys(): machines_updates[machine] = "scan level update"
         if "active" in changes.keys(): machines_addrem[machine] = machine.active
     machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
-    for user in machinuserset:
-        machine = Machine.objects.filter(id=user.machine)
-        if user.userType=='S':
+    for machineUser in machinuserset:
+        machine = machineUser.machine
+        if machineUser.userType=='S':
             machines_updates[machine] = "subscriber added"
-        elif user.userType=='O':
+        elif machineUser.userType=='O':
             machines_updates[machine] = "owner added"
 
-
-    return render(request, "dashboard/dashboard.html", {
+    context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
         'ports': MachinePort.objects.all(),
@@ -132,4 +131,6 @@ def DashboardView(request, *args, **kwargs):
         'fixed_vulns': fixed_vulns,
         'machines_updates': machines_updates,
         'machines_addrem': machines_addrem,
-    })
+    }
+
+    return render(request, "dashboard/dashboard.html", context)
