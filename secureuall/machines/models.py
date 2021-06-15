@@ -167,4 +167,5 @@ class Log(models.Model):
     date = models.DateField() # auto_now=True
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='logs')
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='logs')
-    path = models.CharField(max_length=256) #caminho para o ficheiro de logs
+    log = models.TextField()
+
