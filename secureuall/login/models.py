@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-from machines.models import MachineUser
+from django.db.models import signals
 
 
 class User(AbstractUser):
@@ -69,3 +68,17 @@ class UserNotification(models.Model):
     class Meta:
         # can't have same notification type for same user
         unique_together = ('type', 'user')
+
+
+def create_user_notification_email(sender, instance, **kwargs):
+    if not UserNotification.objects.filter(type='Email', user=instance).exists():
+        print("User created, signal activated to create UserNotification for email!")
+        UserNotification.objects.create(
+            type='Email',
+            user=instance,
+            value=instance.email
+        )
+
+
+# Create user notification email by default when User is created
+signals.post_save.connect(create_user_notification_email, sender=User)
