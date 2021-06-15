@@ -1,8 +1,8 @@
 // This function initializes all the charts
 const initCharts = () => {
     initVulnsNumbersChart();
-    initVulnsByGroupChart();
     initMachinesRiskLevelChart();
+    initVulnsByGroupChart();
 }
 
 
@@ -16,14 +16,13 @@ const initVulnsNumbersChart = () => {
     gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
     gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
 
-
     // Draw chart
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: vulnsNumbersLabels,
             datasets: [{
-                label: "Vulnerabilities",
+                labels: "Vulnerabilities",
                 borderColor: chartColor,
                 pointBorderColor: chartColor,
                 pointBackgroundColor: chartColor,
@@ -92,7 +91,7 @@ const initVulnsNumbersChart = () => {
                         padding: 10,
                         fontColor: "rgba(255,255,255,0.4)",
                         fontStyle: "bold"
-                    }
+                    },
                 }]
             },
         }
@@ -117,7 +116,7 @@ const initVulnsByGroupChart = () => {
     var myChart = {
         type: "bar",
         data: {
-            labels: initVulnsByGroupChartLabels,
+            labels: vulnsByGroupChartLabels,
             datasets: [{
                 label: "Amount",
                 backgroundColor: gradientFill,
@@ -125,7 +124,7 @@ const initVulnsByGroupChart = () => {
                 borderColor: chartColor,
                 fill: true,
                 borderWidth: 1,
-                data: initVulnsByGroupChartValues
+                data: vulnsByGroupChartValues
             }]
         },
         options: {
@@ -154,6 +153,9 @@ const initVulnsByGroupChart = () => {
                     gridLines: {
                         zeroLineColor: "transparent",
                         drawBorder: false
+                    },
+                    ticks: {
+                        beginAtZero: true
                     }
                 }],
                 xAxes: [{
@@ -174,27 +176,11 @@ const initMachinesRiskLevelChart = () => {
     // Get element from DOM
     var ctx = document.getElementById("machinesRiskLevelChart").getContext("2d");
 
-    // Colors
-    const chartColor = "#92d400";
-
     // Data
-    const DATA_COUNT = 5;
-    const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
     const data = {
-        labels: [ '1', '2', '3', '4', '5' ],
+        labels: machinesRiskLevelChartLabels,
         datasets: [{
           data: machinesRiskLevelChartValues,
-          /*
-          // Multicolor
-          backgroundColor: [ '#92d400', '#42d3b8', '#9878d3', '#f3b21b', '#f0592a' ],
-          pointHoverBackgroundColor: [ '#7ab300', '#2cbaa0', '#7b52c7', '#da9c0b','#d73e0f' ]
-          */
-          /*
-          // Green variation
-          backgroundColor: [ '#92d400', '#7ab300', '#578000', '#344d00', '#111a00' ],
-          pointHoverBackgroundColor: [ '#8bcc00', '#699900', '#466600', '#233300','#000000' ]
-          */
-          // Green variation smooth
           backgroundColor: [ 'rgba(146, 212, 0, .6)', 'rgba(122, 179, 0, .6)', 'rgba(87, 128, 0, .6)', 'rgba(52, 77, 0, .6)', 'rgba(17, 26, 0, .6)' ],
           hoverBackgroundColor: [ '#92d400', '#7ab300', '#578000', '#344d00', '#111a00' ],
         }]
@@ -215,6 +201,7 @@ const initMachinesRiskLevelChart = () => {
                     render: 'value',
                     fontColor: '#fff',
                     fontStyle: 'bold',
+                    precision: 2
                 }
             },
             tooltips: {

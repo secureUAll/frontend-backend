@@ -23,19 +23,7 @@
             <div class="card card-chart">
                 <div class="card-header">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">% of Machines in a Risk Level</h4>
-                    <div class="dropdown">
-                        <button type="button"
-                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                            data-toggle="dropdown">
-                            <i class="now-ui-icons loader_gear"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                            <a class="dropdown-item" href="#">Last 14 days</a>
-                            <a class="dropdown-item" href="#">Last month</a>
-                        </div>
-                    </div>
+                    <h4 class="card-title">% of Machines per Risk Level</h4>
                 </div>
                 <div class="card-body my-auto d-flex">
                     <div class="chart-area my-auto">
@@ -56,18 +44,6 @@
                 <div class="card-header mb-auto">
                     <h5 class="card-category"></h5>
                     <h4 class="card-title">Vulnerabilities by Group</h4>
-                    <div class="dropdown">
-                        <button type="button"
-                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                            data-toggle="dropdown">
-                            <i class="now-ui-icons loader_gear"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                            <a class="dropdown-item" href="#">Last 14 days</a>
-                            <a class="dropdown-item" href="#">Last month</a>
-                        </div>
-                    </div>
                 </div>
                 <div class="card-body my-auto d-flex">
                     <div class="chart-area my-auto">
@@ -87,48 +63,44 @@
             <div class="card card-chart d-flex">
                 <div class="card-header mb-auto">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">UA in Numbers</h4>
-                    <div class="dropdown">
-                        <button type="button"
-                            class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                            data-toggle="dropdown">
-                            <i class="now-ui-icons loader_gear"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                            <a class="dropdown-item" href="#">Last 14 days</a>
-                            <a class="dropdown-item" href="#">Last month</a>
-                        </div>
-                    </div>
+                    <h4 class="card-title">secure(UA)ll in Numbers</h4>
                 </div>
                 <div class="card-body my-auto d-flex">
                     <table class="text-center text-secondary col-12 my-auto">
                         <tr>
                             <td>
-                                <h3 class="fw-bold mb-0">1242</h3>
-                                <p class="mt-0">machines</p>
+                                <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
+                                <p class="mt-0">registered assets</p>
                             </td>
                             <td>
-                                <h3 class="fw-bold mb-0">1502</h3>
-                                <p class="mt-0">domains</p>
-                            </td>
-                            <td>
-                                <h3 class="fw-bold mb-0">4968</h3>
+                                {% if ports %}
+                                <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
+                                {% else %}
+                                <h3 class="fw-bold mb-0">0</h3>
+                                {% endif %}
                                 <p class="mt-0">exposed ports</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">{{ active_vulnerabilities }}</h3>
+                                <p class="mt-0">active vulnerabilities</p>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <h3 class="fw-bold mb-0">2901</h3>
-                                <p class="mt-0">active vulnerabilities</p>
+                                <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
+                                <p class="mt-0">scans performed</p>
                             </td>
                             <td>
+                                {% if vulnerabilities %}
+                                <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
+                                {% else %}
                                 <h3 class="fw-bold mb-0">0</h3>
-                                <p class="mt-0">weeks without vulnerabilities</p>
+                                {% endif %}
+                                <p class="mt-0">total vulnerabilities</p>
                             </td>
                             <td>
-                                <h3 class="fw-bold mb-0">13004</h3>
-                                <p class="mt-0">vulnerabilities found</p>
+                                <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
+                                <p class="mt-0">weeks without vulnerabilities</p>
                             </td>
                         </tr>
                     </table>
@@ -163,86 +135,20 @@
                                     <th></th>
                                 </thead>
                                 <tbody>
+                                    {% for key, value in machines_addrem %}
                                     <tr>
                                         <td>
-                                            127.001.100.037
+                                            {{ key }}
                                         </td>
                                         <td>
+                                        {% if value %}
                                             <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.128
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.030
-                                        </td>
-                                        <td>
+                                        {% else %}
                                             <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
+                                        {% endif %}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.077
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.037
-                                        </td>
-                                        <td>
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -256,33 +162,18 @@
                             <table class="table table-discreet" id="latestChangesTableUpdates">
                                 <thead class=" text-primary">
                                     <th></th>
-                                    <th></th>
                                 </thead>
                                 <tbody>
+                                    {% for key, value in machines_updates.items %}
                                     <tr>
                                         <td>
-                                            127.001.100.037
+                                            {{ key }}
                                         </td>
                                         <td>
-                                            owner update
+                                            {{ value }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.128
-                                        </td>
-                                        <td>
-                                            notes added
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.030
-                                        </td>
-                                        <td>
-                                            OS update
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -298,21 +189,13 @@
                                     <th></th>
                                 </thead>
                                 <tbody>
+                                    {% for machine in fixed_vulns %}
                                     <tr>
                                         <td>
-                                            127.001.100.037
+                                            {{ machine }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.128
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            127.001.100.030
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -320,6 +203,11 @@
                     <!-- End Fixed Vulnerabilities -->
                 </div>
                 <!-- End Tables -->
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                    </div>
+                </div>
             </div>
         </div>
         <!-- End Latest Changes Table -->
@@ -353,11 +241,13 @@
     <!-- Activate charts -->
     <script>
         // Define charts values
-        const vulnsNumbersLabels = ["08 APR", "09 APR", "10 APR", "11 APR", "12 APR", "13 APR", "14 APR", "15 APR", "16 APR", "17 APR", "18 APR", "19 APR"];
-        const vulnsNumbersValues = [50, 150, 100, 190, 130, 90, 150, 160, 120, 140, 190, 95];
-        const machinesRiskLevelChartValues = [43, 16, 25, 6, 10];
-        const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
-        const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
+        const vulnsNumbersLabels = {{ vulslabels|safe }};
+        const vulnsNumbersValues = {{ vulnsdata|safe }};
+        const vulnsByGroupChartLabels = {{ barlabels|safe }};
+        const vulnsByGroupChartValues = {{ bardata|safe }};
+        const machinesRiskLevelChartLabels = {{ pielabels|safe }};
+        const machinesRiskLevelChartValues = {{ piedata|safe }};
+        
         // Start charts
         $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
