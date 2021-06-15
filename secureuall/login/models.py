@@ -54,3 +54,18 @@ class UserAccessRequest(models.Model):
                 ),
             )
         ]
+
+
+class UserNotification(models.Model):
+    notificationsTypes = (
+        ('Microsoft Teams', 'https://teams.com/.*'),
+        ('Email', '.*')
+    )
+
+    type = models.CharField(max_length=30, choices=notificationsTypes)
+    user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
+    value = models.CharField(max_length=300, null=True, blank=True)
+
+    class Meta:
+        # can't have same notification type for same user
+        unique_together = ('type', 'user')
