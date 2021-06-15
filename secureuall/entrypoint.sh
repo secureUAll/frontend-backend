@@ -24,7 +24,6 @@ echo "Creating createsuperuser..."
 python3 manage.py createsuperuser --noinput
 echo -e "from login.models import User\nimport os\nu=User.objects.get(username=os.environ.get('DJANGO_SUPERUSER_USERNAME', ''))\nu.is_admin=True\nu.save()\nprint(f\"Superuser ({u.username}) with admin status created! :)\")" | python manage.py shell
 
-echo "TEST"
 echo "Collecting static..."
 python3 manage.py collectstatic --no-input
 
