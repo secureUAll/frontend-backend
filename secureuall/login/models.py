@@ -56,16 +56,13 @@ class UserAccessRequest(models.Model):
         ]
 
 
-class NotificationType(models.Model):
-    name = models.CharField(max_length=30, unique=True)
-    regex = models.CharField(max_length=120)
-
-    def __str__(self):
-        return self.name
-
-
 class UserNotification(models.Model):
-    type = models.ForeignKey(NotificationType, on_delete=models.CASCADE)
+    notificationsTypes = (
+        ('Microsoft Teams', 'https://teams.com/.*'),
+        ('Email', '.*')
+    )
+
+    type = models.CharField(max_length=30, choices=notificationsTypes)
     user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
     value = models.CharField(max_length=300, null=True, blank=True)
 

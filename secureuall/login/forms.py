@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import re
-from .models import UserAccessRequest, NotificationType
+from .models import UserAccessRequest, UserNotification
 
 
 class RequestAccessForm(forms.Form):
@@ -45,7 +45,7 @@ class UserNotificationForm(forms.Form):
     def clean_type(self):
         # Make sure that type exists on db
         n = self.cleaned_data['type']
-        if not NotificationType.objects.filter(name=n).exists():
+        if n not in [ut[0] for ut in UserNotification.notificationsTypes]:
             raise ValidationError("Notification type is not valid!", params={'type': n})
         return n
 
@@ -56,9 +56,9 @@ class UserNotificationForm(forms.Form):
             raise ValidationError("The value is mandatory for active notifications!", params={'value': data['value']})
 
         # make sure that value matches regex
-        type = NotificationType.objects.filter(name=self.cleaned_data['type']).first()
-        if data['value'] and data['type']!="Email":
-            regex = re.compile(type.regex)
+        if data['value']:
+            print("HEREE", [ut[1] for ut in UserNotification.notificationsTypes if ut[0]==self.cleaned_data['type']][0])
+            regex = re.compile([ut[1] for ut in UserNotification.notificationsTypes if ut[0]==self.cleaned_data['type']][0])
             print(data['value'], regex.fullmatch(data['value']))
             if not regex.fullmatch(data['value']):
                 print("INVALID")

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, UserAccessRequest, NotificationType, UserNotification
+from .models import User, UserAccessRequest, UserNotification
 
 # Register your models here.
 
@@ -24,6 +24,3 @@ class UserAccessRequestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserAccessRequest, UserAccessRequestAdmin)
-
-
-admin.site.register(NotificationType)
