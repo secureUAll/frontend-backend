@@ -17,7 +17,7 @@ services:
             dockerfile: docker/frontend/Dockerfile
             context: ../
         environment:
-            - RUNNING_MODE=docker
+            - RUNNING_MODE=production
             - DB_NAME=secureuall
             - DB_USER=frontend
             - DB_PASSWORD=abc
