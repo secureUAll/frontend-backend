@@ -27,7 +27,7 @@ jobs:
 
       - name: Create network
         working-directory: docker
-        run: docker network create rede
+        run: docker network ls |grep rede > /dev/null || docker network create rede
 
       - name: Start docker
         working-directory: docker
