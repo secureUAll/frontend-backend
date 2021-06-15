@@ -21,6 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # Checkout the code
 
-      - name: Start docker
+      - name: Validate docker
         working-directory: docker
         run: docker-compose config
+
+      - name: Start docker
+        working-directory: docker
+        run: docker-compose up -d
+
+      - name: Check that containers are running
+        working-directory: docker
+        run: docker-compose ps
