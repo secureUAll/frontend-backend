@@ -25,6 +25,10 @@ jobs:
         working-directory: docker
         run: docker-compose config
 
+      - name: Create network
+        working-directory: docker
+        run: docker network create rede
+
       - name: Start docker
         working-directory: docker
         run: docker-compose up -d
