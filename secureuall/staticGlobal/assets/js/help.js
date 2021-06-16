@@ -43,6 +43,9 @@ $(document).ready(() => {
         if ($("[data-helper][title][data-content]").length==i+1) {
             action += '<p class="btn btn-sm btn-primary mb-0 ml-auto finishHelper">Finish</p>';
         }
+        if (i==0) {
+            action += '<p class="btn btn-sm btn-outline-primary mb-0 mr-auto finishHelper">Finish</p>';
+        }
         action += ($("[data-helper][title][data-content]").length>i+1) ? '<p class="btn btn-sm btn-primary mb-0 ml-auto nextHelper">Next</p>' : '';
         var popover = new bootstrap.Popover(element, {
             'trigger': 'manual',
