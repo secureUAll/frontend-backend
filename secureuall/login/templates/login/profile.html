@@ -81,7 +81,7 @@
                                 </td>
                                 <td>
                                     {% with notifications|get_item:"Microsoft Teams" as not %}
-                                        <input class="form-control"  type="text" name="form-1-value" value="{{not.value}}" placeholder="Webhooks URL">
+                                        <input class="form-control"  type="text" name="form-1-value" maxlength="300" value="{{not.value}}" placeholder="Webhooks URL">
                                     {% endwith %}
                                 </td>
                             </tr>

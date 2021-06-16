@@ -12,7 +12,7 @@ if not env:
 emails = json.loads(env)
 # For each email, create superuser
 for e in emails:
-    u = User.objects.create_user(username=e, email=e, is_superuser=True, is_staff=True)
+    u = User.objects.create_user(username=e, email=e, is_superuser=True, is_staff=True, first_name="Administrator")
     u.is_admin = True
     u.save()
     print(f"Superuser ({u.username}) created, with admin status! :)")
