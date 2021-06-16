@@ -68,8 +68,8 @@ class TeamsNotify(Notify):
             "title": f"**{title}**",
             "facts": [
                 {
-                    "name": c.name,
-                    "value": c.value
+                    "name": c['name'],
+                    "value": c['value']
                 } for c in content
             ]
         })

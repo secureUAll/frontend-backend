@@ -171,7 +171,7 @@ class EmailNotify(Notify):
         # Card content
         self.heading2(title)
         for c in content:
-            self.heading3(c.name).text(c.value)
+            self.heading3(c['name']).text(c['value'])
         # Card end
         self._email += """
                   </td>
