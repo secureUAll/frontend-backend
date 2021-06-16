@@ -26,26 +26,29 @@ class Notify(ABC):
     def text(self, text: str, end="\n") -> Notify:
         pass
 
+    @abstractmethod
     def information(self, title: str, info: str, end="\n") -> Notify:
         pass
 
+    @abstractmethod
     def button(self, url: str, text: str, end="\n") -> Notify:
         pass
 
-    def cardStart(self) -> Notify:
+    @abstractmethod
+    def card(self, title: str, content: list, end="\n") -> Notify:
         pass
 
-    def cardEnd(self, end="\n") -> Notify:
-        pass
-
+    @abstractmethod
     def _spacebelow(self) -> Notify:
         pass
 
     # DECORATION methods
-    def bold(self, text :str, end="\n") -> str:
+    @staticmethod
+    def bold(text :str, end="\n") -> str:
         pass
 
-    def italic(self, text: str, end="\n") -> str:
+    @staticmethod
+    def italic(text: str, end="\n") -> str:
         pass
 
     # PARSING
@@ -55,5 +58,5 @@ class Notify(ABC):
 
     # SEND methods
     @abstractmethod
-    def send(self, recipient: str) -> int:
+    def send(self, subject: str, preview: str, recipient: str) -> int:
         pass

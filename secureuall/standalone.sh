@@ -35,6 +35,12 @@ export DJANGO_SUPERUSERS='["secureuall@secureuall.pt"]'
 python manage.py shell < boot_script.py
 python manage.py dbshell < boot_db.sql
 
+# Env vars
+export EMAIL_HOST=exchange.ua.pt
+export EMAIL_PORT=25
+export EMAIL_USER=deti-vuln-mon@ua.pt
+export EMAIL_PASSWORD=eGdgtY56eF#bve8AxeFe
+
 # Run local server
 echo
 echo "Running Django server..."

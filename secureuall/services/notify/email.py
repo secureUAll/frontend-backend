@@ -6,6 +6,7 @@ from django.conf import settings as conf_settings
 
 
 class EmailNotify(Notify):
+    
 
     def __init__(self):
         # <head>
@@ -145,13 +146,14 @@ class EmailNotify(Notify):
             return self._spacebelow()
         return self
 
-    def cardStart(self) -> EmailNotify:
+    def card(self, title: str, content: list, end="\n") -> Notify:
+        # Card start
         self._email += """
             <table class="s-5 w-full" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" width="100%">
               <tbody>
                 <tr>
                   <td style="line-height: 20px; font-size: 20px; width: 100%; height: 20px; margin: 0;" align="left" width="100%" height="20">
-                     
+
                   </td>
                 </tr>
               </tbody>
@@ -160,21 +162,23 @@ class EmailNotify(Notify):
               <tbody>
                 <tr>
                   <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0;" align="left" bgcolor="#ffffff">
-                    
+
                     <table class="card-body" role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
               <tbody>
                 <tr>
                   <td style="line-height: 24px; font-size: 16px; width: 100%; margin: 0; padding: 20px;" align="left">
         """
-        return self
-
-    def cardEnd(self, end="\n") -> EmailNotify:
+        # Card content
+        self.heading2(title)
+        for c in content:
+            self.heading3(c.name).text(c.value)
+        # Card end
         self._email += """
                   </td>
                 </tr>
               </tbody>
             </table>
-                  
+
                   </td>
                 </tr>
               </tbody>
@@ -183,15 +187,15 @@ class EmailNotify(Notify):
               <tbody>
                 <tr>
                   <td style="line-height: 20px; font-size: 20px; width: 100%; height: 20px; margin: 0;" align="left" width="100%" height="20">
-                     
+
                   </td>
                 </tr>
               </tbody>
             </table>
         """
-        if end=="\n":
+        if end == "\n":
             self._spacebelow()
-        return self
+        pass
 
     def _spacebelow(self) -> EmailNotify:
         self._email += """
@@ -249,7 +253,7 @@ class EmailNotify(Notify):
             subject,
             preview,
             conf_settings.EMAIL_HOST_USER,
-            recipient,
+            [recipient],
             # fail_silently=False,
             html_message=self._email,
         )
