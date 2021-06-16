@@ -94,7 +94,7 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
                     text='Dashboard'
                 )
                 print("Sending notification for ", un.value)
-                n.send(subject='[Secure(UA)ll info] Your access request has been reviewed', recipient=un.value, preview='')
+                n.send(subject='[Secure(UA)ll info] Your access request has been reviewed', recipient=un.value, preview='Your access request has been reviewed')
             # Compute JSON answer
             data = {'request': form.cleaned_data['request'], 'approve': form.cleaned_data['approve']}
         else:

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import json
-
-from django.contrib.sites import requests
+import requests
 
 from .notify import Notify
 
@@ -15,7 +14,8 @@ class TeamsNotify(Notify):
             "@type": "MessageCard",
             "@context": "https://schema.org/extensions",
             "themeColor": "92d400",
-            "title": None,
+            "summary": "",
+            "title": "",
             "sections": [],
             "potentialAction": []
         }
@@ -49,7 +49,7 @@ class TeamsNotify(Notify):
         return self
 
     def button(self, url: str, text:str, end="\n") -> TeamsNotify:
-        self._msg['potencialAction'].append({
+        self._msg['potentialAction'].append({
             "@type": "OpenUri",
             "name": text,
             "targets": [
@@ -92,6 +92,10 @@ class TeamsNotify(Notify):
         return TeamsNotify()
 
     def send(self, subject: str, preview: str,  recipient: str):
-        # preview is ignored
+        self._msg['summary'] = preview
+        print("SENDING to", recipient)
+        print()
+        print(json.dumps(self._msg))
+        print()
         r = requests.post(recipient, data=json.dumps(self._msg))
         return r.status_code

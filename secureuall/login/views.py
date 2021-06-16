@@ -102,7 +102,7 @@ class WelcomeView(LoginRequiredMixin, View):
                         .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} machines as {n.bold(uar.get_role_display())}.")\
                         .text("Access Secure(UA)ll page to approve or deny it.")\
                         .button(text='Requests page',url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]))
-                    n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='')
+                    n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='A new access request was submitted')
             request.session['requestSuccess'] = True
             if not self.incoming:
                 return redirect('machines:requests')
