@@ -551,4 +551,4 @@ keyframes .progress {
 .modal-footer {border-top: none!important;}
 
 /* Pophover */
-.popover, .popover-header {font-size: inherit!important;}
+.popover, .popover-header {font-size: inherit!important; font-weight:inherit!important;}

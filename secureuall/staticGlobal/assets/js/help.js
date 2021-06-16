@@ -1,22 +1,22 @@
 $(document).ready(() => {
 
     // Initialize helpers
-    // (all elements with attrs data-bs-content, data-helper and title)
+    // (all elements with attrs data-content, data-helper and title)
     const helpers = {};
 
-    $("[data-helper][title][data-bs-content]").each((i, element) => {
+    $("[data-helper][title][data-content]").each((i, element) => {
         let action = '';
         if (i!=0) {
             action += '<p class="btn btn-sm btn-outline-primary mb-0 mr-auto previousHelper">Previous</p>';
         }
-        if ($("[data-helper][title][data-bs-content]").length==i+1) {
+        if ($("[data-helper][title][data-content]").length==i+1) {
             action += '<p class="btn btn-sm btn-primary mb-0 ml-auto finishHelper">Finish</p>';
         }
-        action += ($("[data-helper][title][data-bs-content]").length>i+1) ? '<p class="btn btn-sm btn-primary mb-0 ml-auto nextHelper">Next</p>' : '';
+        action += ($("[data-helper][title][data-content]").length>i+1) ? '<p class="btn btn-sm btn-primary mb-0 ml-auto nextHelper">Next</p>' : '';
         var popover = new bootstrap.Popover(element, {
             'trigger': 'manual',
             'html': true,
-            'template': `<div class="popover b-0" role="tooltip"><div class="popover-arrow"></div><h6 class="popover-header mt-0 bg-white"></h6><div class="popover-body p-2"></div><div class="d-flex flex-row flex-wrap ps-2 pe-2 pb-2">${action}</div>`
+            'template': `<div class="popover" role="tooltip"><div class="arrow"></div><h6 class="popover-header mt-0 bg-white"></h6><div class="popover-body p-2"></div><div class="d-flex flex-row flex-wrap pl-2 pr-2 pb-2">${action}</div></div>`
         });
         helpers[$(element).data('helper')] = popover;
     });
