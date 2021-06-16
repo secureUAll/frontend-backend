@@ -10,7 +10,7 @@ from login.models import User
 from django.contrib.auth import login, logout
 
 from machines.forms import MachineNameForm
-from services.notify.slack import SlackNotify
+from services.notify.notifyfactory import NotifyFactory
 from .forms import RequestAccessForm, UserNotificationForm
 
 from .models import UserAccessRequest, UserNotification
@@ -91,19 +91,18 @@ class WelcomeView(LoginRequiredMixin, View):
                 machines=machines,
                 role=self.context['formRequest'].cleaned_data['role']
             )
-            # Notify admin that it has been created
-            SlackNotify() \
-                .heading("Hello admin,") \
-                .brake() \
-                .text("User", end=" ") \
-                .label(self.request.user.email, end=" ") \
-                .text(f"has just submitted a request to access {len(uar.get_machines())} machines as", end=" ") \
-                .label(uar.get_role_display(), end=".\n") \
-                .brake() \
-                .text("Access", end=" ") \
-                .url(url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]), end=" ") \
-                .text("to approve ou deny it.") \
-                .send(recipients=User.objects.filter(is_admin=True).values_list('email', flat=True))
+            # Notify every admin that it has been created
+            for a in User.objects.filter(is_admin=True):
+                # Through every notification type active
+                for un in UserNotification.objects.filter(user=a):
+                    print("Sending notification for ", un.value)
+                    n = NotifyFactory.createNotification(un.type)
+                    n\
+                        .heading(f"Hello {a.first_name},")\
+                        .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} machines as {n.bold(uar.get_role_display())}.")\
+                        .text("Access Secure(UA)ll page to approve or deny it.")\
+                        .button(text='Requests page',url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]))
+                    n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='')
             request.session['requestSuccess'] = True
             if not self.incoming:
                 return redirect('machines:requests')
