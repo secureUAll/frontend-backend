@@ -6,7 +6,7 @@
 
 ## Interface documentation
 
-Each service provides the following methods for text insertion. They all return `None`.
+Each service provides methods for text insertion. They all return `self`.
 
 > They <u>all insert a line break in the end</u>. To remove the line break, some (marked in the table below) support the parameter `end`. Example below.
 >
@@ -14,40 +14,37 @@ Each service provides the following methods for text insertion. They all return 
 > .heading("This is a heading", end="")
 > ```
 
-| Method   | Argument              | Description    | end param |
-| -------- | --------------------- | -------------- | --------- |
-| heading  | heading:str           | Text heading   | Yes       |
-| text     | text:str              | Simple text    | Yes       |
-| olist    | lst:list              | Ordered list   | No        |
-| ulist    | lst:list              | Unordered list | No        |
-| citation | citation:str          | Citation       | Yes       |
-| code     | block:str             | Code block     | No        |
-| url      | url:str<br />text:str | Hyperlink      | Yes       |
-| brake    | -                     | Line break     | No        |
+| Method      | Argument                    | Description                                                  | end param |
+| ----------- | --------------------------- | ------------------------------------------------------------ | --------- |
+| heading     | h1:str                      | Text heading                                                 | Yes       |
+| heading2    | h2:str                      | Text heading                                                 | Yes       |
+| text        | text:str                    | Simple text                                                  | Yes       |
+| information | title:str<br />info:str     | Information card                                             | Yes       |
+| button      | title:str<br />text:str     | Button with link                                             | Yes       |
+| card        | title:str<br />content:list | Card with content, tha is list of objects {"name": str, "value": str} | Yes       |
+| code        | block:str                   | Code block                                                   | No        |
+| clean       |                             | Returns empty notification builder.                          | No        |
 
-For decoration, the following methods are available. They all return `None`.
+For text decoration, the following methods are available. They all return `str`.
 
-| Method | Argument | Description  | end param |
-| ------ | -------- | ------------ | --------- |
-| bold   | text:str | Bold text    | Yes       |
-| italic | text:str | Italic text  | Yes       |
-| label  | text:str | Labeled text | Yes       |
+| Method | Argument | Description | end param |
+| ------ | -------- | ----------- | --------- |
+| bold   | text:str | Bold text   | Yes       |
+| italic | text:str | Italic text | Yes       |
 
-Finally to send the message through the service, use `send(recipient:str) -> int`, which returns the HTTP status code of the sent message process.
-
+Finally to send the message through the service, use `send(subject:str, preview:str, recipient:str) -> int`, which returns the HTTP status code of the sent message process.
 
 
-## Slack
 
-Slack integration is at file [`slack.py`](slack.py).
+## Microsoft Teams
 
->  The Slack integration was created based on an official tutorial that can be found [here](https://api.slack.com/messaging/sending#getting_started).
+Teams integration is at file [`teams.py`](teams.py).
 
->  The text is being formatted according to [this](https://www.markdownguide.org/tools/slack/) documentation.
+>  The Slack integration was created based on an official tutorial that can be found [here](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook).
 
-To post a message, just send `POST` request to https://hooks.slack.com/services/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 with the body as exemplified below.
 
-```json
-{"text": "Hello, world!"}
-```
+
+## Email
+
+Email integration is at file [email.py](email.py).
 
