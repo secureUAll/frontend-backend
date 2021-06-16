@@ -1,3 +1,34 @@
+/**
+
+    This script is used to create help interfaces for to help users.
+
+    To use it, just create a button with id="help". Example below:
+        <button class="btn btn-outline-primary d-none" id="help"><i class="now-ui-icons travel_info"></i> Ajuda</button>
+
+    Then, on elements that you want to provide help define the following attributes:
+        data-helper="0"  // Help order (can't have more than one with same order!)
+        data-placement="top" // This is optional. Available options are: left, right, top, bottom
+        title="Your personal data" // The help title
+        data-content="In this section you can see your personal data. You can not edit it, as it is provided by UA IdP." // The help text
+
+    This attributes can be defined in any HTML element. Below are some examples.
+        <h6
+            class="mt-5"
+            data-helper="0"
+            data-placement="top"
+            title="Your personal data"
+            data-content="In this section you can see your personal data. You can not edit it, as it is provided by UA IdP."
+        >Personal information</h6>
+        <th
+            data-helper="2"
+            data-placement="right"
+            title="Email"
+            data-content="This is the method activated by default."
+        >
+            Email
+        </th>
+
+*/
 $(document).ready(() => {
 
     // Initialize helpers
