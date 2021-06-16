@@ -14,7 +14,7 @@ import machines.dataContext as dataContext
 from login.models import User
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
 from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
-from services.notify.slack import SlackNotify
+from services.notify.notifyfactory import NotifyFactory
 from .forms import MachineNameForm
 
 from .models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
@@ -77,25 +77,24 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             req.notes = form.cleaned_data['notes']
             req.save()
             # Notify user that it has changed status
-            notitication = SlackNotify() \
-                .heading(f"Hello {req.user.first_name},") \
-                .brake() \
-                .text(f"Your request to access {len(req.get_machines())} machines submitted {req.created_at}", end=" ")
-            if req.approved:
-                notitication \
-                    .text("has been approved!") \
-                    .brake() \
-                    .text("You can access the machines you were granted access at", end=" ") \
-                    .url(''.join(['http://', get_current_site(self.request).domain, "/"]), end="") \
-                    .text(".")
-            else:
-                notitication \
-                    .text("has been denied!") \
-                    .brake() \
-                    .text("You can check the motive and fill a new request at", end=" ") \
-                    .url(''.join(['http://', get_current_site(self.request).domain, "/"]), end="") \
-                    .text(".")
-            notitication.send(recipients=[req.user.email])
+            # Through every notification type active
+            for un in req.user.notifications.all():
+                n = NotifyFactory.createNotification(un.type)
+                n.heading(f"Hello {self.request.user.first_name},")
+                if req.approved:
+                    n\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been approved! &#128522;")\
+                        .text("You can access the machines you were granted access at Secure(UA)ll dashboard.")
+                else:
+                    n\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been denied.")\
+                        .text("You can check the motive and fill a new request at at Secure(UA)ll dashboard.")
+                n.button(
+                    url=''.join(['http://', get_current_site(self.request).domain, "/"]),
+                    text='Dashboard'
+                )
+                print("Sending notification for ", un.value)
+                n.send(subject='[Secure(UA)ll info] Your access request has been reviewed', recipient=un.value, preview='Your access request has been reviewed')
             # Compute JSON answer
             data = {'request': form.cleaned_data['request'], 'approve': form.cleaned_data['approve']}
         else:
