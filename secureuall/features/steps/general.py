@@ -45,7 +45,7 @@ def step_impl(context, css, text):
 def step_impl(context, css, text):
     element = context.browser.find_element_by_css_selector(css)
     context.test.assertTrue(
-        text in element.text,
+        text.strip() in element.text.strip() or text.strip() == element.text.strip(),
         msg=f"Element with css '{css}' does not contain expected text!\nExpected:{text}\nGot:{element.text}"
     )
 

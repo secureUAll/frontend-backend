@@ -95,6 +95,7 @@ class MachineWorker(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='workers')
     worker = models.ForeignKey('workers.worker', on_delete=models.CASCADE, related_name='machines')
 
+
 class Subscription(models.Model):
     user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='subscriptions')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='subscriptions')
