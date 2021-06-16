@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
 from kafka import KafkaProducer
+from services.kakfa import KafkaService
 from django.http import HttpResponse, Http404
 import logging
 import json
@@ -17,8 +18,12 @@ from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.slack import SlackNotify
 from .forms import MachineNameForm
 
-from .models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
 from login.models import UserAccessRequest
+
+from datetime import datetime, timedelta, date
+from django.utils import timezone
+from django.http import JsonResponse
 
 logging.basicConfig(level=logging.DEBUG)
 # Create your views here.
@@ -30,11 +35,110 @@ def MachinesView(request, id):
     # Check that user has access to machine
     if not request.user.is_admin and not id in request.user.machines.all().values_list('machine', flat=True):
         return redirect('dashboard:dashboard')
+
     # If has access, proceed
+    barchart = {}
+    machine_users_id = []
+    machine_users= {'S':[],'O':[]}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
+
     try:
         machine = Machine.objects.get(id=id)
+        machine_users_id=machine.users.all().values_list("user", flat=True)
+        
+        if request.POST:
+            if 'machine_scanlevel' in request.POST:
+                machine.scanLevel = request.POST['machine_scanlevel']
+                machine.save()
+            if 'machine_periodicity' in request.POST:
+                p = request.POST['machine_periodicity']
+                if p=='Daily': machine.periodicity = 'D'
+                if p=='Weekly': machine.periodicity = 'W'
+                if p=='Monthly': machine.periodicity = 'M'
+                machine.save()
+            if 'scan_request' in request.POST:
+                KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            if 'vuln_comment' in request.POST:
+                VulnerabilityComment.objects.create(
+                        vulnerability= Vulnerability.objects.get(id=request.POST['vuln_id_comment']),
+                        user=request.user,
+                        comment=request.POST['vuln_comment'],
+                    )
+                return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            if 'new_sub' in request.POST:
+                u = None
+                try:
+                    u=User.objects.get(email=request.POST['new_sub'])
+                except User.DoesNotExist:
+                    u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
+                if not u.id in machine_users_id:
+                    MachineUser.objects.create(
+                        user=u, 
+                        machine=machine,
+                        userType=request.POST['user_role'],
+                    )
+                    UserAccessRequest.objects.create(
+                        user=u,
+                        role=request.POST['user_role'],
+                        motive=request.POST['user_motive'],
+                        machines=machine,
+                        approved=True,
+                        pending=False,
+                        notes="Automatically approved by the host owner",
+                        approvedby=request.user
+                    )
+                return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            if 'remove_user' in request.POST:
+                remu = None
+                try:
+                    remu=User.objects.get(email=request.POST['remove_user'])
+                    if remu.id in machine_users_id:
+                        users = MachineUser.objects.filter(user=remu.id, machine=id)
+                        for user in users: user.delete()
+                except User.DoesNotExist:
+                    print("user does not exist")
+
+
+        machine_users_id=machine.users.all().values_list("user", flat=True)
+        for u_id in machine_users_id:
+            user = machine.users.get(user=u_id)
+            machine_users[user.userType].append(User.objects.get(id=u_id).email)
+
+
+        vulncomments_set = []
+        users = []
+        allvulns = []
+        scanset = Scan.objects.filter(machine=id).order_by('-date')
+        for scan in scanset:
+            if scan.vulnerabilities.all():
+                vulnset = Vulnerability.objects.filter(scan_id=scan.id)
+                for vuln in vulnset:
+                    if not vuln.comments.all()==None:
+                        for comment in vuln.comments.all():
+                            u = User.objects.get(id=comment.user_id)
+                            if not u in users:
+                                users.append(u)
+                        vulncomments_set.append(vuln.comments.all())
+                allvulns.append(vulnset)
+
+        # THIS IS FOR CHARTS
+        for vset in allvulns:
+            print(vset.values())
+            for v in vset:
+                piechart[str(v.risk)].append(v)
+
+        y = [len(v) for v in piechart.values()]
+        print(y)
         context = {
-            'machine': machine
+            'machine': machine,
+            'machine_users': machine_users,
+            'vuln_comments': vulncomments_set,
+            'users': users,
+            'scanset': scanset,
+            'logged_user': User.objects.get(id=request.user.id),
+            'pielabels': [x for x in piechart.keys()],
+            'piedata': [len(v) for v in piechart.values()],
         }
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')

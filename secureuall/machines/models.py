@@ -82,15 +82,6 @@ class MachineWorker(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='workers')
     worker = models.ForeignKey('workers.worker', on_delete=models.CASCADE, related_name='machines')
 
-class Subscription(models.Model):
-    user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='subscriptions')
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='subscriptions')
-    notificationEmail = models.CharField(max_length=50)
-    description = models.CharField(max_length=256)
-
-    def __str__(self):
-        return self.description
-
 
 class Scan(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='scans')
@@ -115,6 +106,7 @@ class MachinePort(models.Model):
     port = models.IntegerField()
     service = models.ForeignKey(MachineService, on_delete=models.CASCADE)
     scanEnabled = models.BooleanField(default=True)
+    vulnerable = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.service) + " (" + str(self.port) + ")"
@@ -127,7 +119,7 @@ class Vulnerability(models.Model):
     risk = models.IntegerField()
     type = models.CharField(max_length=12)
     description = models.CharField(max_length=256)
-    location = models.CharField(max_length=30)
+    location = models.TextField()
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='vulnerabilities')
@@ -140,6 +132,7 @@ class VulnerabilityComment(models.Model):
     vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=256)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.comment
