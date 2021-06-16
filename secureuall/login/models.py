@@ -57,7 +57,7 @@ class UserAccessRequest(models.Model):
 
 class UserNotification(models.Model):
     notificationsTypes = (
-        ('Microsoft Teams', 'https://teams.com/.*'),
+        ('Microsoft Teams', '.*webhook.office.com/.*'),
         ('Email', '.*')
     )
 
