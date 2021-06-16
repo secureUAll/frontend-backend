@@ -51,6 +51,10 @@ class Notify(ABC):
     def italic(text: str, end="\n") -> str:
         pass
 
+    # RESET
+    def clean(self) -> Notify:
+        pass
+
     # PARSING
     @abstractmethod
     def __str__(self) -> str:

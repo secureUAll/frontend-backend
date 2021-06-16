@@ -217,6 +217,9 @@ class EmailNotify(Notify):
     def italic(self, text) -> str:
         return f'<i>{text}</i>'
 
+    def clean(self) -> EmailNotify:
+        return EmailNotify()
+
     def __str__(self) -> str:
         return self._email
 
