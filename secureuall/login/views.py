@@ -10,10 +10,10 @@ from login.models import User
 from django.contrib.auth import login, logout
 
 from machines.forms import MachineNameForm
-from services.notify.slack import SlackNotify
-from .forms import RequestAccessForm
+from services.notify.notifyfactory import NotifyFactory
+from .forms import RequestAccessForm, UserNotificationForm
 
-from .models import UserAccessRequest
+from .models import UserAccessRequest, UserNotification
 
 # Create your views here.
 
@@ -91,19 +91,18 @@ class WelcomeView(LoginRequiredMixin, View):
                 machines=machines,
                 role=self.context['formRequest'].cleaned_data['role']
             )
-            # Notify admin that it has been created
-            SlackNotify() \
-                .heading("Hello admin,") \
-                .brake() \
-                .text("User", end=" ") \
-                .label(self.request.user.email, end=" ") \
-                .text(f"has just submitted a request to access {len(uar.get_machines())} machines as", end=" ") \
-                .label(uar.get_role_display(), end=".\n") \
-                .brake() \
-                .text("Access", end=" ") \
-                .url(url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]), end=" ") \
-                .text("to approve ou deny it.") \
-                .send(recipients=User.objects.filter(is_admin=True).values_list('email', flat=True))
+            # Notify every admin that it has been created
+            for a in User.objects.filter(is_admin=True):
+                # Through every notification type active
+                for un in UserNotification.objects.filter(user=a):
+                    print("Sending notification for ", un.value)
+                    n = NotifyFactory.createNotification(un.type)
+                    n\
+                        .heading(f"Hello {a.first_name},")\
+                        .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} machines as {n.bold(uar.get_role_display())}.")\
+                        .text("Access Secure(UA)ll page to approve or deny it.")\
+                        .button(text='Requests page',url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]))
+                    n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='A new access request was submitted')
             request.session['requestSuccess'] = True
             if not self.incoming:
                 return redirect('machines:requests')
@@ -127,3 +126,71 @@ class WelcomeView(LoginRequiredMixin, View):
         }
         # Clear request session
         if 'requestSuccess' in self.request.session: self.request.session['requestSuccess']=None
+
+
+class ProfileView(LoginRequiredMixin, View):
+    context = {}
+    template_name = "login/profile.html"
+    UserNotificationFormSet = formset_factory(UserNotificationForm, extra=0)
+
+    def get(self, request, *args, **kwargs):
+        self.getContext()
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        print("POST", request.POST)
+        self.getContext()
+        # Validate form
+        valid = self.context['notificationsForm'].is_valid()
+        if valid:
+            # Validate that at least one is selected
+            if not any(f['active'] for f in self.context['notificationsForm']):
+                self.context['error'] = 'You must have at least one notification method on.'
+            # If so, save to db
+            else:
+                # For each notification type
+                for f in self.context['notificationsForm']:
+                    # Get type
+                    # If active, create if not already
+                    if f.cleaned_data['active']:
+                        if not UserNotification.objects.filter(user=self.request.user, type=f.cleaned_data['type']).exists():
+                            UserNotification.objects.create(
+                                user=self.request.user,
+                                type=f.cleaned_data['type'],
+                                value=self.request.user.email if f.cleaned_data['type'] == 'Email' else f.cleaned_data['value']
+                            )
+                        else:
+                            un = UserNotification.objects.filter(user=self.request.user, type=f.cleaned_data['type']).first()
+                            un.value = self.request.user.email if f.cleaned_data['type'] == 'Email' else f.cleaned_data['value']
+                    # Else, delete existent
+                    else:
+                        UserNotification.objects.filter(user=self.request.user, type=f.cleaned_data['type']).delete()
+                for f in self.context['notificationsForm']:
+                    print("CLEANED DATA", f.cleaned_data)
+                self.getContext()
+                self.context['success'] = True
+        else:
+            errors = []
+            for d in self.context['notificationsForm'].errors:
+                for k, v in d.items():
+                    errors.append(v[0])
+            if not len(errors):
+                self.context['error'] = 'An unexpected error occurred, please try again.'
+            else:
+                self.context['error'] = f'Invalid form! Please make sure you correct the following errors:<br><ul><li>{"</li><li>".join(list(set(errors)))}</li></ul>'
+        return render(request, self.template_name, self.context)
+
+    def getContext(self):
+        self.context = {
+            'notificationsForm': self.UserNotificationFormSet(initial=[{
+                'type': n[0],
+                'active': UserNotification.objects.filter(user=self.request.user, type=n).exists(),
+                'value': UserNotification.objects.filter(user=self.request.user, type=n).first().value if UserNotification.objects.filter(user=self.request.user, type=n).exists() else ''
+            } for n in UserNotification.notificationsTypes]) if not self.request.POST else self.UserNotificationFormSet(self.request.POST),
+            'notifications': {
+                n.type: n for n in UserNotification.objects.filter(user=self.request.user)
+            },
+            'error': '',
+            'success': False
+        }
+

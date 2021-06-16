@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from .validators import *
+from model_utils import FieldTracker
 
 class Machine(models.Model):
     riskLevelsOps = (
@@ -29,6 +30,11 @@ class Machine(models.Model):
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    tracker = FieldTracker()
 
     def __str__(self):
         if not self.ip and not self.dns:
@@ -62,7 +68,13 @@ class Machine(models.Model):
     def exists(ip, dns):
         return Machine.objects.filter((Q(dns=dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=ip) & Q(ip__isnull=False) & ~Q(ip="")))
 
-
+    def save(self, *args, **kwargs):
+        """ Automatically add "modified" to update_fields."""
+        update_fields = kwargs.get('update_fields')
+        if update_fields is not None:
+            kwargs['update_fields'] = set(update_fields) | {'modified'}
+        super().save(*args, **kwargs)
+        
 
 class MachineUser(models.Model):
     userType = (
@@ -72,7 +84,8 @@ class MachineUser(models.Model):
 
     user = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='machines')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='users')
-    userType = models.CharField(max_length=1, choices=userType, default='S')
+    userType = models.CharField(max_length=1, choices=userType)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = (("user", "machine"),)
@@ -123,6 +136,10 @@ class Vulnerability(models.Model):
     status = models.CharField(max_length=12)
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='vulnerabilities')
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, related_name='vulnerabilities')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    status_tracker = FieldTracker(fields=['status'])
 
     def __str__(self):
         return "(" + str(self.risk) + ") " + self.description
