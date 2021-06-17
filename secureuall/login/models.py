@@ -30,7 +30,7 @@ class UserAccessRequest(models.Model):
     approved = models.BooleanField(default=False)
     pending = models.BooleanField(default=True)
     notes = models.TextField()
-    approvedby = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accessApproved')
+    approvedby = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accessApproved', blank=True, null=True)
 
     def get_machines(self):
         return [m.strip() for m in self.machines.split(";") if m]

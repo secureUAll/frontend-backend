@@ -177,6 +177,7 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             req.pending = False
             req.approved = form.cleaned_data['approve']
             req.notes = form.cleaned_data['notes']
+            req.approvedby = self.request.user
             req.save()
             # Notify user that it has changed status
             # Through every notification type active
