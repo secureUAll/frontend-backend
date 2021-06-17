@@ -9,28 +9,26 @@
 
 {% block header %}
 <div class="header text-center my-auto">
-    <h2 class="title">Machines</h2>
+    <h2 class="title">Host</h2>
 </div>  
 {% endblock header %}
 
 {% block styles %}
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
     <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
 {% endblock styles %}
 
 {% block content %}
-<!-- Infos and Graphs -->
-<div class="row align-items-stretch">
-    <!-- Left Side Row - Latest Changes Table -->
-    <div class="col-lg-6 d-flex">
-        <div class="card d-flex">
-            <div class="card-header">
-                <h4 class="card-title">Machine Information</h4>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <!-- Machine General Information -->
+
+<!-- Row Latest updates -->
+<div class="row mb-auto">
+    <div class="col-6 d-flex pl-0">
+        <div class="card">
+            <div class="card-body">
                 <div class="my-auto">
-                    <h6 class="mb-0"></h6>
-                    <div class="row">
+                    <h6 class="mt-3 pb-4">Host General Information</h6>
+                    <!-- Machine General Information -->
+                    <div class="row pb-3">
                         <div class="d-flex col-md-12 text-secondary">
                             <dl class="col-md-6">
                                 <dt>IP</dt>
@@ -43,7 +41,7 @@
                                             {% if machine.dns %}
                                                 <tr><td>{{machine.dns}}</td></tr>
                                             {% else %}
-                                            <tr><td>No dns.</td></tr>
+                                                <tr><td>No dns.</td></tr>
                                             {% endif %}
                                             </tbody>
                                         </table>
@@ -53,48 +51,104 @@
                             <dl class="col-md-6">
                                 <dt>OS</dt>
                                 <dd>{{machine.os}}</dd>
-                                <dt>Scan Level</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                    {% if machine.scanLevel == '2' %}
-                                        <span><button class="btn btn-primary">2</button></span>
-                                    {% elif machine.scanLevel == '3' %}
-                                        <span><button class="btn btn-warning">3</button></span>
-                                    {% elif machine.scanLevel == '4' %}
-                                        <span><button class="btn btn-danger">3</button></span>
-                                    {% endif %}
-                                    </div>
-                                </dd>
+                                <dt>Status</dt>
+                                <dd>active</dd>
+                                <dt>Risk</dt>
+                                {% if machine.risk == '1' %}
+                                <dd><span class="badge p-2 bg-primary">1</span></dd>
+                                {% elif machine.risk == '2' %}
+                                <dd><span class="badge p-2 bg-info">2</span></dd>
+                                {% elif machine.risk == '3' %}
+                                <dd><span class="badge p-2 bg-alarm">3</span></dd>
+                                {% elif machine.risk == '4' %}
+                                <dd><span class="badge p-2 bg-warning">4</span></dd>
+                                {% elif machine.risk == '5' %}
+                                <dd><span class="badge p-2 bg-danger">5</span></dd>
+                                {% endif %}
                             </dl>
                         </div>
                     </div>
+                    <!-- End Machine General Information -->
                 </div>
-                <!-- End Machine General Information -->
-
+                <div class="row">
+                    <!-- Owners and Subscribers -->
+                    <div class="my-auto">
+                        <h6 class="mb-0"></h6>
+                        <div class="row">
+                            <div class="d-flex col-12 text-secondary">
+                                <dl class="col-6">
+                                    <dt>Owners</dt>
+                                    <dd>
+                                        <div class="table-responsive d-flex">
+                                            <table class="table table-discreet table-users" id="ownersTable">
+                                                <thead><th data-field="user"></th></thead>
+                                                <tbody>
+                                                {% for key, value in machine_users.items %}
+                                                    {% if key == 'O' %}
+                                                        {% for v in value %}
+                                                            <tr><td>{{v}}</td></tr>
+                                                        {% empty %}
+                                                            <span>No owners yet.</span>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </dd>
+                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
+                                </dl>
+                                <dl class="col-6">
+                                    <dt>Subscribers</dt>
+                                    <dd>
+                                        <div class="table-responsive d-flex">
+                                            <table class="table table-discreet table-users" id="subscribersTable">
+                                                <thead><th data-field="user"></th></thead>
+                                                <tbody>
+                                                {% for key, value in machine_users.items %}
+                                                    {% if key == 'S' %}
+                                                        {% for v in value %}
+                                                            <tr><td>{{v}}</td></tr>
+                                                        {% empty %}
+                                                            <span>No owners yet.</span>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </dd>
+                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Owners and Subscribers -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 pr-0 d-flex">
+        <div class="card">
+            <div class="card-body">
                 <!-- Open Ports -->
                 <div class="my-auto">
                     <h6 class="mt-3">Open Ports</h6>
                     <div class="table-responsive col-12">
                         <table class="table table-discreet" id="openPorts">
                             <thead class=" text-primary">
-                                <th class="col-3">Number</th>
-                                <th class="col-6">Description</th>
-                                <th class="col-3">Scan port</th>
+                                <th>Number</th>
+                                <th>Service</th>
+                                <th>Version</th>
+                                <th>Vulnerable</th>
                             </thead>
                             <tbody>
                             {% for port in machine.ports.all %}
-                                <tr>
+                                <tr {% if port.vulnerable %} class="text-danger" {% endif %}>
                                     <td>{{port.port}}</td>
                                     <td>{{port.service.service}}</td>
-                                    <td>
-                                        <div class="d-flex justify-content-around">
-                                            {% if port.scanEnabled %}
-                                                <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
-                                            {% else %}
-                                                <i class="fas fa-check text-primary tooltip-test" title="Enable"></i><i class="fas fa-times text-danger tooltip-test" title="Disable"></i>
-                                            {% endif %}
-                                        </div>
-                                    </td>
+                                    <td>{{port.service.version}}</td>
+                                    <td>{{port.vulnerable}}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -102,93 +156,22 @@
                     </div>
                 </div>
                 <!-- End Open Ports -->
-
-                <!-- Services and Versions -->
-                <div class="my-auto">
-                    <h6 class="mt-3">Services and Versions</h6>
-                    <div class="table-responsive">
-                        <table class="table table-discreet" id="servicesVersions">
-                            <thead class=" text-primary">
-                                <th>Service</th>
-                                <th>Version</th>
-                            </thead>
-                            <tbody>
-                                {% for port in machine.ports.all %}
-                                    <tr>
-                                        <td>{{port.service.service}}</td>
-                                        <td>{{port.service.version}}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- End Services and Versions -->
-
-                <!-- Owners and Subscribers -->
-                <div class="my-auto">
-                    <h6 class="mb-0"></h6>
-                    <div class="row">
-                        <div class="d-flex col-12 text-secondary">
-                            <dl class="col-6">
-                                <dt>Owners</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table">
-                                            <tbody>
-                                            {% for owner in machine.users.all %}
-                                                <tr><td>{{owner}}</td></tr>
-                                            {% empty %}
-                                                <span>No owners yet.</span>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <button class="btn btn-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
-                                </dd>
-                            </dl>
-                            <dl class="col-6">
-                                <dt>Subscribers</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table">
-                                            <tbody>
-                                            {% for subscriber in machine.subscriptions.all %}
-                                                <tr><td>{{subscriber}}</td></tr>
-                                            {% empty %}
-                                                <span>No subscribers yet.</span>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <button class="btn btn-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Owners and Subscribers -->
-            </div>
-            <!-- End Tables -->
-            <div class="card-footer">
-                <div class="stats">
-                    <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                </div>
             </div>
         </div>
     </div>
-    <!-- End Left Side Row - Latest Changes Table -->
+</div>
+<!-- End Row Latest updates -->
 
-    <!-- Right Side Row -->
-    <div class="col-lg-6 d-flex flex-column">
+<!-- Row Graphs -->
+<div class="row mb-auto pb-4">
+    <div class="card-deck mx-0 col-12 p-0">
         <!-- Row Graph 1 -->
-        <div class="row d-flex flex-grow-1">
-            <div class="d-flex">
-                <div class="card card-chart d-flex flex-column">
-                    <div class="card-header">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
-                        <div class="dropdown">
+        <div class="card ml-0">
+            <div class="card-body">
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Vulnerabilities per Risk Level</h6>
+                        <div class="dropdown p-2 bd-highlight">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
@@ -201,64 +184,93 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body my-auto d-flex">
-                        <div class="chart-area my-auto">
-                            <canvas id="vulnerabilitiesByRiskLevel"></canvas>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
-                    </div>
+                </div>
+            </div>
+            <div class="card-body my-auto d-flex">
+                <div class="chart-area my-auto">
+                    <canvas id="vulnerabilitiesByRiskLevel"></canvas>
                 </div>
             </div>
         </div>
         <!-- End Graph 1 -->
 
-        <!-- Row Graph 2 -->
-        <div class="row d-flex flex-grow-1">
-            <div class="d-flex">
-                <div class="card card-chart d-flex flex-column">
-                    <div class="card-header">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">Vulnerabilities by Group</h4>
-                        <div class="dropdown">
+
+        <!-- Row Bar Graph 2 -->
+        <div class="card">
+            <div class="card-body">
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Bar Chart</h6>
+                        <div class="dropdown p-2 bd-highlight">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" id="vulnByGroupChart" onchange="myFunction()">
+                                <li class="dropdown-item text-primary" value="1">Last 7 days</li>
+                                <li class="dropdown-item" value="2">Last 15 days</li>
+                                <li class="dropdown-item" value="3">Last month</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons arrows-1_refresh-69"></i> Last 7 days
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Row Bar Graph 2 -->
+
+        <!-- Line Graph 3 -->    
+        <div class="card mr-0">
+            <div class="card-body">
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Line Chart</h6>
+                        <div class="dropdown p-2 bd-highlight">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
                                 <i class="now-ui-icons loader_gear"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                                <a class="dropdown-item" href="#">Last 14 days</a>
-                                <a class="dropdown-item" href="#">Last month</a>
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body my-auto d-flex">
-                        <div class="chart-area my-auto">
-                            <canvas id="vulnerabilitiesByGroupChart"></canvas>
-                        </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="lineChart"></canvas>
                     </div>
-                    <div class="card-footer mt-auto">
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Row Graph 2 -->
+        <!-- End Line Graph 3 -->
     </div>
-    <!-- End Right Side Row -->
 </div>
-<!-- End Infos and Graphs -->
+<!-- End Row Graphs -->
 
 <!-- Vulnerabilities Report -->
-<div class="row mx-0">
+<div class="row">
     <div class="card card-chart">
-        <div class="card-header">
+        <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
             <h4 class="card-title">Vulnerability Report</h4>
             <div class="dropdown">
@@ -268,74 +280,117 @@
                     <i class="now-ui-icons loader_gear"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                    <a class="dropdown-item" href="#">Last 14 days</a>
+                    <a class="dropdown-item text-primary" href="#">Last scan</a>
                     <a class="dropdown-item" href="#">Last month</a>
+                    <a class="dropdown-item" href="#">All scans</a>
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body mx-3">
             <!-- Row Next Scan -->
-            <div class="row">
-                <div class="d-flex justify-content-center text-secondary my-auto">
-                    <span class="fw-bold fs-4 px-4">Next Scan:</span><span class="border border-secondary rounded-pill fs-5 px-4 py-1">{{machine.nextScan}}</span>
+            <div class="row pb-3">
+                <div class="col-6  text-secondary my-auto">
+                    <form method="POST"> {% csrf_token %}
+                        <dl class="row">
+                            <dt class="pb-0 col-3">Next scan: </dt>
+                            <dd class="pb-2 col-9">{{machine.nextScan}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="pb-0 col-3">Periodicity: </dt>
+                            <dd class="col-9">
+                                <select name="machine_periodicity" id="periodicitySelect" type="text"
+                                class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
+                                <option value = "Daily" {% if machine.get_periodicity_display == 'Daily' %}selected="selected"{% endif %}>Daily</option>
+                                <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
+                                <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
+                                </select>
+                                <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
+                            </dd>
+                        </dl>
+                    </form>
+                </div>
+                <div class="col-6 text-secondary my-auto">
+                    <form method="POST"> {% csrf_token %}
+                        <dl class="row">
+                            <dt class="col-3">Scan level: </dt>
+                            <dd class="col-9">
+                                <select name="machine_scanlevel" id="scanLevelSelect" type="button"
+                                class="btn btn-sm dropdown-toggle
+                                {% if machine.scanLevel == '1' %} btn-info" 
+                                {% elif machine.scanLevel == '2' %} btn-alarm" 
+                                {% elif machine.scanLevel == '3' %} btn-warning" 
+                                {% elif machine.scanLevel == '4' %} btn-danger" 
+                                {% endif %} data-toggle="dropdown" aria-expanded="false">
+                                <option value = "1" {% if machine.scanLevel == '1' %}selected="selected"{% endif %}>1</option>
+                                <option value = "2" {% if machine.scanLevel == '2' %}selected="selected"{% endif %}> 2</option>
+                                <option value = "3" {% if machine.scanLevel == '3' %}selected="selected"{% endif %}> 3</option>
+                                <option value = "4" {% if machine.scanLevel == '4' %}selected="selected"{% endif %}> 4</option>
+                                </select>
+                                <button class="btn btn-outline-default" type="submit" id="scanLevelSubmit">Apply</button>
+                            </dd>
+                            <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
+                        </dl>
+                    </form>
                 </div>
             </div>
-            <!-- End Row Next Scan -->
-            <div class="table-responsive">
-                <table class="table table-discreet" id="vulnerabilitiesTable">
-                    <thead class=" text-primary">
-                        <th>Risk</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Comments</th>
-                    </thead>
-                    <tbody>
-                        {% for vuln in machine.vulnerabilities.all %}
-                        <tr>
-                            <td>
-                            {% if vuln.risk == 1 %}
-                                <span class="badge p-2 bg-primary">1</span>
-                            {% elif vuln.risk == 2 %}
-                                <span class="badge p-2 bg-warning">2</span>
-                            {% elif vuln.risk == 3 %}
-                                <span class="badge p-2 bg-danger">3</span>
-                            {% elif vuln.risk == 4 %}
-                                <span class="badge p-2 bg-danger">4</span>
-                            {% endif %}
-                            </td>
-                            <td>{{vuln.type}}</td>
-                            <td>{{vuln.description}}</td>
-                            <td>{{vuln.location}}</td>
-                            <td>
-                            {% if vuln.status == 'Fixed' %}
-                                <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
-                            {% elif vuln.status == 'Not Fixed' %}
-                                <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
-                            {% elif vuln.status == 'Fixing' %}
-                                <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
-                            {% elif vuln.status == 'Invalid' %}
-                                <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
-                            {% endif %}
-                            </td>
-                            <td>
-                            {% if vuln.comments.all %}
-                                <p>
-                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
-                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Show</a>
-                                </p>
-                            {% else %}
-                                <p>
-                                    <a href="#" class="tooltip-test" title="Add comment" data-toggle="modal" data-target="#exampleModalCenter" style="text-decoration-color: DodgerBlue; color: DodgerBlue;">Add</a>
-                                </p>
-                            {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="row">
+                <!-- End Row Next Scan -->
+                <div class="table-responsive">
+                    <table class="table table-discreet table-vulnerabilities" id="vulnerabilitiesTable">
+                        <thead class=" text-primary">
+                            <th>Risk</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Comments</th>
+                            <th style="display:none">Scan ID</th>
+                            <th style="display:none">Vulnerability ID</th>
+                        </thead>
+                        <tbody>
+                            {% for vuln in machine.vulnerabilities.all %}
+                            <tr>
+                                <td class="vuln-risk">
+                                {% if vuln.risk == 1 %}
+                                    <span class="badge p-2 bg-primary">1</span>
+                                {% elif vuln.risk == 2 %}
+                                    <span class="badge p-2 bg-info">2</span>
+                                {% elif vuln.risk == 3 %}
+                                    <span class="badge p-2 bg-alarm">3</span>
+                                {% elif vuln.risk == 4 %}
+                                    <span class="badge p-2 bg-warning">4</span>
+                                {% elif vuln.risk == 5 %}
+                                    <span class="badge p-2 bg-danger">5</span>
+                                {% endif %}
+                                </td>
+                                <td class="vuln-type">{{vuln.type}}</td>
+                                <td class="vuln-date">{{vuln.scan.date}}</td>
+                                <td class="vuln-desc">{{vuln.description}}</td>
+                                <td class="vuln-location">{{vuln.location}}</td>
+                                <td class="vuln-status">
+                                {% if vuln.status == 'Fixed' %}
+                                    <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
+                                {% elif vuln.status == 'Not Fixed' %}
+                                    <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
+                                {% elif vuln.status == 'Fixing' %}
+                                    <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
+                                {% elif vuln.status == 'Invalid' %}
+                                    <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
+                                {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <div class="ms-auto">
+                                        <button class="btn btn-sm btn-outline-primary" title="Add comment" data-toggle="modal" data-target="#vulnCommentModal"><i class="now-ui-icons ui-1_simple-add"></i></button>
+                                    </div>
+                                </td>
+                                <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
+                                <td class="vuln-id" style="display:none">{{vuln.id}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="card-footer">
@@ -349,26 +404,151 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+    <!-- Modal Vulnerability comments -->
+    {% for scan in scanset %}
+        {% if scan.vulnerabilities.all %}
+            {% for vuln in scan.vulnerabilities.all %}
+            <div class="modal fade" id="vuln{{vuln.id}}CommentModalScan{{scan.id}}" tabindex="-1" role="dialog" aria-labelledby="vulnCommentModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="vulnCommentModalLongTitle">Vulnerability Comments</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-body">
+                            <div class="row pb-3">
+                                <div class="col-6  text-secondary my-auto">
+                                    <dl class="row">
+                                        <dt class="pb-0">Vulnerability</dt>
+                                        <dd id="vuln{{vuln.id}}TypeModalScan{{scan.id}}" class="pb-2"></dd>
+                                    </dl>
+                                </div>
+                                <div class="col-6  text-secondary my-auto">
+                                    <dl class="row">
+                                        <dt class="pb-0">Date</dt>
+                                        <dd id="vuln{{vuln.id}}DateModalScan{{scan.id}}" class="pb-2"></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="row pb-3">
+                                <div class="col-12  text-secondary my-auto">
+                                    <dl class="row">
+                                        <dt class="pb-0">Description</dt>
+                                        <dd id="vuln{{vuln.id}}DescModalScan{{scan.id}}" class="pb-2"></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="table-responsive col-12">
+                                <table class="table table-discreet" id="vuln{{vuln.id}}CommentsScan{{scan.id}}">
+                                    <thead class=" text-primary">
+                                        <th data-field="Date">Date</th>
+                                        <th data-field="user">User</th>
+                                        <th data-field="comment">Comment</th>
+                                    </thead>
+                                    <tbody>
+                                    {% if vuln.comments.all %}
+                                        {% for comment in vuln.comments.all  %}
+                                        <tr>
+                                            <td>{{comment.created}}</td>
+                                            <td>
+                                            {% for u in users %}
+                                                {% if u.id == comment.user_id%} {{u.email}} {% endif %}
+                                            {% endfor %}
+                                            </td>
+                                            <td>{{comment.comment}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mb-3 row form-group">
+                                <label for="formControlUser" class="form-label">User</label>
+                                <input type="text" readonly class="form-control" id="addVuln{{vuln.id}}CommentUserScan{{scan.id}}" value="{{logged_user.email}}">
+                            </div>
+                            <div class="mb-3 row form-group">
+                                <label for="formControlTextareaDesc" class="form-label">Comment</label>
+                                <textarea class="form-control" type="text" id="addVuln{{vuln.id}}CommentDescriptionScan{{scan.id}}" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary add-user-comment" value="Add comment">
+                        <button type="button"class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    <!-- End Modal Vulnerability comments -->
+
+    <!-- Modal New subscription-->
+    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLongTitle">New subscription</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="mb-3 row form-group">
+                            <label for="formControlRole" class="form-label">Role</label>
+                            <input type="text" readonly class="form-control" id="addUser" value="">
+                        </div>
+                        <div class="mb-3 row form-group">
+                            <label for="formControlInputEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="newUserEmail" placeholder="user@ua.pt" required>
+                            </input>
+                        </div>
+                        <div class="mb-3 row form-group">
+                            <label for="formControlTextareaDesc" class="form-label">Motive</label>
+                            <textarea class="form-control" type="text" id="newUserDescription" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="saveNewUser" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal New subscription -->
+
+    <!-- Modal edit user -->
+    <div class="modal fade" id="manageUserModal" tabindex="-1" role="dialog" aria-labelledby="manageUserModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="manageUserModalLongTitle">Manage User</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                Cooments for the vulnerability.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-            </div>
+            <form method="POST"> {% csrf_token %}
+                <div class="modal-body">
+                    <p class="text-muted">You can remove this account from the list of users for this host.</p>
+                    <div class="mb-3 row form-group">
+                        <label for="formControlRemoveUser" class="form-label">User</label>
+                        <input name="remove_user" type="text" readonly class="form-control" id="manageUserEmail" value="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="removeUser" type="submit" class="btn btn-danger" value="Remove">
+                    <button type="button"class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
-    <!-- End Modal -->
+    <!-- End Modal edit user -->
+
 </div>
 <!-- End Vulnerabilities Report -->
 {% endblock content %}
@@ -384,12 +564,160 @@
     <!-- Custom JS -->
     <script src="{% static 'machines/charts.js' %}"></script>
     <script src="{% static 'machines/tables.js' %}"></script>
+    <!-- Bootstrap Table JS -->
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
     <!-- Activate charts -->
     <script>
         // Define charts values
-        const vulsRiskLevelChartValues = [43, 16, 25, 6, 10];
-        const initVulnsByGroupChartLabels = ["Injection", "Data Exp", "BAC", "Broken Auth", "XSS", "XXE", "Ins. Deseria."];
-        const initVulnsByGroupChartValues = [542, 480, 430, 550, 530, 453, 380];
+        const vulsRiskLevelChartValues = {{ piedata|safe }};
+        const vulsRiskLevelChartLabels = {{ pielabels|safe }};
+        const vulnsByGroupChartLabels = ["Injection", "Broken Auth.", "XSS", "XXE", "CVE"];
+        const vulnsByGroupChartValues = [3,8,2,20,15];
+        function myFunction() {
+            console.log("ISadora Ferreira");
+        }
+        
+
+        // Scan host now
+        function scanNow() {
+            if (confirm('Confirm request to scan host now at scan level {{machine.scanLevel}}?')) {
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "/machines/{{machine.id}}",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'scan_request': {{machine.id}},
+                    },
+                    success: function(json) {
+                        console.log("Successfully sent scan request.");
+                    },
+                    error: function(response) {
+                        console.log("Could not send request. Error: " + response);
+                    }
+                });
+            } else {
+                return false;
+            }
+        }
+
+        // Add new users to machine
+        var user_role = "";
+        $(document).on('click', '#addNewOwner', function(event){
+            user_role = "O";
+            $("#addUser").val("Owner");
+        });
+        $(document).on('click', '#addNewSubscriber', function(event){
+            user_role = "S";
+            $("#addUser").val("Subscriber");
+        });
+
+        $(document).on('click', '#saveNewUser', function(event){
+            email = $("#newUserEmail").val().split("@");
+            if (email[1]=='ua.pt'){
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "/machines/{{machine.id}}",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        new_sub: $("#newUserEmail").val(),
+                        user_motive: $("#newUserDescription").val(),
+                        user_role: user_role,
+                    },
+                    success: function(json) {
+                        console.log("Successfully added new user.");
+                        new_row="<tr><td>"+$("#newUserEmail").val()+"</td></tr>";
+                        if (user_role=='S'){
+                            $('#subscribersTable').append(new_row);
+                        } else if (user_role=='O'){
+                            $('#ownersTable').append(new_row);
+                        }
+                        new_row="";
+                    },
+                    error: function (response) {
+                        console.log("Could not send request. Error: " + response);
+                    }
+                });
+                $(".modal-body input").val("");
+                $(".modal-body textarea").val("");
+                $('#addUserModal').modal('hide');
+            } else {
+                alert("Error! It must be an UA account.");
+            }
+        });
+
+        // Remove owner
+        $('.table-users').on('click', 'tr', 'td', function (event, row, $element) {
+            var colValue =$(this).children("td").html();
+            console.log(colValue);
+            $('#manageUserModal').modal('show');
+            $("#manageUserEmail").val(colValue);
+        });
+        $(document).on('click', '#removeUser', function(event){
+            alert("Account removed from the list of users for this host.");
+            $('#manageUserModal').modal('hide');
+        });
+
+        // Scan level selection
+        $("select").change(function(){
+            $.trim($("#scanLevelSelect").children("option:selected").text());
+        });
+        $(document).on('click', '#scanLevelSubmit', function(event){
+            scan_level = $.trim($("#scanLevelSelect").children("option:selected").text())
+            alert("Scan level changed for " + scan_level + ".");
+        });
+
+        // Periodicity selection
+        $(document).on('click', '#periodicitySubmit', function(event){
+            periodicity = $.trim($("#periodicitySelect").children("option:selected").text())
+            alert("Periodicity changed for " + periodicity + ".");
+        });
+
+
+        // Vulnerability comments modal
+        var modal_id = "";
+        var scan_id = "";
+        var vuln_id = "";
+        $('.table-vulnerabilities').on('click', 'tr', 'td', function (event, row, $element) {
+            var currentRow =$(this).html();
+            scan_id = $(this).find('[class*="vuln-scanid"]').first().html();
+            vuln_id = $(this).find('[class*="vuln-id"]').first().html();
+            var type_id = "#vuln"+vuln_id+"TypeModalScan"+scan_id;
+            var date_id = "#vuln"+vuln_id+"DateModalScan"+scan_id;
+            var desc_id = "#vuln"+vuln_id+"DescModalScan"+scan_id;
+            var comment_id = "#addvuln"+vuln_id+"CommentUserlScan"+scan_id;
+            $(type_id).html($(this).find('[class*="vuln-type"]').first().html());
+            $(date_id).html($(this).find('[class*="vuln-date"]').first().html());
+            $(desc_id).html($(this).find('[class*="vuln-desc"]').first().html());
+            $(comment_id).val( "{{ logged_user.email }} ");
+            modal_id = "#vuln"+vuln_id+"CommentModalScan"+scan_id;
+            $(modal_id).modal('show');
+            console.log(modal_id);
+        });
+        $(document).on('click', '.add-user-comment', function(event){
+            var comment_id = "#addVuln"+vuln_id+"CommentDescriptionScan"+scan_id;
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/machines/{{machine.id}}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    vuln_comment: $(comment_id).val(),
+                    vuln_id_comment: vuln_id,
+                },
+                success: function(json) {
+                    console.log("Successfully added comment.");
+                    location.reload(true);
+                },
+                error: function(response) {
+                    console.log("Could not add comment. Error: " + response);
+                }
+            });
+            $(".modal-body textarea").val("");
+            $(modal_id).modal('hide');
+        });
+
         // Start charts
         $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
