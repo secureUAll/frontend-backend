@@ -95,8 +95,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
                                     </dd>
+                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
                                 </dl>
                                 <dl class="col-6">
                                     <dt>Subscribers</dt>
@@ -117,8 +117,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add new</button>
                                     </dd>
+                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
                                 </dl>
                             </div>
                         </div>
@@ -163,16 +163,16 @@
 <!-- End Row Latest updates -->
 
 <!-- Row Graphs -->
-<div class="row mb-auto">
-    <div class="col-lg-4 col-md-6 d-flex">
+<div class="row mb-auto pb-4 mx-0">
+    <div class="card-deck justify-content-center mx-0">
+
         <!-- Row Graph 1 -->
-        <div class="row d-flex">
-            <div class="d-flex">
-                <div class="card card-chart d-flex flex-column">
-                    <div class="card-header">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">Vulnerabilities Found By Risk Level</h4>
-                        <div class="dropdown">
+        <div class="card">
+            <div class="card-body">
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Vulnerabilities per Risk Level</h6>
+                        <div class="dropdown p-2 bd-highlight">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
@@ -185,77 +185,81 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body my-auto d-flex">
-                        <div class="chart-area my-auto">
-                            <canvas id="vulnerabilitiesByRiskLevel"></canvas>
-                        </div>
-                    </div>
+                </div>
+            </div>
+            <div class="card-body my-auto d-flex">
+                <div class="chart-area my-auto">
+                    <canvas id="vulnerabilitiesByRiskLevel"></canvas>
                 </div>
             </div>
         </div>
         <!-- End Graph 1 -->
-    </div>
 
 
-    <!-- Row Bar Graph 2 -->
-    <div class="col-lg-4 col-md-6">
-        <div class="card card-chart">
-            <div class="card-header">
-                <h4 class="card-title">Bar Chart</h4>
-                <div class="dropdown">
-                    <button type="button"
-                        class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                        data-toggle="dropdown">
-                        <i class="now-ui-icons loader_gear"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" id="vulnByGroupChart" onchange="myFunction()">
-                        <li class="dropdown-item text-primary" value="1">Last 7 days</li>
-                        <li class="dropdown-item" value="2">Last 15 days</li>
-                        <li class="dropdown-item" value="3">Last month</li>
-                    </ul>
-                </div>
-            </div>
+        <!-- Row Bar Graph 2 -->
+        <div class="card">
             <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Bar Chart</h6>
+                        <div class="dropdown p-2 bd-highlight">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" id="vulnByGroupChart" onchange="myFunction()">
+                                <li class="dropdown-item text-primary" value="1">Last 7 days</li>
+                                <li class="dropdown-item" value="2">Last 15 days</li>
+                                <li class="dropdown-item" value="3">Last month</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <div class="stats">
-                    <i class="now-ui-icons arrows-1_refresh-69"></i> Last 7 days
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Row Bar Graph 2 -->
-
-    <!-- Line Graph 3 -->    
-    <div class="col-lg-4 col-md-6">
-        <div class="card card-chart">
-            <div class="card-header">
-                <h4 class="card-title">Line Chart</h4>
-                <div class="dropdown">
-                    <button type="button"
-                        class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                        data-toggle="dropdown">
-                        <i class="now-ui-icons loader_gear"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                        <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons arrows-1_refresh-69"></i> Last 7 days
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- End Row Bar Graph 2 -->
+
+        <!-- Line Graph 3 -->    
+        <div class="card">
             <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="lineChart"></canvas>
+                <div class="my-auto">
+                    <div class="d-flex bd-highlight mb-3">
+                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Line Chart</h6>
+                        <div class="dropdown p-2 bd-highlight">
+                            <button type="button"
+                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
+                                data-toggle="dropdown">
+                                <i class="now-ui-icons loader_gear"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <div class="stats">
-                    <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                        <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,7 +271,7 @@
 <!-- Vulnerabilities Report -->
 <div class="row mx-0">
     <div class="card card-chart">
-        <div class="card-header pb-3">
+        <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
             <h4 class="card-title">Vulnerability Report</h4>
             <div class="dropdown">
@@ -283,34 +287,34 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body mx-3">
             <!-- Row Next Scan -->
             <div class="row pb-3">
                 <div class="col-6  text-secondary my-auto">
-                    <dl class="row">
-                        <dt class="pb-0">Next scan: </dt>
-                        <dd class="pb-2">{{machine.nextScan}}</dd>
-                        <form method="POST"> {% csrf_token %}
-                            <dl class="row">
-                                <dt class="pb-0">Periodicity: </dt>
-                                <dd>
-                                    <select name="machine_periodicity" id="periodicitySelect" type="text"
-                                    class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
-                                    <option value = "Daily" {% if machine.get_periodicity_display == 'Daily' %}selected="selected"{% endif %}>Daily</option>
-                                    <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
-                                    <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
-                                    </select>
-                                    <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
-                                </dd>
-                            </dl>
-                        </form>
-                    </dl>
+                    <form method="POST"> {% csrf_token %}
+                        <dl class="row">
+                            <dt class="pb-0 col-3">Next scan: </dt>
+                            <dd class="pb-2 col-9">{{machine.nextScan}}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="pb-0 col-3">Periodicity: </dt>
+                            <dd class="col-9">
+                                <select name="machine_periodicity" id="periodicitySelect" type="text"
+                                class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
+                                <option value = "Daily" {% if machine.get_periodicity_display == 'Daily' %}selected="selected"{% endif %}>Daily</option>
+                                <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
+                                <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
+                                </select>
+                                <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
+                            </dd>
+                        </dl>
+                    </form>
                 </div>
                 <div class="col-6 text-secondary my-auto">
                     <form method="POST"> {% csrf_token %}
                         <dl class="row">
-                            <dt class="pb-0">Scan level: </dt>
-                            <dd>
+                            <dt class="col-3">Scan level: </dt>
+                            <dd class="col-9">
                                 <select name="machine_scanlevel" id="scanLevelSelect" type="button"
                                 class="btn btn-sm dropdown-toggle
                                 {% if machine.scanLevel == '1' %} btn-info" 
@@ -325,9 +329,9 @@
                                 </select>
                                 <button class="btn btn-outline-default" type="submit" id="scanLevelSubmit">Apply</button>
                             </dd>
+                            <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
                         </dl>
                     </form>
-                    <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
                 </div>
             </div>
             <div class="row">

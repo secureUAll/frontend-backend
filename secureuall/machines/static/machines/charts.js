@@ -112,7 +112,7 @@ const initVulsRiskLevelChart = () => {
         labels: vulsRiskLevelChartLabels,
         datasets: [{
           data: vulsRiskLevelChartValues,
-          bbackgroundColor: gradientFill,
+          backgroundColor: gradientFill,
           hoverBackgroundColor: gradientFillHover,
           borderColor: borderColor,
           fill: true,
@@ -130,14 +130,14 @@ const initVulsRiskLevelChart = () => {
                 position: 'left',
             },
             responsive: true,
-            plugins: {
+            /* plugins: {
                 labels: {
                     render: 'value',
                     fontColor: '#fff',
                     fontStyle: 'bold',
                     precision: 2
                 }
-            },
+            }, */
             tooltips: {
                 enabled: true,
                 mode: 'single',
@@ -165,7 +165,7 @@ const initVulsRiskLevelChart = () => {
           var idx = activePoints[0]['_index'];
   
           var label = chartData.labels[idx];
-          var table = document.getElementById("machinesTable");
+          var table = document.getElementById("vulnerabilitiesTable");
           var tr =  table.getElementsByTagName("tr");
 
           var i, td;

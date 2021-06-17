@@ -128,8 +128,6 @@ def MachinesView(request, id):
             for v in vset:
                 piechart[str(v.risk)].append(v)
 
-        y = [len(v) for v in piechart.values()]
-        print(y)
         context = {
             'machine': machine,
             'machine_users': machine_users,
