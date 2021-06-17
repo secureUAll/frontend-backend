@@ -12,6 +12,7 @@ class Machine(models.Model):
         ('5', 5)
     )
     scanLevelOps = (
+        ('1', 1),
         ('2', 2),
         ('3', 3),
         ('4', 4)
