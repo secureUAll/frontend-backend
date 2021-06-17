@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Machine, MachineWorker, Vulnerability, MachineUser, Scan, MachinePort, Log
+from .models import Machine, MachineWorker, Vulnerability, MachineUser, Scan, MachinePort, Log, MachineService
 
 
 # Machine
@@ -50,3 +50,6 @@ class MachineWorkerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MachineWorker, MachineWorkerAdmin)
+
+
+admin.site.register(MachineService)
