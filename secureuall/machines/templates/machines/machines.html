@@ -21,7 +21,7 @@
 {% block content %}
 
 <!-- Row Latest updates -->
-<div class="row mb-auto">
+<div class="row mb-auto mx-0">
     <div class="col-6 d-flex">
         <div class="card">
             <div class="card-body">
@@ -164,7 +164,7 @@
 
 <!-- Row Graphs -->
 <div class="row mb-auto pb-4 mx-0">
-    <div class="card-deck justify-content-center mx-0">
+    <div class="card-deck mx-0">
 
         <!-- Row Graph 1 -->
         <div class="card">
@@ -356,11 +356,11 @@
                                 {% if vuln.risk == 1 %}
                                     <span class="badge p-2 bg-primary">1</span>
                                 {% elif vuln.risk == 2 %}
-                                    <span class="badge p-2 bg-warning">2</span>
+                                    <span class="badge p-2 bg-info">2</span>
                                 {% elif vuln.risk == 3 %}
-                                    <span class="badge p-2 bg-danger">3</span>
+                                    <span class="badge p-2 bg-alarm">3</span>
                                 {% elif vuln.risk == 4 %}
-                                    <span class="badge p-2 bg-danger">4</span>
+                                    <span class="badge p-2 bg-warning">4</span>
                                 {% elif vuln.risk == 5 %}
                                     <span class="badge p-2 bg-danger">5</span>
                                 {% endif %}

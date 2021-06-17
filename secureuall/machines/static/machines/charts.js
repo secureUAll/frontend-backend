@@ -130,21 +130,34 @@ const initVulsRiskLevelChart = () => {
                 position: 'left',
             },
             responsive: true,
-            /* plugins: {
-                labels: {
+            plugins: {
+               /* labels: {
                     render: 'value',
                     fontColor: '#fff',
                     fontStyle: 'bold',
                     precision: 2
-                }
-            }, */
+                } */
+                datalabels: {
+                    formatter: (value, ctx) => {
+                      let datasets = ctx.chart.data.datasets;
+                      if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+                        let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = Math.round((value / sum) * 100) + '%';
+                        return percentage;
+                      } else {
+                        return percentage;
+                      }
+                    },
+                    color: '#fff',
+                  }
+            },
             tooltips: {
                 enabled: true,
                 mode: 'single',
                 callbacks: {
                     label: function (tooltipItems, data) {
                         var i = tooltipItems.index;
-                        return "Risk level " + data.labels[i] + ": " + data.datasets[0].data[i] + " %";
+                        return "Risk level " + data.labels[i];
                     }
                 }
             },
