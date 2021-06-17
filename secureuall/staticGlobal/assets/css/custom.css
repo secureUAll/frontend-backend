@@ -552,3 +552,20 @@ keyframes .progress {
 
 /* Pophover */
 .popover, .popover-header {font-size: inherit!important; font-weight:inherit!important;}
+
+/* Bootstrap fixes */
+.col-1 { flex-basis: auto!important; }
+.col-2 { flex-basis: auto!important; }
+.col-3 { flex-basis: auto!important; }
+.col-4 { flex-basis: auto!important; }
+.col-5 { flex-basis: auto!important; }
+.col-6 { flex-basis: auto!important; }
+.col-7 { flex-basis: auto!important; }
+.col-8 { flex-basis: auto!important; }
+.col-9 { flex-basis: auto!important; }
+.col-10 { flex-basis: auto!important; }
+.col-11 { flex-basis: auto!important; }
+.col-12 { flex-basis: auto!important; }
+
+/* template.css fixes */
+.content { padding:0!important; }
