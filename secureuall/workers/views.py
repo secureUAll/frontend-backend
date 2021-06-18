@@ -26,8 +26,12 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         context = {
             'workers': Worker.objects.all().order_by('-created'),
             'machinesAdded': request.session['machinesAdded'] if 'machinesAdded' in request.session else None,
-            'machinesWithoutWorker': Machine.objects.filter(workers=None).count()
+            'machinesWithoutWorker': Machine.objects.filter(workers=None).count(),
+            'filter': request.GET.get('status') if 'status' in request.GET else None
         }
+        # If status param, filter by status
+        if 'status' in request.GET and any([request.GET.get('status') in s[0] for s in Worker.statusOps]):
+            context['workers'] = context['workers'].filter(status=request.GET.get('status'))
         # Remove session data after adding to context
         if 'machinesAdded' in request.session:
             request.session['machinesAdded']=None
