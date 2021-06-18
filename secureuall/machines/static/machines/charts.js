@@ -1,12 +1,10 @@
 
 // This function initializes all the charts
 const initCharts = () => {
-    initVulnsByGroupChart();
+    //initVulnsByGroupChart();
     initVulsRiskLevelChart();
     initLineChart();
 }
-
-console.log("oi goncalo! :)");
 
 const initVulnsByGroupChart = () => {
     // Get element from DOM
@@ -91,6 +89,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52, 0.7)',
         'rgba(243,178,27, 0.7)',
         'rgba(240, 89, 42, 0.7)',
+        'rgba(218, 223, 230, 0.7)',
     ];
     const gradientFillHover = [
         'rgba(146, 212, 0, 1)',
@@ -98,6 +97,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52, 1)',
         'rgba(243,178,27, 1)',
         'rgba(240, 89, 42, 1)',
+        'rgba(218, 223, 230, 1)',
     ];
     const borderColor = [
         'rgba(146, 212, 0)',
@@ -105,6 +105,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52)',
         'rgba(243,178,27)',
         'rgba(240, 89, 42)',
+        'rgba(218, 223, 230)',
       ];
 
     // Data
@@ -170,7 +171,7 @@ const initVulsRiskLevelChart = () => {
 
     var pieChart = new Chart(ctx, myChart);
 
-    // on-click event, filter
+    // on click event, filter
     canvas.onclick = function(evt) {
         var activePoints = pieChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
@@ -196,9 +197,22 @@ const initVulsRiskLevelChart = () => {
                 }
             }
           }
-          console.log(label);
+          var text = "Filtered by risk level <strong>" + label + "</strong>.";
+          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
         }
     };
+
+    // on click event, clear filter
+    document.getElementById("clearFilterVulnerabilities").onclick = function() {
+        var table  = document.getElementById("vulnerabilitiesTable");
+        var tr =  table.getElementsByTagName("tr");
+
+          var i;
+          for (i = 0; i < table.rows.length; i++) {
+            tr[i].style.display = "";
+          }
+    }
+
 };
 
 const initLineChart = () => {

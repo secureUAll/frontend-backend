@@ -40,7 +40,7 @@ def MachinesView(request, id):
     barchart = {}
     machine_users_id = []
     machine_users= {'S':[],'O':[]}
-    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[], 'unclassified':[]}
 
     try:
         machine = Machine.objects.get(id=id)
@@ -59,6 +59,11 @@ def MachinesView(request, id):
             if 'scan_request' in request.POST:
                 KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            if 'vuln_status' in request.POST:
+                vuln = Vulnerability.objects.get(scan_id=request.POST['scan_id'], id=request.POST['vuln_id'])
+                vuln.status = request.POST['vuln_status']
+                vuln.save()
+                return JsonResponse({'status':'false','message':"Validation passed"}, status=200) 
             if 'vuln_comment' in request.POST:
                 VulnerabilityComment.objects.create(
                         vulnerability= Vulnerability.objects.get(id=request.POST['vuln_id_comment']),
@@ -105,6 +110,12 @@ def MachinesView(request, id):
             user = machine.users.get(user=u_id)
             machine_users[user.userType].append(User.objects.get(id=u_id).email)
 
+        # get logged user machine subscription type if user is not a system admin ('superuser')
+        if User.objects.get(id=request.user.id).is_superuser == 1: 
+            user_type = "A"
+        else: 
+            user_type = machine.users.get(user=request.user.id).userType
+
 
         vulncomments_set = []
         users = []
@@ -126,7 +137,8 @@ def MachinesView(request, id):
         for vset in allvulns:
             print(vset.values())
             for v in vset:
-                piechart[str(v.risk)].append(v)
+                if v.risk == 0: piechart['unclassified'].append(v)
+                else: piechart[str(v.risk)].append(v)
 
         context = {
             'machine': machine,
@@ -135,8 +147,10 @@ def MachinesView(request, id):
             'users': users,
             'scanset': scanset,
             'logged_user': User.objects.get(id=request.user.id),
+            'user_type': user_type,
             'pielabels': [x for x in piechart.keys()],
             'piedata': [len(v) for v in piechart.values()],
+            'piechart': piechart,
         }
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')

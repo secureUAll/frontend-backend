@@ -9,7 +9,7 @@
 
 {% block header %}
 <div class="header text-center my-auto">
-    <h2 class="title">Host</h2>
+    <h2 class="title">Host | {{machine}}</h2>
 </div>  
 {% endblock header %}
 
@@ -28,27 +28,23 @@
                 <div class="my-auto">
                     <h6 class="mt-3 pb-4">Host General Information</h6>
                     <!-- Machine General Information -->
-                    <div class="row pb-3">
+                    <div class="row pb-5">
                         <div class="d-flex col-md-12 text-secondary">
-                            <dl class="col-md-6">
+                            <dl class="col-md-6 px-1">
                                 <dt>IP</dt>
                                 <dd>{{machine.ip}}</dd>
                                 <dt>DNS</dt>
                                 <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table">
-                                            <tbody>
-                                            {% if machine.dns %}
-                                                <tr><td>{{machine.dns}}</td></tr>
-                                            {% else %}
-                                                <tr><td>No dns.</td></tr>
-                                            {% endif %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                {% if machine.dns %}
+                                    {{machine.dns}}
+                                {% else %}
+                                    No dns.
+                                {% endif %}
                                 </dd>
+                                <dt>Registered</dt>
+                                <dd>{{machine.created}}</dd>
                             </dl>
-                            <dl class="col-md-6">
+                            <dl class="col-md-6 px-1">
                                 <dt>OS</dt>
                                 <dd>{{machine.os}}</dd>
                                 <dt>Status</dt>
@@ -73,55 +69,66 @@
                 <div class="row">
                     <!-- Owners and Subscribers -->
                     <div class="my-auto">
-                        <h6 class="mb-0"></h6>
                         <div class="row">
-                            <div class="d-flex col-12 text-secondary">
-                                <dl class="col-6">
-                                    <dt>Owners</dt>
-                                    <dd>
-                                        <div class="table-responsive d-flex">
-                                            <table class="table table-discreet table-users" id="ownersTable">
-                                                <thead><th data-field="user"></th></thead>
-                                                <tbody>
-                                                {% for key, value in machine_users.items %}
-                                                    {% if key == 'O' %}
-                                                        {% for v in value %}
-                                                            <tr><td>{{v}}</td></tr>
-                                                        {% empty %}
-                                                            <span>No owners yet.</span>
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </dd>
-                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
-                                </dl>
-                                <dl class="col-6">
-                                    <dt>Subscribers</dt>
-                                    <dd>
-                                        <div class="table-responsive d-flex">
-                                            <table class="table table-discreet table-users" id="subscribersTable">
-                                                <thead><th data-field="user"></th></thead>
-                                                <tbody>
-                                                {% for key, value in machine_users.items %}
-                                                    {% if key == 'S' %}
-                                                        {% for v in value %}
-                                                            <tr><td>{{v}}</td></tr>
-                                                        {% empty %}
-                                                            <span>No owners yet.</span>
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </dd>
-                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
-                                </dl>
+                            <div class="d-flex col-md-12 text-secondary">
+                                <div class="col-md-6">
+                                    <dl class="row px-2">
+                                        <dt class="row">Owners</dt>
+                                        <dd class="row">
+                                            <div class="table-responsive d-flex">
+                                                <table class="table table-discreet table-users" id="ownersTable">
+                                                    <thead><th data-field="user"></th></thead>
+                                                    <tbody>
+                                                    {% for key, value in machine_users.items %}
+                                                        {% if key == 'O' %}
+                                                            {% for v in value %}
+                                                                <tr><td>{{v}}</td></tr>
+                                                            {% empty %}
+                                                                <span>No owners yet.</span>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="row px-2">
+                                        <dt class="row">Subscribers</dt>
+                                        <dd class="row">
+                                            <div class="table-responsive d-flex">
+                                                <table class="table table-discreet table-users" id="subscribersTable">
+                                                    <thead><th data-field="user"></th></thead>
+                                                    <tbody>
+                                                    {% for key, value in machine_users.items %}
+                                                        {% if key == 'S' %}
+                                                            {% for v in value %}
+                                                                <tr><td>{{v}}</td></tr>
+                                                            {% empty %}
+                                                                <span>No owners yet.</span>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
                             </div>
                         </div>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                        <div class="row d-flex text-secondary">
+                            <div class="col-6">
+                                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                     <!-- End Owners and Subscribers -->
                 </div>
@@ -164,50 +171,56 @@
 
 <!-- Row Graphs -->
 <div class="row mb-auto pb-4">
-    <div class="card-deck mx-0 col-12 p-0">
+    <div class="card-group mb-auto">
+
         <!-- Row Graph 1 -->
-        <div class="card ml-0">
-            <div class="card-body">
+        <div class="card card-chart">
+            <div class="card-header">
                 <div class="my-auto">
-                    <div class="d-flex bd-highlight mb-3">
-                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Vulnerabilities per Risk Level</h6>
-                        <div class="dropdown p-2 bd-highlight">
+                    <div class="mb-3 d-flex justify-content-between">
+                        <h6 class="mt-3 mr-auto p-2">Vulnerabilities per Risk Level</h6>
+                        <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
                                 <i class="now-ui-icons loader_gear"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item text-primary" href="#">Last 7 days</a>
-                                <a class="dropdown-item" href="#">Last 14 days</a>
-                                <a class="dropdown-item" href="#">Last month</a>
+                                <a class="dropdown-item" onclick="filterVulnPerRisk('last_scan')">Last scan</a>
+                                <a class="dropdown-item" onclick="filterVulnPerRisk('last_month')">Last month</a>
+                                <a class="dropdown-item" onclick="filterVulnPerRisk('all')">All scans</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body my-auto d-flex">
+            <div class="card-body my-auto">
                 <div class="chart-area my-auto">
                     <canvas id="vulnerabilitiesByRiskLevel"></canvas>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="now-ui-icons arrows-1_refresh-69"></i> Last 7 days
                 </div>
             </div>
         </div>
         <!-- End Graph 1 -->
 
 
-        <!-- Row Bar Graph 2 -->
-        <div class="card">
-            <div class="card-body">
+        <!-- Row Bar Graph 2
+        <div class="card card-chart">
+            <div class="card-header">
                 <div class="my-auto">
-                    <div class="d-flex bd-highlight mb-3">
-                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Bar Chart</h6>
-                        <div class="dropdown p-2 bd-highlight">
+                    <div class="d-flex mb-3">
+                        <h6 class="mt-3 mr-auto p-2">Bar Chart</h6>
+                        <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
                                 <i class="now-ui-icons loader_gear"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-right" id="vulnByGroupChart" onchange="myFunction()">
+                            <ul class="dropdown-menu dropdown-menu-right" id="vulnByGroupChart">
                                 <li class="dropdown-item text-primary" value="1">Last 7 days</li>
                                 <li class="dropdown-item" value="2">Last 15 days</li>
                                 <li class="dropdown-item" value="3">Last month</li>
@@ -227,25 +240,24 @@
                 </div>
             </div>
         </div>
-        <!-- End Row Bar Graph 2 -->
+        <End Row Bar Graph 2 -->
 
         <!-- Line Graph 3 -->    
-        <div class="card mr-0">
-            <div class="card-body">
+        <div class="card card-chart">
+            <div class="card-header">
                 <div class="my-auto">
-                    <div class="d-flex bd-highlight mb-3">
-                        <h6 class="mt-3 mr-auto p-2 bd-highlight">Line Chart</h6>
-                        <div class="dropdown p-2 bd-highlight">
+                    <div class="mb-3 d-flex justify-content-between">
+                        <h6 class="mt-3 p-2">Vulnerabilities per scan</h6>
+                        <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                                 data-toggle="dropdown">
                                 <i class="now-ui-icons loader_gear"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                                <a class="dropdown-item">Last scan</a>
+                                <a class="dropdown-item">Last month</a>
+                                <a class="dropdown-item">All scans</a>
                             </div>
                         </div>
                     </div>
@@ -287,16 +299,18 @@
             </div>
         </div>
         <div class="card-body mx-3">
+            <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table.</p>
             <!-- Row Next Scan -->
             <div class="row pb-3">
                 <div class="col-6  text-secondary my-auto">
                     <form method="POST"> {% csrf_token %}
                         <dl class="row">
-                            <dt class="pb-0 col-3">Next scan: </dt>
+                            <dt class="pb-0 col-3">Next scan </dt>
                             <dd class="pb-2 col-9">{{machine.nextScan}}</dd>
                         </dl>
                         <dl class="row">
-                            <dt class="pb-0 col-3">Periodicity: </dt>
+                            <dt class="pb-0 col-3">Periodicity </dt>
+                            {% if user_type == 'O' or user_type == 'A' %}
                             <dd class="col-9">
                                 <select name="machine_periodicity" id="periodicitySelect" type="text"
                                 class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
@@ -306,13 +320,19 @@
                                 </select>
                                 <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
                             </dd>
+                            {% else %}
+                            <dd  class="pb-2 col-9">
+                                {{machine.get_periodicity_display}}
+                            </dd>
+                            {% endif %}
                         </dl>
                     </form>
                 </div>
                 <div class="col-6 text-secondary my-auto">
                     <form method="POST"> {% csrf_token %}
                         <dl class="row">
-                            <dt class="col-3">Scan level: </dt>
+                            <dt class="col-3">Scan level </dt>
+                            {% if user_type == 'O' or user_type == 'A' %}
                             <dd class="col-9">
                                 <select name="machine_scanlevel" id="scanLevelSelect" type="button"
                                 class="btn btn-sm dropdown-toggle
@@ -328,8 +348,25 @@
                                 </select>
                                 <button class="btn btn-outline-default" type="submit" id="scanLevelSubmit">Apply</button>
                             </dd>
-                            <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
+                            {% else %}
+                            <dd  class="pb-2 col-9">
+                                {% if machine.scanLevel == '1' %}
+                                <dd><span class="badge p-2 bg-primary">1</span></dd>
+                                {% elif machine.scanLevel == '2' %}
+                                <dd><span class="badge p-2 bg-info">2</span></dd>
+                                {% elif machine.scanLevel == '3' %}
+                                <dd><span class="badge p-2 bg-alarm">3</span></dd>
+                                {% elif machine.scanLevel == '4' %}
+                                <dd><span class="badge p-2 bg-warning">4</span></dd>
+                                {% endif %}
+                            </dd>
+                            {% endif %}
                         </dl>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                        <div class="row">
+                            <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
+                        </div>
+                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -352,7 +389,9 @@
                             {% for vuln in machine.vulnerabilities.all %}
                             <tr>
                                 <td class="vuln-risk">
-                                {% if vuln.risk == 1 %}
+                                {% if vuln.risk == 0 %}
+                                    <span class="badge p-2 bg-secondary">unclassified</span>
+                                {% elif vuln.risk == 1 %}
                                     <span class="badge p-2 bg-primary">1</span>
                                 {% elif vuln.risk == 2 %}
                                     <span class="badge p-2 bg-info">2</span>
@@ -387,6 +426,8 @@
                                 <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
                                 <td class="vuln-id" style="display:none">{{vuln.id}}</td>
                             </tr>
+                            {% empty %}
+                                <span>No vulnerabilities to show.</span>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -394,6 +435,9 @@
             </div>
         </div>
         <div class="card-footer">
+            <div class="stats d-flex justify-content-center">
+                <button type="button" class="btn btn-outline-primary btn-lg" id="clearFilterVulnerabilities">Clear Filters</button>
+            </div>
             <div class="d-flex justify-content-between">
                 <div class="stats">
                     <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
@@ -421,16 +465,37 @@
                     <div class="modal-body">
                         <div class="modal-body">
                             <div class="row pb-3">
-                                <div class="col-6  text-secondary my-auto">
+                                <div class="col-3  text-secondary my-auto">
                                     <dl class="row">
                                         <dt class="pb-0">Vulnerability</dt>
                                         <dd id="vuln{{vuln.id}}TypeModalScan{{scan.id}}" class="pb-2"></dd>
                                     </dl>
                                 </div>
-                                <div class="col-6  text-secondary my-auto">
+                                <div class="col-3  text-secondary my-auto">
                                     <dl class="row">
                                         <dt class="pb-0">Date</dt>
                                         <dd id="vuln{{vuln.id}}DateModalScan{{scan.id}}" class="pb-2"></dd>
+                                    </dl>
+                                </div>
+                                <div class="col-6 text-secondary my-auto">
+                                    <dl class="row d-flex flex-column">
+                                        <dt class="col-12 pb-0">Status</dt>
+                                        <dd class="flex-row d-flex pb-2">
+                                            <select name="machine_status" id="vuln{{vuln.id}}StatusSelectionModalScan{{scan.id}}"
+                                            type="button" class="btn text-center dropdown-toggle
+                                            {% if vuln.status == 'Fixed' %} btn-primary" 
+                                            {% elif vuln.status == 'Not Fixed' %} btn-danger" 
+                                            {% elif vuln.status == 'Fixing' %} btn-warning" 
+                                            {% elif vuln.status == 'Invalid' %} btn-default" 
+                                            {% endif %} data-toggle="dropdown" aria-expanded="false"
+                                            style="width: 7rem;">
+                                            <option value = "Fixed" {% if vuln.status == 'Fixed' %}selected="selected"{% endif %}>Fixed</option>
+                                            <option value = "Not Fixed" {% if vuln.status == 'Not Fixed' %}selected="selected"{% endif %}>Not Fixed</option>
+                                            <option value = "Fixing" {% if vuln.status == 'Fixing' %}selected="selected"{% endif %}>Fixing</option>
+                                            <option value = "Invalid" {% if vuln.status == 'Invalid' %}selected="selected"{% endif %}>Invalid</option>
+                                            </select>
+                                            <button class="btn btn-outline-default vuln-status" type="submit" id="vuln{{vuln.id}}StatusSubmitModalScan{{scan.id}}">Apply</button>
+                                        </dd>
                                     </dl>
                                 </div>
                             </div>
@@ -572,11 +637,19 @@
         const vulsRiskLevelChartValues = {{ piedata|safe }};
         const vulsRiskLevelChartLabels = {{ pielabels|safe }};
         const vulnsByGroupChartLabels = ["Injection", "Broken Auth.", "XSS", "XXE", "CVE"];
-        const vulnsByGroupChartValues = [3,8,2,20,15];
-        function myFunction() {
-            console.log("ISadora Ferreira");
+        const vulnsByGroupChartValues = [3,8,2,20,15]; 
+
+
+        // Filter pie chart
+        function filterVulnPerRisk(filter) {
+            var piechart=[];
+            {% for key, value in piechart.items %}
+                piechart.push(value);
+            {% endfor %}
+            console.log(piechart);
+            console.log(filter);
+
         }
-        
 
         // Scan host now
         function scanNow() {
@@ -627,7 +700,7 @@
                     },
                     success: function(json) {
                         console.log("Successfully added new user.");
-                        new_row="<tr><td>"+$("#newUserEmail").val()+"</td></tr>";
+                        new_row="<tr><td>"+email[0]+"@"+email[1]+"</td></tr>";
                         if (user_role=='S'){
                             $('#subscribersTable').append(new_row);
                         } else if (user_role=='O'){
@@ -647,12 +720,14 @@
             }
         });
 
-        // Remove owner
+        // Remove owners and subscribers
         $('.table-users').on('click', 'tr', 'td', function (event, row, $element) {
-            var colValue =$(this).children("td").html();
-            console.log(colValue);
-            $('#manageUserModal').modal('show');
-            $("#manageUserEmail").val(colValue);
+            if ("{{ user_type|safe }}"=='O' || "{{ user_type|safe }}"=='A'){
+                var colValue =$(this).children("td").html();
+                console.log(colValue);
+                $('#manageUserModal').modal('show');
+                $("#manageUserEmail").val(colValue);
+            }
         });
         $(document).on('click', '#removeUser', function(event){
             alert("Account removed from the list of users for this host.");
@@ -686,6 +761,7 @@
             var type_id = "#vuln"+vuln_id+"TypeModalScan"+scan_id;
             var date_id = "#vuln"+vuln_id+"DateModalScan"+scan_id;
             var desc_id = "#vuln"+vuln_id+"DescModalScan"+scan_id;
+            var status_id = "#vuln"+vuln_id+"StatusModalScan"+scan_id;
             var comment_id = "#addvuln"+vuln_id+"CommentUserlScan"+scan_id;
             $(type_id).html($(this).find('[class*="vuln-type"]').first().html());
             $(date_id).html($(this).find('[class*="vuln-date"]').first().html());
@@ -695,6 +771,7 @@
             $(modal_id).modal('show');
             console.log(modal_id);
         });
+        // POST Comment
         $(document).on('click', '.add-user-comment', function(event){
             var comment_id = "#addVuln"+vuln_id+"CommentDescriptionScan"+scan_id;
             $.ajax({
@@ -716,6 +793,42 @@
             });
             $(".modal-body textarea").val("");
             $(modal_id).modal('hide');
+        });
+        // POST vulnerability status
+        $(document).on('click', '.vuln-status', function(event){
+            var status_id = "#vuln"+vuln_id+"StatusSelectionModalScan"+scan_id;
+            var status = $(status_id).children(':selected').text();
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/machines/{{machine.id}}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    vuln_status: status,
+                    vuln_id: vuln_id,
+                    scan_id: scan_id,
+                },
+                success: function(json) {
+                    alert("Vulnerability status changed for \"" + status + "\".");
+                    location.reload(true);
+                },
+                error: function(response) {
+                    console.log("Could not change vulnerability status. Error: " + response);
+                }
+            });
+            $(".modal-body textarea").val("");
+            $(modal_id).modal('hide');
+        });
+
+        // Status vulnerability selection
+        $("select").change(function(){
+            var status_id = "#vuln"+vuln_id+"StatusSelectionModalScan"+scan_id;
+            $.trim($(status_id).children("option:selected").text());
+        });
+        var button_sub_status_id = "#vuln"+vuln_id+"StatusSubmitModalScan"+scan_id;
+        $(document).on('click', button_sub_status_id, function(event){
+            status = $.trim($(button_id).children("option:selected").text())
+            alert("Scan level changed for " + status + ".");
         });
 
         // Start charts
