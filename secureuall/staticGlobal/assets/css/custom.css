@@ -750,7 +750,22 @@ keyframes .progress {
 
 /* template.css fixes */
 .content { padding:0!important; }
+.btn { margin: 0!important; }
 
 /* Extra Bootstrap */
 .op-0 { opacity: 0; }
 .transition { transition: all .3s ease; }
+
+/* Editable container */
+.editable-submit {
+    margin-right: .5rem!important;
+}
+.glyphicon-ok::before {
+    content: "\ea22";
+    font-family: 'Nucleo Outline';
+}
+
+.glyphicon-remove::before {
+    content: "\ea53";
+    font-family: 'Nucleo Outline';
+}

@@ -1,3 +1,7 @@
+import json
+
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -28,6 +32,38 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         if 'machinesAdded' in request.session:
             request.session['machinesAdded']=None
         return render(request, "workers/workers.html", context)
+
+
+class WorkerOperationsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+
+    def post(self, request, id=None, *args, **kwargs):
+        # Validate that worker with id exists
+        if not Worker.objects.filter(id=id).exists():
+            return HttpResponse(
+                json.dumps({'error': 'Invalid worker!'}),
+                content_type='application/json',
+                status=400
+            )
+        # Make operations on worker
+        w = Worker.objects.get(id=id)
+        success = False
+        if 'name' in request.POST and request.POST['name']:
+            # Edit name
+            if 'editName' in request.POST['name'] and 'value' in request.POST and request.POST['value']:
+                w.name = request.POST['value']
+                w.save()
+                success = True
+        # Return worker manipulated if success, else error
+        if success:
+            return HttpResponse(
+                serializers.serialize('json', [Worker.objects.get(id=id)]),
+                content_type='application/json'
+            )
+        return HttpResponse(
+            json.dumps({'error': 'Invalid request!'}),
+            content_type='application/json',
+            status=400
+        )
 
 
 class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):

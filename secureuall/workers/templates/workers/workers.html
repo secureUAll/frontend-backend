@@ -37,10 +37,22 @@
             <div class="col-lg-6 d-flex mx-auto" id="worker{{worker.id}}">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header d-flex">
-                        <h4 class="card-title">Worker {{worker.name}}</h4>
+                        <h4 class="card-title">
+                            Worker
+                            <a
+                                data-pk="{{worker.id}}"
+                                data-url="/workers/{{worker.id}}/"
+                                id="editName_worker{{worker.id}}"
+                                href="#"
+                                class="workerTitle"
+                                title="Click to edit"
+                            >{{worker.name}}</a>
+                            {% csrf_token %}
+                            <i class="small text-primary now-ui-icons design-2_ruler-pencil" title="Click on text to edit"></i>
+                        </h4>
                         {% if worker.machines.all %}
-                        <div class="ml-auto d-flex flex-row">
-                            <div class="dropdown mx-auto dropdown-free my-auto">
+                        <div class="ml-auto my-auto d-flex flex-row">
+                            <div class="dropdown mx-auto dropdown-free">
                                 <button class="btn btn-sm btn-outline-primary" title="Add machines" data-toggle="dropdown"><i class="now-ui-icons ui-1_simple-add"></i></button>
                                 <div class="dropdown-menu dropdown-menu-left">
                                     <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
@@ -140,6 +152,8 @@
 {% endblock content %}
 
 {% block scripts %}
+    <!-- Editable -->
+    <script src="{% static 'assets/js/plugins/bootstrap-editable.min.js' %}"></script>
     <!-- Data Tables Script -->
     <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
     <!-- Custom JS -->
