@@ -36,10 +36,10 @@ $(document).ready(function () {
         // Get row and extract log id
         var row = table.row(this).data(); // Array [ "April 15, 2021<span class=\"d-none\">3</span>", "192.168.0.12" ]
         var id = row[0].split("\">")[1].split("<")[0];
-        console.log(id);
         // Start loading...
         $(".spinner-grow").removeClass("d-none");
         $("#log").hide();
+        $("#start").addClass("d-none");
         // Get log from API
         fetch('/machines/logs/' + id)
             .then(res => res.json())
@@ -54,7 +54,8 @@ $(document).ready(function () {
                     );
                 // Else, render log
                 } else {
-                    var log = response[0]['fields']['log'];
+                    response = response[0]['fields'];
+                    var log = response['log'];
                     console.log("GOTTT", response);
                     // Show JSON beautified, if error parsing show raw and notify
                     try {
@@ -71,11 +72,15 @@ $(document).ready(function () {
                         );
                     }
                 }
+                if (window.location.href.indexOf("/workers/")>=0) {
+                    $("#scanTitle").html("Scan <span class=\"text-secondary\">of host <b>" + row[1] + "</b> at <b>" + row[0].split("<")[0] + "</b></span>");
+                } else {
+                    $("#scanTitle").html("Scan <span class=\"text-secondary\">by worker <b>" + row[1] + "</b> at <b>" + row[0].split("<")[0] + "</b></span>");
+                }
                 // Finish loading...
                 $(".spinner-grow").addClass("d-none");
                 $("#log").show();
             });
     });
-
 
 });
