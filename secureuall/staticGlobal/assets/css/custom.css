@@ -344,28 +344,6 @@ fieldset[disabled] .btn-danger.active {
     box-shadow: none;
 }
 
-.btn-outline-primary {
-    color: #92d400;
-    border-color: #92d400;
-}
-
-.btn-outline-primary:hover,
-.btn-outline-primary:focus,
-.btn-outline-primary:not(:disabled):not(.disabled):active,
-.btn-outline-primary:not(:disabled):not(.disabled).active,
-.btn-outline-primary:not(:disabled):not(.disabled):active:focus,
-.btn-outline-primary:not(:disabled):not(.disabled).active:focus,
-.btn-outline-primary:active:hover,
-.btn-outline-primary.active:hover,
-.show>.btn-outline-primary.dropdown-toggle,
-.show>.btn-outline-primary.dropdown-toggle:focus,
-.show>.btn-outline-primary.dropdown-toggle:hover {
-    background-color: #92d400;
-    color: #ffffff;
-    border-color: #92d400;
-    box-shadow: none;
-}
-
 .btn-outline-danger {
     color: #f0592a;
     border-color: #f0592a;
@@ -388,25 +366,71 @@ fieldset[disabled] .btn-danger.active {
     box-shadow: none;
 }
 
-.btn-outline-danger {
-    color: #f0592a;
-    border-color: #f0592a;
+.btn-outline-warning {
+    color: #f3b21b;
+    border-color: #f3b21b;
 }
 
-.btn-outline-danger:hover,
-.btn-outline-danger:focus,
-.btn-outline-danger:not(:disabled):not(.disabled):active,
-.btn-outline-danger:not(:disabled):not(.disabled).active,
-.btn-outline-danger:not(:disabled):not(.disabled):active:focus,
-.btn-outline-danger:not(:disabled):not(.disabled).active:focus,
-.btn-outline-danger:active:hover,
-.btn-outline-danger.active:hover,
-.show>.btn-outline-danger.dropdown-toggle,
-.show>.btn-outline-danger.dropdown-toggle:focus,
-.show>.btn-outline-danger.dropdown-toggle:hover {
-    background-color: #f0592a;
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-warning:not(:disabled):not(.disabled):active,
+.btn-outline-warning:not(:disabled):not(.disabled).active,
+.btn-outline-warning:not(:disabled):not(.disabled):active:focus,
+.btn-outline-warning:not(:disabled):not(.disabled).active:focus,
+.btn-outline-warning:active:hover,
+.btn-outline-warning.active:hover,
+.show>.btn-outline-warning.dropdown-toggle,
+.show>.btn-outline-warning.dropdown-toggle:focus,
+.show>.btn-outline-warning.dropdown-toggle:hover {
+    background-color: #f3b21b;
     color: #ffffff;
-    border-color: #f0592a;
+    border-color: #f3b21b;
+    box-shadow: none;
+}
+
+
+.btn-outline-dark {
+    color: #343a40;
+    border-color: #343a40;
+}
+
+.btn-outline-dark:hover,
+.btn-outline-dark:focus,
+.btn-outline-dark:not(:disabled):not(.disabled):active,
+.btn-outline-dark:not(:disabled):not(.disabled).active,
+.btn-outline-dark:not(:disabled):not(.disabled):active:focus,
+.btn-outline-dark:not(:disabled):not(.disabled).active:focus,
+.btn-outline-dark:active:hover,
+.btn-outline-dark.active:hover,
+.show>.btn-outline-dark.dropdown-toggle,
+.show>.btn-outline-dark.dropdown-toggle:focus,
+.show>.btn-outline-dark.dropdown-toggle:hover {
+    background-color: #343a40;
+    color: #ffffff;
+    border-color: #343a40;
+    box-shadow: none;
+}
+
+
+.btn-outline-secondary {
+    color: #979797;
+    border-color: #979797;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+.btn-outline-secondary:not(:disabled):not(.disabled).active,
+.btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
+.btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
+.btn-outline-secondary:active:hover,
+.btn-outline-secondary.active:hover,
+.show>.btn-outline-secondary.dropdown-toggle,
+.show>.btn-outline-secondary.dropdown-toggle:focus,
+.show>.btn-outline-secondary.dropdown-toggle:hover {
+    background-color: #979797;
+    color: #ffffff;
+    border-color: #979797;
     box-shadow: none;
 }
 
@@ -606,7 +630,7 @@ a {
     color: #92d400;
 }
 a:hover, a:focus {
-    color: #7ab300!important;
+    color: #7ab300;
 }
 
 /* Tables */
@@ -671,6 +695,7 @@ dt {
 }
 dd {
   float: left;
+  margin-left: auto;
   width: 50%;
   padding: 0;
   margin: 0
@@ -750,7 +775,7 @@ keyframes .progress {
 
 /* template.css fixes */
 .content { padding:0!important; }
-.btn { margin: 0!important; }
+.btn { margin: 0; }
 
 /* Extra Bootstrap */
 .op-0 { opacity: 0; }
@@ -768,4 +793,15 @@ keyframes .progress {
 .glyphicon-remove::before {
     content: "\ea53";
     font-family: 'Nucleo Outline';
+}
+
+/* Animations */
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }
