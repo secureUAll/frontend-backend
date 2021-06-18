@@ -1,0 +1,109 @@
+{% extends "dashboard/base.html" %}
+
+{% comment "About" %}
+
+    This template renders the logs for a given worker.
+
+    -- Context
+    title               str                                             The page title
+
+{% endcomment %}
+
+{% load static %}
+
+{% block meta %}
+    <title>Secure(ua)ll | {{title}}</title>
+{% endblock meta %}
+
+{% block header %}
+    <div class="header text-center my-auto">
+        <h2 class="title mb-0">Worker {{worker.name}} | Logs</h2>
+    </div>
+{% endblock header %}
+
+{% block styles %}
+    <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
+    <link href="{% static 'workers/logs.css' %}" rel="stylesheet" />
+{% endblock styles %}
+
+{% block content %}
+
+    <div class="row">
+        {% if logs %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Scans list</h4>
+                        <p>Click on a scan to see its log.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-discreet" id="scansTable">
+                                <thead class="text-primary">
+                                    <th>Date</th>
+                                    <th>Machine</th>
+                                </thead>
+                                <tbody>
+                                    {% for log in logs %}
+                                    <tr title="Click to see log">
+                                        <td>
+                                            {{ log.date|date:"Y/m/d G:i" }}<span class="d-none">{{ log.cod }}</span>
+                                        </td>
+                                        <td>
+                                            {{ log.machine }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Scan</h4>
+                        <p></p>
+                    </div>
+                    <div class="card-body d-flex">
+                        <div class="spinner-grow text-primary mx-auto d-none my-5" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <pre id="log"></pre>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">No logs found!</h4>
+                        <p></p>
+                    </div>
+                    <div class="card-body d-flex">
+                        <p>There are no logs for this machine on the database. Please wait for a scan to happen and check back.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    <!-- Data Tables Script -->
+    <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'workers/logs.js' %}"></script>
+    <script>
+        {% if ignored %}
+            showNotification(
+                "Invalid machines!",
+                "A total of {{ignored}} entries were ignored, as they do not represent any valid IP addresses or DNS names. Please verify they are correct.",
+                "danger",
+                ""
+            );
+        {% endif %}
+    </script>
+{% endblock scripts %}

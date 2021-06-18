@@ -750,3 +750,7 @@ keyframes .progress {
 
 /* template.css fixes */
 .content { padding:0!important; }
+
+/* Extra Bootstrap */
+.op-0 { opacity: 0; }
+.transition { transition: all .3s ease; }

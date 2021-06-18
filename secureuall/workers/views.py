@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from login.models import User
 from .models import Worker
-from machines.models import Machine, MachineWorker
+from machines.models import Machine, MachineWorker, Log
 
 from machines.forms import MachineWorkerBatchInputForm, MachineForm, IPRangeForm
 from django.forms import formset_factory
@@ -121,3 +121,20 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def test_func(self):
         return User.has_access(self.request.user)
+
+
+class WorkerLogsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+    context = {}
+    template_name = "workers/logs.html"
+
+    def get(self, request, id=None, *args, **kwargs):
+        self.getContext(id)
+        return render(request, self.template_name, self.context)
+
+    def getContext(self, id):
+        w = get_object_or_404(Worker, id=id)
+        self.context = {
+            'title': 'Worker | Logs',
+            'worker': w,
+            'logs': Log.objects.filter(worker=w).order_by('-date')
+        }

@@ -53,3 +53,11 @@ admin.site.register(MachineWorker, MachineWorkerAdmin)
 
 
 admin.site.register(MachineService)
+
+
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['worker', 'machine', 'date']
+    list_filter = ['worker', 'machine', 'date']
+
+
+admin.site.register(Log, LogAdmin)

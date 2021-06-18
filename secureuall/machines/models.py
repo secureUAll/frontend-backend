@@ -164,7 +164,7 @@ class VulnerabilityComment(models.Model):
 
 class Log(models.Model):
     cod = models.BigAutoField(primary_key=True)
-    date = models.DateField() # auto_now=True
+    date = models.DateTimeField()
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='logs')
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='logs')
     log = models.TextField()
