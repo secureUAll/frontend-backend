@@ -523,6 +523,9 @@ dl.dl-line dd {width: 100%}
 }
 
 /* Progress */
+.progress {
+    line-height: inherit!important;
+}
 @-webkit-keyframes .progress {
    0% { width: 0; }
 }
@@ -537,6 +540,7 @@ keyframes .progress {
   -webkit-animation: progress-bar 2s;
   -moz-animation: progress-bar 2s;
   animation: progress-bar 2s;
+  margin-right: .5rem;
 }
 
 @keyframes progress-bar {
@@ -552,6 +556,20 @@ keyframes .progress {
 
 /* Pophover */
 .popover, .popover-header {font-size: inherit!important; font-weight:inherit!important;}
+
+/* Dropdown */
+.dropdown.dropdown-free {
+    position: relative!important;
+    top: inherit!important;
+    right: inherit!important;
+    left: inherit!important;
+}
+.dropdown-menu.dropdown-menu-left.dropdown-reverse::before {
+    left: 90%!important;
+}
+.dropdown-menu.dropdown-menu-right.dropdown-reverse::before {
+    right: 90%!important;
+}
 
 /* Bootstrap fixes */
 .col-1 { flex-basis: auto!important; }
