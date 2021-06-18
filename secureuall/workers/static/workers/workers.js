@@ -2,7 +2,7 @@ $(document).ready(function () {
     // Activate all workers tables
     $(".workersTable").each(function(){
         $(this).DataTable({
-            "lengthMenu": [ 5, 10, 25 ],
+            "lengthMenu": [ 25, 50, 100 ],
             "order": [[ 5, "asc" ]]
         });
     });
