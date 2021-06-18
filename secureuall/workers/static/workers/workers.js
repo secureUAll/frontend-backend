@@ -47,6 +47,15 @@ $(document).ready(function () {
                 return {newValue: ''}
             }
         }
-    })
+    });
+
+    // Worker table accordion changing toggler text on toggle
+    $(".collapse").on('show.bs.collapse', function() {
+        $(this).parent().find("button[data-toggle=collapse]").html("<i class=\"now-ui-icons ui-1_simple-delete mr-2\"></i> Hide hosts")
+    });
+
+    $(".collapse").on('hide.bs.collapse', function() {
+        $(this).parent().find("button[data-toggle=collapse]").html("<i class=\"now-ui-icons tech_laptop mr-2\"></i> See hosts")
+    });
 
 });

@@ -410,6 +410,50 @@ fieldset[disabled] .btn-danger.active {
     box-shadow: none;
 }
 
+.btn-outline-warning {
+    color: #f3b21b;
+    border-color: #f3b21b;
+}
+
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-warning:not(:disabled):not(.disabled):active,
+.btn-outline-warning:not(:disabled):not(.disabled).active,
+.btn-outline-warning:not(:disabled):not(.disabled):active:focus,
+.btn-outline-warning:not(:disabled):not(.disabled).active:focus,
+.btn-outline-warning:active:hover,
+.btn-outline-warning.active:hover,
+.show>.btn-outline-warning.dropdown-toggle,
+.show>.btn-outline-warning.dropdown-toggle:focus,
+.show>.btn-outline-warning.dropdown-toggle:hover {
+    background-color: #f3b21b;
+    color: #ffffff;
+    border-color: #f3b21b;
+    box-shadow: none;
+}
+
+.btn-outline-warning {
+    color: #f3b21b;
+    border-color: #f3b21b;
+}
+
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-warning:not(:disabled):not(.disabled):active,
+.btn-outline-warning:not(:disabled):not(.disabled).active,
+.btn-outline-warning:not(:disabled):not(.disabled):active:focus,
+.btn-outline-warning:not(:disabled):not(.disabled).active:focus,
+.btn-outline-warning:active:hover,
+.btn-outline-warning.active:hover,
+.show>.btn-outline-warning.dropdown-toggle,
+.show>.btn-outline-warning.dropdown-toggle:focus,
+.show>.btn-outline-warning.dropdown-toggle:hover {
+    background-color: #f3b21b;
+    color: #ffffff;
+    border-color: #f3b21b;
+    box-shadow: none;
+}
+
 
 /* Bachgrounds */
 
