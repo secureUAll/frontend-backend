@@ -59,7 +59,7 @@
                                     <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/range">IP Range</a>
                                 </div>
                             </div>
-                            <a href="/workers/{{worker.id}}/machines/edit" class="ml-2"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
+                            <a href="/workers/{{worker.id}}/machines/edit" class="ml-2"><button class="btn btn-sm btn-outline-primary" title="Edit hosts"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
                             <a href="/workers/{{worker.id}}/logs" class="ml-2"><button class="btn btn-sm btn-outline-primary" title="Machine logs"><i class="now-ui-icons text_align-center"></i></button></a>
                         </div>
                         {% endif %}
@@ -78,12 +78,6 @@
                                 <dd>
                                     <span class="text-{{worker.get_status_display|color}}">{{worker.get_status_display}}</span>
                                 </dd>
-                                <dt>Machines</dt>
-                                <dd>{{worker.machines.all|length}}</dd>
-                            </dl>
-                        </div>
-                        <div class="d-flex col-12 p-0 text-secondary">
-                            <dl class="dl-12">
                                 <dt>Created</dt>
                                 <dd>{{worker.created}}</dd>
                             </dl>
@@ -91,7 +85,7 @@
                         <!-- Machines table -->
                         {% if worker.machines.all %}
                             <div class="mt-3 d-flex flex-row">
-                                <h5 class="mb-0">20 machines associated</h5>
+                                <h5 class="mb-0">{{worker.machines.all|length}} hosts associated</h5>
                                 <div class="dropdown ml-auto dropdown-free ml-auto">
                                     <button
                                         class="btn btn-outline-primary"
@@ -145,13 +139,13 @@
                         </div>
                         {% else %}
                             <div class="mt-3 d-flex flex-row">
-                                <h5 class="text-warning">No machines associated!</h5>
+                                <h5 class="text-warning">No hosts associated!</h5>
                                 <div class="dropdown ml-auto dropdown-free">
                                     <button
                                         class="btn btn-outline-warning"
                                         data-toggle="dropdown"
                                     >
-                                        <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add machines
+                                        <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add hosts
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
@@ -185,7 +179,7 @@
     <script>
         {% if machinesWithoutWorker %}
             showNotification(
-                "There are {{machinesWithoutWorker}} machines without a worker!",
+                "There are {{machinesWithoutWorker}} hosts without a worker!",
                 "To see the full list and associate them to a worker click <a class=\"text-white\" href=\"#\">here</a>.",
                 "warning",
                 "ui-2_settings-90"
@@ -194,7 +188,7 @@
         {% if machinesAdded %}
             showNotification(
                 "Changes applied to worker {{machinesAdded.worker}}!",
-                "{{machinesAdded.machines}} machines where associated, {{machinesAdded.new}} new machine was created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
+                "{{machinesAdded.machines}} hosts where associated, {{machinesAdded.new}} new hosts were created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
                 "success",
                 "tech_laptop"
             );
