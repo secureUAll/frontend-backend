@@ -183,7 +183,7 @@ class IPRangeForm(forms.Form):
         label="Base IP"
     )
     range = forms.ChoiceField(
-        choices=[(n, n) for n in range(13, 33)][::-1],
+        choices=[(n, n) for n in range(24, 33)][::-1],
         required=True,
         label="Range",
         widget=forms.Select(attrs={'class': 'form-control'})
