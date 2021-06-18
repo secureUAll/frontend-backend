@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $(document).ready(function () {
         $('#machinesTable').DataTable({
-            "lengthMenu": [ 5, 10, 25 ]
+            "lengthMenu": [ 25, 50, 100 ]
         });
         $('#workersTable').DataTable({
             "lengthMenu": [ 5, 10, 25 ]
@@ -20,6 +20,12 @@ $(document).ready(function () {
         });
         $('#latestChangesTableFixedVulns').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
+            "searching": false,
+            "lengthChange": false,
+            "ordering": false
+        });
+        $('#alertsTable').DataTable({
+            "lengthMenu": [ 10 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false

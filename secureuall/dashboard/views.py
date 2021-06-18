@@ -10,6 +10,7 @@ from workers.models import Worker
 from datetime import datetime, timedelta, date
 from django.utils import timezone
 
+
 # Create your views here.
 @login_required
 @user_passes_test(User.has_access, login_url="/welcome")
@@ -54,16 +55,16 @@ def DashboardView(request, *args, **kwargs):
                 piechart[machine.risk] = value
             else:
                 piechart[machine.risk] = 1
-
-    for key in piechart.keys():
+    
+    for key in sorted(piechart.keys()):
         pielabels.append(key)
-    for value in piechart.values():
+    for value in sorted(piechart.values()):
         percentage = round((value*100)/len(machineset))
         piedata.append(percentage)
 
-
     # Calculates number of weeks without vulnerabilities.
     scanset = Scan.objects.all().order_by('-date')
+    weeks_without_vuln = 0
     for scan in scanset:
         if scan.vulnerabilities:
             delta = (date.today()-scan.date)
@@ -113,8 +114,12 @@ def DashboardView(request, *args, **kwargs):
         elif user.userType=='O':
             machines_updates[machine] = "owner added"
 
-
+    print(request.user)
+    if request.user.is_admin:
+        #machineset = Machine.objects.filter(users__contains=request.user.id)
+        print(machineset)
     return render(request, "dashboard/dashboard.html", {
+        'logged_user': request.user,
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
         'ports': MachinePort.objects.all(),

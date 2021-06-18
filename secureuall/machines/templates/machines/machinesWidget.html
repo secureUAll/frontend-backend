@@ -9,37 +9,70 @@
 
 {% load workers_filters %}
 
-<!-- Machines Table -->
-<div class="card">
-    <div class="card-header">
-        <h4 class="card-title">Machines</h4>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-discreet" id="machinesTable">
-                <thead class=" text-primary">
-                    <th>Machine</th>
-                    <th>Risk level</th>
-                    <th>Owner</th>
-                </thead>
-                <tbody>
-                    {% for m in machines %}
-                        <tr onClick="window.location='/machines/{{m.id}}'">
-                            <td>
-                                {{m}}
-                            </td>
-                            <td>
-                                <span class="badge p-2 bg-{{m.risk}}">{{m.risk}}</span>
-                            </td>
-                            <td>
-                                <span class="text-primary">{{m.owner}}</span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="row">
+    <!-- Machines Table -->
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Hosts</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-discreet" id="machinesTable">
+                        <thead class=" text-primary">
+                            <th data-field="host">Host</th>
+                            <th data-field="risk">Risk level</th>
+                            <th data-field="owner">Owner</th>
+                        </thead>
+                        <tbody>
+                            {% for m in machines %}
+                                <tr onClick="window.location='/machines/{{m.id}}'">
+                                    <td>
+                                        {{m}}
+                                    </td>
+                                    <td>
+                                        <span class="badge p-2 bg-{{m.risk}}">{{m.risk}}</span>
+                                    </td>
+                                    <td>
+                                    {% for u in m.users.all %}
+                                        {% if u.userType == 'O' %}
+                                        <p class="text-primary">{{u.email}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>       
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="stats d-flex justify-content-center">
+                    <button type="button" class="btn btn-outline-primary btn-lg" id="clearFilterMachines">Clear Filters</button>
+                </div>
+            </div>
         </div>
     </div>
-<!-- End Right Side Tables Row -->
+    <!-- End Mahcines Table -->
+
+    <!-- Pie chart - Machines in a risk Level -->
+    <div class="col-4">
+        <div class="card card-chart">
+            <div class="card-header">
+                <h5 class="card-category"></h5>
+                <h4 class="card-title">% of Host per Risk Level</h4>
+                <p class="card-text">Filter hosts by risk level.</p>
+            </div>
+            <div class="card-body my-auto">
+                <div class="chart-area my-auto">
+                    <canvas id="machinesRiskLevelChart"></canvas>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Pie chart - Machines in a risk Level -->
 </div>
-<!-- End Workers Table -->

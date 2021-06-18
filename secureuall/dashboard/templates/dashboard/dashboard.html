@@ -12,122 +12,113 @@
 {% endblock header %}
 
 {% block styles %}
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
     <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
 {% endblock styles %}
 
 {% block content %}
-    <!-- Row of Graphs -->
+    {% if logged_user.is_admin %}
+    <!-- Row of General info -->
     <div class="row">
-        <!-- Card 1 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart">
-                <div class="card-header">
-                    <h5 class="card-category"></h5>
-                    <h4 class="card-title">% of Machines per Risk Level</h4>
-                </div>
-                <div class="card-body my-auto d-flex">
-                    <div class="chart-area my-auto">
-                        <canvas id="machinesRiskLevelChart"></canvas>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Card 1 -->
-        <!-- Card 2 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart d-flex">
-                <div class="card-header mb-auto">
-                    <h5 class="card-category"></h5>
-                    <h4 class="card-title">Vulnerabilities by Group</h4>
-                </div>
-                <div class="card-body my-auto d-flex">
-                    <div class="chart-area my-auto">
-                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
-                    </div>
-                </div>
-                <div class="card-footer mt-auto">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Card 2 -->
-        <!-- Card 3 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart d-flex">
-                <div class="card-header mb-auto">
-                    <h5 class="card-category"></h5>
-                    <h4 class="card-title">secure(UA)ll in Numbers</h4>
-                </div>
-                <div class="card-body my-auto d-flex">
-                    <table class="text-center text-secondary col-12 my-auto">
-                        <tr>
-                            <td>
-                                <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
-                                <p class="mt-0">registered assets</p>
-                            </td>
-                            <td>
-                                {% if ports %}
-                                <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
-                                {% else %}
-                                <h3 class="fw-bold mb-0">0</h3>
-                                {% endif %}
-                                <p class="mt-0">exposed ports</p>
-                            </td>
-                            <td>
-                                <h3 class="fw-bold mb-0">{{ active_vulnerabilities }}</h3>
-                                <p class="mt-0">active vulnerabilities</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
-                                <p class="mt-0">scans performed</p>
-                            </td>
-                            <td>
-                                {% if vulnerabilities %}
-                                <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
-                                {% else %}
-                                <h3 class="fw-bold mb-0">0</h3>
-                                {% endif %}
-                                <p class="mt-0">total vulnerabilities</p>
-                            </td>
-                            <td>
-                                <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
-                                <p class="mt-0">weeks without vulnerabilities</p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="card-footer mt-auto">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Card 3 -->
-    </div>
-    <!-- End Row of Graphs -->
+        <div class="col-lg-8 col-md-8">
+            <!-- Table Alerts -->
+            
+            {% include "workers/workersWidget.html" %}
 
-    <!-- Tables -->
-    <div class="row">
-        <!-- Latest Changes Table -->
-        <div class="col-lg-4 d-flex">
-            <div class="card d-flex">
-                <div class="card-header">
-                    <h4 class="card-title">Latest Changes</h4>
+            <!-- End Table Alerts -->
+        </div>
+        
+        <div class="col-lg-4 col-md-4">
+            <!-- Numbers Card -->
+            <div class="row">
+                <div class="card card-chart">
+                    <div class="card-header mb-auto">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">secure(UA)ll in Numbers</h4>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <table class="text-center text-secondary col-12 my-auto">
+                            <tr>
+                                <td>
+                                    <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
+                                    <p class="mt-0">registered hosts</p>
+                                </td>
+                                <td>
+                                    {% if ports %}
+                                    <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
+                                    {% else %}
+                                    <h3 class="fw-bold mb-0">0</h3>
+                                    {% endif %}
+                                    <p class="mt-0">exposed ports</p>
+                                </td>
+                                <td>
+                                    <h3 class="fw-bold mb-0">{{ active_vulnerabilities }}</h3>
+                                    <p class="mt-0">active vulnerabilities</p>`
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
+                                    <p class="mt-0">performed scans</p>
+                                </td>
+                                <td>
+                                    {% if vulnerabilities %}
+                                    <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
+                                    {% else %}
+                                    <h3 class="fw-bold mb-0">0</h3>
+                                    {% endif %}
+                                    <p class="mt-0">total vulnerabilities</p>
+                                </td>
+                                <td>
+                                    <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
+                                    <p class="mt-0">weeks without vulnerabilities</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card-footer mt-auto">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body d-flex flex-column">
-                    <!-- Machines Added/Removed -->
+            </div>
+            <!-- End Numbers Card -->
+
+            <!-- Bar Graph 
+            <div class="row">
+                <div class="card card-chart d-flex">
+                    <div class="card-header mb-auto">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">Vulnerabilities by Group</h4>
+                    </div>
+                    <div class="card-body my-auto d-flex">
+                        <div class="chart-area my-auto">
+                            <canvas id="vulnerabilitiesByGroupChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card-footer mt-auto">
+                        <div class="stats">
+                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                        </div>
+                    </div>
+                </div>
+            </div>
+             End Bar Graph -->
+        </div>
+    </div>
+    <!-- End Row of General info -->
+
+    
+    <!-- Row Latest updates -->
+    <div class="row mb-auto pb-4">
+        <div class="card-group mb-auto">
+            
+            <!-- Machines Added/Removed -->
+            <div class="card">
+                <div class="card-body">
                     <div class="my-auto">
-                        <h6 class="mb-0">Machines Added/Removed</h6>
+                        <h6 class="mt-3">Host Added/Removed</h6>
                         <div class="table-responsive">
                             <table class="table table-discreet" id="latestChangesTableAddRemoved">
                                 <thead class=" text-primary">
@@ -153,11 +144,15 @@
                             </table>
                         </div>
                     </div>
-                    <!-- End Machines Added/Removed -->
+                </div>
+            </div>
+            <!-- End Machines Added/Removed -->
 
-                    <!-- Machines Updates -->
+            <!-- Machines Updates -->
+            <div class="card">
+                <div class="card-body">
                     <div class="my-auto">
-                        <h6 class="mt-3">Machines Updates</h6>
+                        <h6 class="mt-3">Host Updates</h6>
                         <div class="table-responsive">
                             <table class="table table-discreet" id="latestChangesTableUpdates">
                                 <thead class=" text-primary">
@@ -178,9 +173,13 @@
                             </table>
                         </div>
                     </div>
-                    <!-- End Machines Updates -->
+                </div>
+            </div>
+            <!-- End Machines Updates -->
 
-                    <!-- Machines Fixed Vulnerabilities -->
+            <!-- Machines Fixed Vulnerabilities -->
+            <div class="card">
+                <div class="card-body">
                     <div class="my-auto">
                         <h6 class="mt-3">Fixed Vulnerabilities</h6>
                         <div class="table-responsive">
@@ -200,28 +199,22 @@
                             </table>
                         </div>
                     </div>
-                    <!-- End Fixed Vulnerabilities -->
-                </div>
-                <!-- End Tables -->
-                <div class="card-footer mt-auto">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                    </div>
                 </div>
             </div>
+            <!-- End Fixed Vulnerabilities -->
         </div>
-        <!-- End Latest Changes Table -->
+    </div>
+    <!-- End Row Latest updates -->
+    {% endif %}
 
-        <!-- Right Side Tables Row -->
-        <div class="col-lg-8">
+    <!-- Tables -->
+    <div class="row">
+        <!-- Machines ListRow -->
 
             {% include "machines/machinesWidget.html" %}
 
-            {% include "workers/workersWidget.html" %}
-
-        </div>
-
-
+        <!-- End Machines List Row -->
+    </div>
 
 {% endblock content %}
 
@@ -236,6 +229,8 @@
     <!-- Custom JS -->
     <script src="{% static 'dashboard/charts.js' %}"></script>
     <script src="{% static 'dashboard/tables.js' %}"></script>
+    <!-- Bootstrap Table JS -->
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
     <!-- Activate charts -->
     <script>
         // Define charts values
@@ -246,6 +241,14 @@
         const machinesRiskLevelChartLabels = {{ pielabels|safe }};
         const machinesRiskLevelChartValues = {{ piedata|safe }};
         
+        // on click event, clear filter
+        $(document).on('click', '#clearFilterMachines', function(event){
+            alert("Isadora vai dormir por favor!");
+            var table = $('#machinesTable').DataTable();
+        });
+
+        
+
         // Start charts
         $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
