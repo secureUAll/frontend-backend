@@ -344,6 +344,73 @@ fieldset[disabled] .btn-danger.active {
     box-shadow: none;
 }
 
+.btn-outline-primary {
+    color: #92d400;
+    border-color: #92d400;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn-outline-primary:not(:disabled):not(.disabled):active:focus,
+.btn-outline-primary:not(:disabled):not(.disabled).active:focus,
+.btn-outline-primary:active:hover,
+.btn-outline-primary.active:hover,
+.show>.btn-outline-primary.dropdown-toggle,
+.show>.btn-outline-primary.dropdown-toggle:focus,
+.show>.btn-outline-primary.dropdown-toggle:hover {
+    background-color: #92d400;
+    color: #ffffff;
+    border-color: #92d400;
+    box-shadow: none;
+}
+
+.btn-outline-danger {
+    color: #f0592a;
+    border-color: #f0592a;
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:not(:disabled):not(.disabled):active,
+.btn-outline-danger:not(:disabled):not(.disabled).active,
+.btn-outline-danger:not(:disabled):not(.disabled):active:focus,
+.btn-outline-danger:not(:disabled):not(.disabled).active:focus,
+.btn-outline-danger:active:hover,
+.btn-outline-danger.active:hover,
+.show>.btn-outline-danger.dropdown-toggle,
+.show>.btn-outline-danger.dropdown-toggle:focus,
+.show>.btn-outline-danger.dropdown-toggle:hover {
+    background-color: #f0592a;
+    color: #ffffff;
+    border-color: #f0592a;
+    box-shadow: none;
+}
+
+.btn-outline-danger {
+    color: #f0592a;
+    border-color: #f0592a;
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus,
+.btn-outline-danger:not(:disabled):not(.disabled):active,
+.btn-outline-danger:not(:disabled):not(.disabled).active,
+.btn-outline-danger:not(:disabled):not(.disabled):active:focus,
+.btn-outline-danger:not(:disabled):not(.disabled).active:focus,
+.btn-outline-danger:active:hover,
+.btn-outline-danger.active:hover,
+.show>.btn-outline-danger.dropdown-toggle,
+.show>.btn-outline-danger.dropdown-toggle:focus,
+.show>.btn-outline-danger.dropdown-toggle:hover {
+    background-color: #f0592a;
+    color: #ffffff;
+    border-color: #f0592a;
+    box-shadow: none;
+}
+
+
 /* Bachgrounds */
 
 .bg-primary { 
@@ -550,11 +617,11 @@ table.table-discreet tbody tr:hover {
     color: #000!important;
 }
 
-table.table-discreet tbody tr .bg-1 { background-color: rgba(146, 212, 0, .6)!important;}
-table.table-discreet tbody tr .bg-2 { background-color: rgba(122, 179, 0, .6)!important;}
-table.table-discreet tbody tr .bg-3 { background-color: rgba(87, 128, 0, .6)!important;}
-table.table-discreet tbody tr .bg-4 { background-color: rgba(52, 77, 0, .6)!important;}
-table.table-discreet tbody tr .bg-5 { background-color: rgba(17, 26, 0, .6)!important;}
+table.table-discreet tbody tr .bg-1 { background-color: rgba(146, 212, 0, .6)!important; color: #FFFFFF; }
+table.table-discreet tbody tr .bg-2 { background-color: rgba(75, 181, 255, .6)!important; color: #FFFFFF; }
+table.table-discreet tbody tr .bg-3 { background-color: rgba(232, 215, 26, .6)!important; color: #FFFFFF; }
+table.table-discreet tbody tr .bg-4 { background-color: rgba(218, 156, 11, .6)!important; color: #FFFFFF; }
+table.table-discreet tbody tr .bg-5 { background-color: rgba(240, 89, 42, .6)!important; color: #FFFFFF; }
 table.table-discreet tbody tr .bg-primary { 
     background-color: rgba(146, 212, 0, .6)!important;
     color: #FFFFFF;
@@ -578,11 +645,11 @@ table.table-discreet tbody tr .bg-danger {
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, .6)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, .6)!important;}
 
-table.table-discreet tbody tr:hover .bg-1 { background-color: rgba(146, 212, 0, 1)!important;}
-table.table-discreet tbody tr:hover .bg-2 { background-color: rgba(122, 179, 0, 1)!important;}
-table.table-discreet tbody tr:hover .bg-3 { background-color: rgba(87, 128, 0, 1)!important;}
-table.table-discreet tbody tr:hover .bg-4 { background-color: rgba(52, 77, 0, 1)!important;}
-table.table-discreet tbody tr:hover .bg-5 { background-color: rgba(17, 26, 0, 1)!important;}
+table.table-discreet tbody tr:hover .bg-1 { background-color: rgba(146, 212, 0, 1)!important; color: #FFFFFF; }
+table.table-discreet tbody tr:hover .bg-2 { background-color: rgba(75, 181, 255, 1)!important; color: #FFFFFF; }
+table.table-discreet tbody tr:hover .bg-3 { background-color: rgba(232, 215, 26, 1)!important; color: #FFFFFF; }
+table.table-discreet tbody tr:hover .bg-4 { background-color: rgba(218, 156, 11, 1)!important; color: #FFFFFF; }
+table.table-discreet tbody tr:hover .bg-5 { background-color: rgba(240, 89, 42, 1)!important; color: #FFFFFF; }
 table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
@@ -619,6 +686,9 @@ dl.dl-line dd {width: 100%}
 }
 
 /* Progress */
+.progress {
+    line-height: inherit!important;
+}
 @-webkit-keyframes .progress {
    0% { width: 0; }
 }
@@ -633,6 +703,7 @@ keyframes .progress {
   -webkit-animation: progress-bar 2s;
   -moz-animation: progress-bar 2s;
   animation: progress-bar 2s;
+  margin-right: .5rem;
 }
 
 @keyframes progress-bar {
@@ -648,3 +719,53 @@ keyframes .progress {
 
 /* Pophover */
 .popover, .popover-header {font-size: inherit!important; font-weight:inherit!important;}
+
+/* Dropdown */
+.dropdown.dropdown-free {
+    position: relative!important;
+    top: inherit!important;
+    right: inherit!important;
+    left: inherit!important;
+}
+.dropdown-menu.dropdown-menu-left.dropdown-reverse::before {
+    left: 90%!important;
+}
+.dropdown-menu.dropdown-menu-right.dropdown-reverse::before {
+    right: 90%!important;
+}
+
+/* Bootstrap fixes */
+.col-1 { flex-basis: auto!important; }
+.col-2 { flex-basis: auto!important; }
+.col-3 { flex-basis: auto!important; }
+.col-4 { flex-basis: auto!important; }
+.col-5 { flex-basis: auto!important; }
+.col-6 { flex-basis: auto!important; }
+.col-7 { flex-basis: auto!important; }
+.col-8 { flex-basis: auto!important; }
+.col-9 { flex-basis: auto!important; }
+.col-10 { flex-basis: auto!important; }
+.col-11 { flex-basis: auto!important; }
+.col-12 { flex-basis: auto!important; }
+
+/* template.css fixes */
+.content { padding:0!important; }
+.btn { margin: 0!important; }
+
+/* Extra Bootstrap */
+.op-0 { opacity: 0; }
+.transition { transition: all .3s ease; }
+
+/* Editable container */
+.editable-submit {
+    margin-right: .5rem!important;
+}
+.glyphicon-ok::before {
+    content: "\ea22";
+    font-family: 'Nucleo Outline';
+}
+
+.glyphicon-remove::before {
+    content: "\ea53";
+    font-family: 'Nucleo Outline';
+}

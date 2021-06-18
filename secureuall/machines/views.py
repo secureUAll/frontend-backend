@@ -18,7 +18,7 @@ from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.notifyfactory import NotifyFactory
 from .forms import MachineNameForm
 
-from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment, Log
 from login.models import UserAccessRequest
 
 from datetime import datetime, timedelta, date
@@ -230,6 +230,21 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
         self.context['requestSuccess'] = self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
         if 'requestSuccess' in self.request.session:
             self.request.session['requestSuccess']=None
+
+
+class LogView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+
+    def get(self, request, id=None, *args, **kwargs):
+        if Log.objects.filter(cod=id).exists():
+            return HttpResponse(
+                serializers.serialize('json', [Log.objects.get(cod=id)]),
+                content_type='application/json'
+            )
+        return HttpResponse(
+            json.dumps({'error': 'Log with given id does not exist!'}),
+            content_type='application/json',
+            status=400
+        )
 
 
 @login_required

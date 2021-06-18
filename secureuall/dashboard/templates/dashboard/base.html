@@ -58,7 +58,7 @@
         {% endblock header %}
         {# Don't show this btns on homepage #}
         {% if request.get_full_path != "/" %}
-            <div class="col-10 mx-auto d-flex flex-row align-items-center">
+            <div class="col-10 p-0 mx-auto d-flex flex-row align-items-center">
                 <button class="btn btn-outline-primary mr-auto mb-auto" onclick="window.history.back()">< Go back</button>
                 <button class="btn btn-outline-primary d-none ml-auto mb-auto" id="help"><i class="now-ui-icons travel_info"></i> Help</button>
             </div>

@@ -1,12 +1,16 @@
+import json
+
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from login.models import User
 from .models import Worker
-from machines.models import Machine, MachineWorker
+from machines.models import Machine, MachineWorker, Log
 
-from machines.forms import MachineWorkerBatchInputForm, MachineForm
+from machines.forms import MachineWorkerBatchInputForm, MachineForm, IPRangeForm
 from django.forms import formset_factory
 
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
@@ -30,10 +34,43 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         return render(request, "workers/workers.html", context)
 
 
+class WorkerOperationsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+
+    def post(self, request, id=None, *args, **kwargs):
+        # Validate that worker with id exists
+        if not Worker.objects.filter(id=id).exists():
+            return HttpResponse(
+                json.dumps({'error': 'Invalid worker!'}),
+                content_type='application/json',
+                status=400
+            )
+        # Make operations on worker
+        w = Worker.objects.get(id=id)
+        success = False
+        if 'name' in request.POST and request.POST['name']:
+            # Edit name
+            if 'editName' in request.POST['name'] and 'value' in request.POST and request.POST['value']:
+                w.name = request.POST['value']
+                w.save()
+                success = True
+        # Return worker manipulated if success, else error
+        if success:
+            return HttpResponse(
+                serializers.serialize('json', [Worker.objects.get(id=id)]),
+                content_type='application/json'
+            )
+        return HttpResponse(
+            json.dumps({'error': 'Invalid request!'}),
+            content_type='application/json',
+            status=400
+        )
+
+
 class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
+    mode = "batch"
     MachineFormSet = formset_factory(MachineForm, extra=0, can_delete=True)
 
     def get(self, request, id=None, *args, **kwargs):
@@ -43,11 +80,18 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def post(self, request, id=None, *args, **kwargs):
         self.getContext(id)
         # 1. Receive user input and create machines for validation (without saving to database)
-        if 'batch' in request.POST:
-            # Build form, validate it and update context
-            self.context['form'] = MachineWorkerBatchInputForm(request.POST)
-            valid = self.context['form'].validate_custom(self.context['worker'])
-            self.context.update(self.context['form'].cleaned_data)
+        if 'mode' in request.POST and request.POST['mode']:
+            valid = False
+            if request.POST['mode'] == 'batch':
+                # Build form, validate it and update context
+                self.context['form'] = MachineWorkerBatchInputForm(request.POST)
+                valid = self.context['form'].validate_custom(self.context['worker'])
+                self.context.update(self.context['form'].cleaned_data)
+            elif request.POST['mode'] == 'range':
+                # Build form, validate it and update context
+                self.context['form'] = IPRangeForm(request.POST)
+                valid = self.context['form'].validate_custom(self.context['worker'])
+                self.context.update(self.context['form'].cleaned_data)
             # If valid, proceed to step 2
             if valid:
                 self.template_name = "workers/editMachines.html"
@@ -98,7 +142,8 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def getContext(self, id):
         w = get_object_or_404(Worker, id=id)
         self.context = {
-            'form': MachineWorkerBatchInputForm(),
+            'mode': self.mode,
+            'form': MachineWorkerBatchInputForm() if self.mode=='batch' else IPRangeForm(),
             'title': 'Add machines',
             'worker': w,
             'add': not self.edit,
@@ -112,3 +157,27 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 
     def test_func(self):
         return User.has_access(self.request.user)
+
+
+class WorkerLogsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+    context = {}
+    template_name = "workers/logs.html"
+    machine = False
+
+    def get(self, request, id=None, *args, **kwargs):
+        self.getContext(id)
+        return render(request, self.template_name, self.context)
+
+    def getContext(self, id):
+        m = None
+        w = None
+        if self.machine:
+            m = get_object_or_404(Machine, id=id)
+        else:
+            w = get_object_or_404(Worker, id=id)
+        self.context = {
+            'title': 'Worker | Logs' if w else 'Machine | Logs',
+            'worker': w,
+            'machine': m,
+            'logs': Log.objects.filter(worker=w).order_by('-date') if w else Log.objects.filter(machine=m).order_by('-date')
+        }
