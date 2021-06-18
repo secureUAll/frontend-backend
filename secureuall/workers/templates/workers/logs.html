@@ -17,7 +17,11 @@
 
 {% block header %}
     <div class="header text-center my-auto">
-        <h2 class="title mb-0">Worker {{worker.name}} | Logs</h2>
+        {% if worker %}
+            <h2 class="title mb-0">Worker {{worker.name}} | Logs</h2>
+        {% elif machine %}
+            <h2 class="title mb-0">{{machine}} | Logs</h2>
+        {% endif %}
     </div>
 {% endblock header %}
 
@@ -41,7 +45,11 @@
                             <table class="table table-discreet" id="scansTable">
                                 <thead class="text-primary">
                                     <th>Date</th>
-                                    <th>Machine</th>
+                                    {% if worker %}
+                                        <th>Machine</th>
+                                    {% elif machine %}
+                                        <th>Worker</th>
+                                    {% endif %}
                                 </thead>
                                 <tbody>
                                     {% for log in logs %}
@@ -50,7 +58,11 @@
                                             {{ log.date|date:"Y/m/d G:i" }}<span class="d-none">{{ log.cod }}</span>
                                         </td>
                                         <td>
-                                            {{ log.machine }}
+                                            {% if worker %}
+                                                {{ log.machine }}
+                                            {% elif machine %}
+                                                {{ log.worker }}
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}

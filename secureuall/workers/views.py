@@ -126,15 +126,22 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
 class WorkerLogsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/logs.html"
+    machine = False
 
     def get(self, request, id=None, *args, **kwargs):
         self.getContext(id)
         return render(request, self.template_name, self.context)
 
     def getContext(self, id):
-        w = get_object_or_404(Worker, id=id)
+        m = None
+        w = None
+        if self.machine:
+            m = get_object_or_404(Machine, id=id)
+        else:
+            w = get_object_or_404(Worker, id=id)
         self.context = {
-            'title': 'Worker | Logs',
+            'title': 'Worker | Logs' if w else 'Machine | Logs',
             'worker': w,
-            'logs': Log.objects.filter(worker=w).order_by('-date')
+            'machine': m,
+            'logs': Log.objects.filter(worker=w).order_by('-date') if w else Log.objects.filter(machine=m).order_by('-date')
         }
