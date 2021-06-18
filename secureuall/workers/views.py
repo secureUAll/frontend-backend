@@ -6,7 +6,7 @@ from login.models import User
 from .models import Worker
 from machines.models import Machine, MachineWorker
 
-from machines.forms import MachineWorkerBatchInputForm, MachineForm
+from machines.forms import MachineWorkerBatchInputForm, MachineForm, IPRangeForm
 from django.forms import formset_factory
 
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
@@ -34,6 +34,7 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/addMachines.html"
     edit = False
+    mode = "batch"
     MachineFormSet = formset_factory(MachineForm, extra=0, can_delete=True)
 
     def get(self, request, id=None, *args, **kwargs):
@@ -43,11 +44,18 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def post(self, request, id=None, *args, **kwargs):
         self.getContext(id)
         # 1. Receive user input and create machines for validation (without saving to database)
-        if 'batch' in request.POST:
-            # Build form, validate it and update context
-            self.context['form'] = MachineWorkerBatchInputForm(request.POST)
-            valid = self.context['form'].validate_custom(self.context['worker'])
-            self.context.update(self.context['form'].cleaned_data)
+        if 'mode' in request.POST and request.POST['mode']:
+            valid = False
+            if request.POST['mode'] == 'batch':
+                # Build form, validate it and update context
+                self.context['form'] = MachineWorkerBatchInputForm(request.POST)
+                valid = self.context['form'].validate_custom(self.context['worker'])
+                self.context.update(self.context['form'].cleaned_data)
+            elif request.POST['mode'] == 'range':
+                # Build form, validate it and update context
+                self.context['form'] = IPRangeForm(request.POST)
+                valid = self.context['form'].validate_custom(self.context['worker'])
+                self.context.update(self.context['form'].cleaned_data)
             # If valid, proceed to step 2
             if valid:
                 self.template_name = "workers/editMachines.html"
@@ -98,7 +106,8 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     def getContext(self, id):
         w = get_object_or_404(Worker, id=id)
         self.context = {
-            'form': MachineWorkerBatchInputForm(),
+            'mode': self.mode,
+            'form': MachineWorkerBatchInputForm() if self.mode=='batch' else IPRangeForm(),
             'title': 'Add machines',
             'worker': w,
             'add': not self.edit,

@@ -39,9 +39,15 @@
                     <div class="card-header d-flex">
                         <h4 class="card-title">Worker {{worker.name}}</h4>
                         {% if worker.machines.all %}
-                        <div class="ml-auto">
-                            <a href="/workers/{{worker.id}}/machines/add"><button class="btn btn-sm btn-outline-primary" title="Add machines"><i class="now-ui-icons ui-1_simple-add"></i></button></a>
-                            <a href="/workers/{{worker.id}}/machines/edit"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
+                        <div class="ml-auto d-flex flex-row">
+                            <div class="dropdown mx-auto dropdown-free my-auto">
+                                <button class="btn btn-sm btn-outline-primary" title="Add machines" data-toggle="dropdown"><i class="now-ui-icons ui-1_simple-add"></i></button>
+                                <div class="dropdown-menu dropdown-menu-left">
+                                    <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
+                                    <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/range">IP Range</a>
+                                </div>
+                            </div>
+                            <a href="/workers/{{worker.id}}/machines/edit" class="ml-2"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
                         </div>
                         {% endif %}
                     </div>
@@ -105,11 +111,18 @@
                         {% else %}
                         <div class="my-auto p-5 text-center">
                             <h5 class="">No machines associated.</h5>
-                            <a href="/workers/{{worker.id}}/machines/add">
-                                <button class="btn btn-outline-primary">
+                            <div class="dropdown mx-auto dropdown-free">
+                                <button
+                                    class="btn btn-outline-primary"
+                                    data-toggle="dropdown"
+                                >
                                     <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add machines
                                 </button>
-                            </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-reverse">
+                                    <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
+                                    <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/range">IP Range</a>
+                                </div>
+                            </div>
                         </div>
                         {% endif %}
                     </div>

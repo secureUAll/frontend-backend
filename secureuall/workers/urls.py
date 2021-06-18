@@ -6,7 +6,8 @@ app_name = 'workers'
 
 urlpatterns = [
     path('', WorkersView.as_view(), name='workers'),
-    path('<int:id>/machines/add', AddMachinesView.as_view(), name='addMachines'),
+    path('<int:id>/machines/add/batch', AddMachinesView.as_view(mode="batch"), name='addMachines'),
+    path('<int:id>/machines/add/range', AddMachinesView.as_view(mode="range"), name='addMachinesRange'),
     path('<int:id>/machines/edit', AddMachinesView.as_view(edit=True), name='addMachines'),
 
 ]
