@@ -17,7 +17,7 @@ from django.utils import timezone
 def DashboardView(request, *args, **kwargs):
     pielabels = []
     piedata = []
-    piechart = {}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
     vulnsdata = []
     vulnslabels = []
     active_vuln = 0
@@ -30,19 +30,15 @@ def DashboardView(request, *args, **kwargs):
     # Define piechart (% of Machines in a Risk Level) x and y axes values.
     machineset = Machine.objects.filter(active__exact=True).order_by('-created')
     for machine in machineset:
-        if machine.risk in piechart:
-            value = piechart.get(machine.risk)+1
-            piechart[machine.risk] = value
+        if str(machine.risk) in piechart:
+            print(machine)
+            piechart[machine.risk].append(machine)
         else:
-            piechart[machine.risk] = 1
-
-
+            print(machine)
+            piechart[machine.risk].append(machine)
     
-    for key in sorted(piechart.keys()):
-        pielabels.append(key)
-    for value in sorted(piechart.values()):
-        percentage = round((value*100)/len(machineset))
-        piedata.append(percentage)
+    pielabels = [x for x in piechart.keys()]
+    piedata = [len(v) for v in piechart.values()]
 
     # Calculates number of weeks without vulnerabilities.
     scanset = Scan.objects.all().order_by('-date')
