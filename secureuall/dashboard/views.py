@@ -83,8 +83,15 @@ def DashboardView(request, *args, **kwargs):
     machineset_updates = Machine.objects.filter(updated__gte=timezone.now()-timedelta(days=7))
     for machine in machineset_updates:
         changes = machine.tracker.changed()
+        # Para isto criei o modelo machine.models.MachineChanges
+        # Tens de criar um quando o user atualiza o scan level
+        # A Margarida no coletor vai integrar para criar quando o SO muda, mas podes já considerar os dois no frontend
+        # Tens a flag criada para os dois
         if "os" in changes.keys(): machines_updates[machine] = "OS update"
         if "scanLevel" in changes.keys(): machines_updates[machine] = "scan level update"
+        # O active só muda para False. Portanto basta filtrares pelos que estão a False e que foram atualizados nos últimos 7 dias.
+        # Tens é de bloquear outras atualizações (que estão no modelo Machine) nas máquinas a active=False, caso contrário
+        # se o user fizer outra alteração vai aparecer...
         if "active" in changes.keys(): machines_addrem[machine] = machine.active
     machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
     for machineuser in machinuserset:

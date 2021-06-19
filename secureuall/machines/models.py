@@ -172,3 +172,12 @@ class Log(models.Model):
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='logs')
     log = models.TextField()
 
+
+class MachineChanges(models.Model):
+    types = (
+        ("O", "Operative Sistem"),
+        ("S", "Scan level")
+    )
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="changes")
+    type = models.CharField(max_length=1, choices=types, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
