@@ -19,7 +19,7 @@
 {% block content %}
 {% if user.is_admin %}
     <!-- Row of General info -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-8 d-flex">
             <div class="card card-chart d-flex flex-column">
                 <div class="card-header">
@@ -88,56 +88,54 @@
 
         <div class="col-lg-4 col-md-4">
             <!-- Numbers Card -->
-            <div class="row">
-                <div class="card card-chart">
-                    <div class="card-header mb-auto">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">secure(UA)ll in Numbers</h4>
-                    </div>
-                    <div class="card-body my-auto d-flex">
-                        <table class="text-center text-secondary col-12 my-auto">
-                            <tr>
-                                <td>
-                                    <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
-                                    <p class="mt-0">registered hosts</p>
-                                </td>
-                                <td>
-                                    {% if ports %}
-                                    <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
-                                    {% else %}
-                                    <h3 class="fw-bold mb-0">0</h3>
-                                    {% endif %}
-                                    <p class="mt-0">exposed ports</p>
-                                </td>
-                                <td>
-                                    <h3 class="fw-bold mb-0">{{ active_vulnerabilities }}</h3>
-                                    <p class="mt-0">active vulnerabilities</p>`
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
-                                    <p class="mt-0">performed scans</p>
-                                </td>
-                                <td>
-                                    {% if vulnerabilities %}
-                                    <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
-                                    {% else %}
-                                    <h3 class="fw-bold mb-0">0</h3>
-                                    {% endif %}
-                                    <p class="mt-0">total vulnerabilities</p>
-                                </td>
-                                <td>
-                                    <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
-                                    <p class="mt-0">weeks without vulnerabilities</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="card-footer mt-auto">
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
+            <div class="card card-chart">
+                <div class="card-header mb-auto">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title">secure(UA)ll in Numbers</h4>
+                </div>
+                <div class="card-body my-auto d-flex">
+                    <table class="text-center text-secondary col-12 my-auto">
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
+                                <p class="mt-0">registered hosts</p>
+                            </td>
+                            <td>
+                                {% if ports %}
+                                <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
+                                {% else %}
+                                <h3 class="fw-bold mb-0">0</h3>
+                                {% endif %}
+                                <p class="mt-0">exposed ports</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">{{ active_vulnerabilities }}</h3>
+                                <p class="mt-0">active vulnerabilities</p>`
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
+                                <p class="mt-0">performed scans</p>
+                            </td>
+                            <td>
+                                {% if vulnerabilities %}
+                                <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
+                                {% else %}
+                                <h3 class="fw-bold mb-0">0</h3>
+                                {% endif %}
+                                <p class="mt-0">total vulnerabilities</p>
+                            </td>
+                            <td>
+                                <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
+                                <p class="mt-0">weeks without vulnerabilities</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer mt-auto">
+                    <div class="stats">
+                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
                     </div>
                 </div>
             </div>
@@ -148,37 +146,39 @@
 
     
     <!-- Row Latest updates -->
-    <div class="row mb-auto pb-4">
-        <div class="card-group mb-auto">
+    <div class="row mb-4">
+        <div class="d-flex flex-row mb-auto w-100">
             
             <!-- Machines Added/Removed -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="my-auto">
-                        <h6 class="mt-3">Host Added/Removed</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableAddRemoved">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for key, value in machines_addrem.items %}
-                                    <tr>
-                                        <td>
-                                            {{ key }}
-                                        </td>
-                                        <td>
-                                        {% if value %}
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        {% else %}
-                                            <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
-                                        {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6 class="mt-3">Host Added/Removed</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableAddRemoved">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, value in machines_addrem.items %}
+                                        <tr>
+                                            <td>
+                                                {{ key }}
+                                            </td>
+                                            <td>
+                                            {% if value %}
+                                                <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                            {% else %}
+                                                <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
+                                            {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -186,28 +186,30 @@
             <!-- End Machines Added/Removed -->
 
             <!-- Machines Updates -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="my-auto">
-                        <h6 class="mt-3">Host Updates</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableUpdates">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for key, value in machines_updates.items %}
-                                    <tr>
-                                        <td>
-                                            {{ key }}
-                                        </td>
-                                        <td>
-                                            {{ value }}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6 class="mt-3">Host Updates</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableUpdates">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, value in machines_updates.items %}
+                                        <tr>
+                                            <td>
+                                                {{ key }}
+                                            </td>
+                                            <td>
+                                                {{ value }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -215,25 +217,27 @@
             <!-- End Machines Updates -->
 
             <!-- Machines Fixed Vulnerabilities -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="my-auto">
-                        <h6 class="mt-3">Fixed Vulnerabilities</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableFixedVulns">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for machine in fixed_vulns %}
-                                    <tr>
-                                        <td>
-                                            {{ machine }}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6 class="mt-3">Fixed Vulnerabilities</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableFixedVulns">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for machine in fixed_vulns %}
+                                        <tr>
+                                            <td>
+                                                {{ machine }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
