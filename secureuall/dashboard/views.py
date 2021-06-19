@@ -91,16 +91,12 @@ def DashboardView(request, *args, **kwargs):
     machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
     for machineuser in machinuserset:
         if machineuser.userType=='S':
-            machines_updates[machineuser.machine] = "subscriber added"
+            machines_updates[machineuser.machine] = "Subscriber added"
         elif machineuser.userType=='O':
-            machines_updates[machineuser.machine] = "owner added"
-
-
+            machines_updates[machineuser.machine] = "Owner added"
 
     if not request.user.is_superuser:
-        machineset = machineset.filter(users__in=[request.user.id])
-    else:
-        print("ISADORA F LOREDO")
+        machineset = machineset.filter(users__user__in=[request.user.id])
         
     return render(request, "dashboard/dashboard.html", {
         'workers': Worker.objects.all().order_by('-created'),
