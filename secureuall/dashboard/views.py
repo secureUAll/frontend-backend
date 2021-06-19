@@ -89,12 +89,11 @@ def DashboardView(request, *args, **kwargs):
         if "scanLevel" in changes.keys(): machines_updates[machine] = "scan level update"
         if "active" in changes.keys(): machines_addrem[machine] = machine.active
     machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
-    for user in machinuserset:
-        machine = Machine.objects.filter(id=user.machine)
-        if user.userType=='S':
-            machines_updates[machine] = "subscriber added"
-        elif user.userType=='O':
-            machines_updates[machine] = "owner added"
+    for machineuser in machinuserset:
+        if machineuser.userType=='S':
+            machines_updates[machineuser.machine] = "subscriber added"
+        elif machineuser.userType=='O':
+            machines_updates[machineuser.machine] = "owner added"
 
 
 
@@ -104,7 +103,6 @@ def DashboardView(request, *args, **kwargs):
         print("ISADORA F LOREDO")
         
     return render(request, "dashboard/dashboard.html", {
-        'logged_user': User.objects.get(id=request.user.id),
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
         'ports': MachinePort.objects.all(),
