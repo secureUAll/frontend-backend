@@ -157,13 +157,15 @@ def MachinesView(request, id):
                 if v.risk == 0: piechart['unclassified'].append(v)
                 else: piechart[str(v.risk)].append(v)
 
+        # Line chart set up
+        lastScans = Scan.objects.filter(machine=machine).order_by('-date')[:7]
+        linelabels = [str(s.date) for s in lastScans][::-1]
+        linedata = [s.vulnerabilities.all().count() for s in lastScans][::-1]
+
         pielabels = [x for x in piechart.keys()]
         piedata = [len(v) for v in piechart.values()]
         piedata_last = []
-        
-        linelabels = [x for x in linechart.keys()]
-        linedata = [x for x in linechart.values()]
-        print(piechart)
+
         context = {
             'machine': machine,
             'machine_users': machine_users,
