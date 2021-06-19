@@ -53,62 +53,67 @@ def MachinesView(request, id):
         machine_users_id=machine.users.all().values_list("user", flat=True)
         
         if request.POST:
-            if 'machine_scanlevel' in request.POST:
-                machine.scanLevel = request.POST['machine_scanlevel']
-                machine.save()
-            elif 'machine_periodicity' in request.POST:
-                p = request.POST['machine_periodicity']
-                if p=='Daily': machine.periodicity = 'D'
-                if p=='Weekly': machine.periodicity = 'W'
-                if p=='Monthly': machine.periodicity = 'M'
-                machine.save()
-            elif 'scan_request' in request.POST:
-                KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
-                return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            elif 'vuln_status' in request.POST:
-                vuln = Vulnerability.objects.get(scan_id=request.POST['scan_id'], id=request.POST['vuln_id'])
-                vuln.status = request.POST['vuln_status']
-                vuln.save()
-                return JsonResponse({'status':'false','message':"Validation passed"}, status=200) 
-            elif 'vuln_comment' in request.POST:
+            # Everyone
+            if 'vuln_comment' in request.POST:
                 VulnerabilityComment.objects.create(
                         vulnerability= Vulnerability.objects.get(id=request.POST['vuln_id_comment']),
                         user=request.user,
                         comment=request.POST['vuln_comment'],
                     )
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            elif 'new_sub' in request.POST:
-                u = None
-                try:
-                    u=User.objects.get(email=request.POST['new_sub'])
-                except User.DoesNotExist:
-                    u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
-                if not u.id in machine_users_id:
-                    MachineUser.objects.create(
-                        user=u, 
-                        machine=machine,
-                        userType=request.POST['user_role'],
-                    )
-                    UserAccessRequest.objects.create(
-                        user=u,
-                        role=request.POST['user_role'],
-                        motive=request.POST['user_motive'],
-                        machines=machine,
-                        approved=True,
-                        pending=False,
-                        notes="Automatically approved by the host owner",
-                        approvedby=request.user
-                    )
+            elif 'vuln_status' in request.POST:
+                vuln = Vulnerability.objects.get(scan_id=request.POST['scan_id'], id=request.POST['vuln_id'])
+                vuln.status = request.POST['vuln_status']
+                vuln.save()
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            elif 'remove_user' in request.POST:
-                remu = None
-                try:
-                    remu=User.objects.get(email=request.POST['remove_user'])
-                    if remu.id in machine_users_id:
-                        musers = MachineUser.objects.filter(user=remu.id, machine=id)
-                        for user in musers: user.delete()
-                except User.DoesNotExist:
-                    print("user does not exist")
+            # ADMIN and OWNER ONLY
+            if request.user.is_admin or request.user.machines.all().filter(machine=machine, userType='O').exists():
+                if 'machine_scanlevel' in request.POST:
+                    machine.scanLevel = request.POST['machine_scanlevel']
+                    machine.save()
+                elif 'machine_periodicity' in request.POST:
+                    p = request.POST['machine_periodicity']
+                    if p=='Daily': machine.periodicity = 'D'
+                    if p=='Weekly': machine.periodicity = 'W'
+                    if p=='Monthly': machine.periodicity = 'M'
+                    machine.save()
+                elif 'scan_request' in request.POST:
+                    KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                elif 'new_sub' in request.POST:
+                    u = None
+                    try:
+                        u=User.objects.get(email=request.POST['new_sub'])
+                    except User.DoesNotExist:
+                        u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
+                    if not u.id in machine_users_id:
+                        MachineUser.objects.create(
+                            user=u,
+                            machine=machine,
+                            userType=request.POST['user_role'],
+                        )
+                        UserAccessRequest.objects.create(
+                            user=u,
+                            role=request.POST['user_role'],
+                            motive=request.POST['user_motive'],
+                            machines=machine,
+                            approved=True,
+                            pending=False,
+                            notes="Automatically approved by the host owner",
+                            approvedby=request.user
+                        )
+                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                elif 'remove_user' in request.POST:
+                    remu = None
+                    try:
+                        remu=User.objects.get(email=request.POST['remove_user'])
+                        if remu.id in machine_users_id:
+                            musers = MachineUser.objects.filter(user=remu.id, machine=id)
+                            for user in musers: user.delete()
+                    except User.DoesNotExist:
+                        print("user does not exist")
+            else:
+                return JsonResponse({'error': 'You don\'t have permissions to perform that operation.'}, status=401)
 
 
         machine_users_id=machine.users.all().values_list("user", flat=True)
