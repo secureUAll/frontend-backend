@@ -3,7 +3,7 @@
 const initCharts = () => {
     //initVulnsByGroupChart();
     initVulsRiskLevelChart();
-    initLineChart();
+    initVulnsByScanChart();
 }
 
 const initVulnsByGroupChart = () => {
@@ -215,7 +215,7 @@ const initVulsRiskLevelChart = () => {
 
 };
 
-const initLineChart = () => {
+const initVulnsByScanChart = () => {
     // Get element from DOM
     const ctx = document.getElementById('lineChart').getContext("2d");
 
@@ -230,9 +230,9 @@ const initLineChart = () => {
         type: 'line',
         responsive: true,
         data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            labels: vulnsByScanChartLabels,
             datasets: [{
-                label: "Active Users",
+                label: "Vulnerabilities found",
                 borderColor: chartColor,
                 pointBorderColor: "#FFF",
                 pointBackgroundColor: chartColor,
@@ -243,9 +243,9 @@ const initLineChart = () => {
                 fill: true,
                 backgroundColor: gradientFill,
                 borderWidth: 2,
-                data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630]
+                data: vulnsByScanChartValues,
             }]
         },
-        options: gradientChartOptionsConfiguration
+        //options: gradientChartOptionsConfiguration,
     });
 }

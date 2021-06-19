@@ -37,10 +37,16 @@ def MachinesView(request, id):
         return redirect('dashboard:dashboard')
 
     # If has access, proceed
-    barchart = {}
     machine_users_id = []
     machine_users= {'S':[],'O':[]}
     piechart = {'1':[],'2':[], '3':[],'4':[], '5':[], 'unclassified':[]}
+    pielabels = []
+    piedata = []
+    linechart = {}
+    vulncomments_set = []
+    users = []
+    allvulns = []
+    scanset = Scan.objects.filter(machine=id).order_by('-date')
 
     try:
         machine = Machine.objects.get(id=id)
@@ -117,29 +123,42 @@ def MachinesView(request, id):
             user_type = machine.users.get(user=request.user.id).userType
 
 
-        vulncomments_set = []
-        users = []
-        allvulns = []
-        scanset = Scan.objects.filter(machine=id).order_by('-date')
         for scan in scanset:
+            # adding to line chart
+            if scan.status=='Done':
+                    label = (str)(scan.date.day) + " "+ scan.date.strftime('%b')
+                    if not scan.date in linechart.keys():
+                        linechart[label] = scan.vulnerabilities.count()
+                    else: 
+                        count = linechart[label]
+                        count += scan.vulnerabilities.count()
+                        linechart[label] = count
+            # end of adding to line chart
             if scan.vulnerabilities.all():
                 vulnset = Vulnerability.objects.filter(scan_id=scan.id)
                 for vuln in vulnset:
+                    # get comments for vulnerabilities
                     if not vuln.comments.all()==None:
                         for comment in vuln.comments.all():
                             u = User.objects.get(id=comment.user_id)
                             if not u in users:
                                 users.append(u)
                         vulncomments_set.append(vuln.comments.all())
-                allvulns.append(vulnset)
+                allvulns.append(vulnset) # set of vulnerabilities
 
-        # THIS IS FOR CHARTS
+        # this is for pie chart
         for vset in allvulns:
-            print(vset.values())
             for v in vset:
                 if v.risk == 0: piechart['unclassified'].append(v)
                 else: piechart[str(v.risk)].append(v)
 
+        pielabels = [x for x in piechart.keys()]
+        piedata = [len(v) for v in piechart.values()]
+        piedata_last = []
+        
+        linelabels = [x for x in linechart.keys()]
+        linedata = [x for x in linechart.values()]
+        print(piechart)
         context = {
             'machine': machine,
             'machine_users': machine_users,
@@ -148,9 +167,11 @@ def MachinesView(request, id):
             'scanset': scanset,
             'logged_user': User.objects.get(id=request.user.id),
             'user_type': user_type,
-            'pielabels': [x for x in piechart.keys()],
-            'piedata': [len(v) for v in piechart.values()],
-            'piechart': piechart,
+            'pielabels': pielabels,
+            'piedata': piedata,
+            'piedata_last': piedata_last,
+            'linelabels': linelabels[::-1],
+            'linedata': linedata[::-1],
         }
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
