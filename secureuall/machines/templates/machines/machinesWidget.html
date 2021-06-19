@@ -22,7 +22,7 @@
                         <thead class=" text-primary">
                             <th data-field="host">Host</th>
                             <th data-field="risk">Risk level</th>
-                            <th data-field="owner">Owner</th>
+                            <th data-field="owner">Owners</th>
                         </thead>
                         <tbody>
                             {% for m in machines %}
@@ -34,11 +34,11 @@
                                         <span class="badge p-2 bg-{{m.risk}}">{{m.risk}}</span>
                                     </td>
                                     <td>
-                                    {% for u in m.users.all %}
-                                        {% if u.userType == 'O' %}
-                                        <p class="text-primary">{{u.email}}</p>
-                                        {% endif %}
-                                    {% endfor %}
+                                        {% for u in m.users.all %}
+                                            {% if u.userType == 'O' %}
+                                            <p class="text-primary mb-0">{{u.user.email}}</p>
+                                            {% endif %}
+                                        {% endfor %}
                                     </td>
                                 </tr>
                             {% endfor %}
