@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
 from django.db.models import Q
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
@@ -228,14 +228,14 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
                 n.heading(f"Hello {self.request.user.first_name},")
                 if req.approved:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been approved! &#128522;")\
-                        .text("You can access the machines you were granted access at Secure(UA)ll dashboard.")
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at)} has been approved! &#128522;")\
+                        .text("You can access the hosts you were granted access at Secure(UA)ll dashboard.")
                 else:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been denied.")\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at)} has been denied.")\
                         .text("You can check the motive and fill a new request at at Secure(UA)ll dashboard.")
                 n.button(
-                    url=''.join(['http://', get_current_site(self.request).domain, "/"]),
+                    url=''.join([settings.DEPLOY_URL, "/"]),
                     text='Dashboard'
                 )
                 print("Sending notification for ", un.value)
