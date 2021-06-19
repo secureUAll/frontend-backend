@@ -30,14 +30,14 @@ def DashboardView(request, *args, **kwargs):
     # Define piechart (% of Machines in a Risk Level) x and y axes values.
     machineset = Machine.objects.filter(active__exact=True).order_by('-created')
     for machine in machineset:
-        if machine.risk in piechart:
-            value = piechart.get(machine.risk)+1
-            piechart[machine.risk] = value
-        else:
-            piechart[machine.risk] = 1
+        # Ignore empty risks
+        if machine.risk:
+            if machine.risk in piechart:
+                value = piechart.get(machine.risk)+1
+                piechart[machine.risk] = value
+            else:
+                piechart[machine.risk] = 1
 
-
-    
     for key in sorted(piechart.keys()):
         pielabels.append(key)
     for value in sorted(piechart.values()):
