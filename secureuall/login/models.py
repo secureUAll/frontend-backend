@@ -16,7 +16,7 @@ class User(AbstractUser):
         return user.is_admin or user.machines.all().count()
 
     def __str__(self):
-        return self.first_name or self.email
+        return self.get_full_name() or self.email
 
 
 class UserAccessRequest(models.Model):
