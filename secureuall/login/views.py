@@ -194,3 +194,9 @@ class ProfileView(LoginRequiredMixin, View):
             'success': False
         }
 
+
+class AboutView(View):
+    template_name = "login/about.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
