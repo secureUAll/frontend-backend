@@ -1,12 +1,10 @@
 
 // This function initializes all the charts
 const initCharts = () => {
-    initVulnsByGroupChart();
+    //initVulnsByGroupChart();
     initVulsRiskLevelChart();
-    initLineChart();
+    initVulnsByScanChart();
 }
-
-console.log("oi goncalo! :)");
 
 const initVulnsByGroupChart = () => {
     // Get element from DOM
@@ -91,6 +89,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52, 0.7)',
         'rgba(243,178,27, 0.7)',
         'rgba(240, 89, 42, 0.7)',
+        'rgba(218, 223, 230, 0.7)',
     ];
     const gradientFillHover = [
         'rgba(146, 212, 0, 1)',
@@ -98,6 +97,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52, 1)',
         'rgba(243,178,27, 1)',
         'rgba(240, 89, 42, 1)',
+        'rgba(218, 223, 230, 1)',
     ];
     const borderColor = [
         'rgba(146, 212, 0)',
@@ -105,6 +105,7 @@ const initVulsRiskLevelChart = () => {
         'rgba(245,230,52)',
         'rgba(243,178,27)',
         'rgba(240, 89, 42)',
+        'rgba(218, 223, 230)',
       ];
 
     // Data
@@ -170,7 +171,7 @@ const initVulsRiskLevelChart = () => {
 
     var pieChart = new Chart(ctx, myChart);
 
-    // on-click event, filter
+    // on click event, filter
     canvas.onclick = function(evt) {
         var activePoints = pieChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
@@ -196,12 +197,31 @@ const initVulsRiskLevelChart = () => {
                 }
             }
           }
-          console.log(label);
+          var text = "Filtered by risk level <strong>" + label + "</strong>.";
+          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
+          $("#clearFilterVulnerabilities").removeClass("d-none");
         }
     };
+
+    // on click event, clear filter
+    document.getElementById("clearFilterVulnerabilities").onclick = function() {
+
+        $("#clearFilterVulnerabilities").addClass("d-none");
+
+        var table  = document.getElementById("vulnerabilitiesTable");
+        var tr =  table.getElementsByTagName("tr");
+
+        var i;
+        for (i = 0; i < table.rows.length; i++) {
+            tr[i].style.display = "";
+        }
+
+        $("#vulnerabilitiesTableFilterText").text("No filter applied to table.");
+    }
+
 };
 
-const initLineChart = () => {
+const initVulnsByScanChart = () => {
     // Get element from DOM
     const ctx = document.getElementById('lineChart').getContext("2d");
 
@@ -216,9 +236,9 @@ const initLineChart = () => {
         type: 'line',
         responsive: true,
         data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            labels: vulnsByScanChartLabels,
             datasets: [{
-                label: "Active Users",
+                label: "Vulnerabilities found",
                 borderColor: chartColor,
                 pointBorderColor: "#FFF",
                 pointBackgroundColor: chartColor,
@@ -229,9 +249,9 @@ const initLineChart = () => {
                 fill: true,
                 backgroundColor: gradientFill,
                 borderWidth: 2,
-                data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 630]
+                data: vulnsByScanChartValues,
             }]
         },
-        options: gradientChartOptionsConfiguration
+        //options: gradientChartOptionsConfiguration,
     });
 }

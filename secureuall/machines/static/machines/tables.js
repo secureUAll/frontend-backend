@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $(document).ready(function () {
         $('#vulnerabilitiesTable').DataTable({
-            "lengthMenu": [ 10, 25, 50 ],
+            "lengthMenu": [ 25, 50, 100 ],
         });
         $('#servicesVersions').DataTable({
             "lengthMenu": [ 4, 10, 25 ],

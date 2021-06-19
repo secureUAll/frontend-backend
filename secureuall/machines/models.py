@@ -109,12 +109,15 @@ class Scan(models.Model):
     date = models.DateField(auto_now=True)
     status = models.CharField(max_length=15)
 
+    def __str__(self):
+        return f"{self.date} at {self.worker}"
+
 
 class MachineService(models.Model):
     service = models.CharField(max_length=24)
     version = models.TextField()
 
-    def _str_(self):
+    def __str__(self):
         return str(self.service) + " (" + str(self.version) + ")"
 
     class Meta:
@@ -137,7 +140,7 @@ class MachinePort(models.Model):
 
 class Vulnerability(models.Model):
     risk = models.IntegerField()
-    type = models.CharField(max_length=12)
+    type = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
     location = models.TextField()
     status = models.CharField(max_length=12)
