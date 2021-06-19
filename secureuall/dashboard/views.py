@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth.decorators import login_required
 
-from login.models import User
+from login.models import User, UserAccessRequest
 from machines.models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
 from workers.models import Worker
 
@@ -114,6 +114,14 @@ def DashboardView(request, *args, **kwargs):
         elif machineUser.userType=='O':
             machines_updates[machine] = "owner added"
 
+    # Alerts
+    alerts = {'workers': Worker.objects.filter(status='D'),
+              'requests': list(UserAccessRequest.objects.filter(pending=True).order_by('-created_at')),
+              'machines': Machine.objects.filter(active=True, workers__isnull=True), 'number': 0}
+    alerts['number'] += 1 if alerts['workers'].exists() else 0
+    alerts['number'] += 1 if alerts['machines'].exists() else 0
+    alerts['number'] += 1 if len(alerts['requests']) else 0
+
     context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
@@ -131,6 +139,7 @@ def DashboardView(request, *args, **kwargs):
         'fixed_vulns': fixed_vulns,
         'machines_updates': machines_updates,
         'machines_addrem': machines_addrem,
+        'alerts': alerts
     }
 
     return render(request, "dashboard/dashboard.html", context)

@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     // Datatables
     $('#requestsTable').DataTable({
-        "lengthMenu": [ 5, 10, 25 ],
+        "lengthMenu": [ 25, 50, 100 ],
     });
 
     // Fill request modal when click on status change button

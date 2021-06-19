@@ -45,7 +45,7 @@
                     <dt>Email</dt>
                     <dd>{{user.email}}</dd>
                     <dt>Role</dt>
-                    <dd>{% if user.admin %}Administrator{% else %}Normal user{% endif %}</dd>
+                    <dd>{% if user.is_admin %}Administrator{% else %}Normal user{% endif %}</dd>
                 </dl>
             </div>
 

@@ -37,9 +37,12 @@
 <div class="row mb-auto">
     <div class="col-6 d-flex pl-0">
         <div class="card">
+            <div class="card-header d-flex">
+                <h6 class="mt-3 pb-4">Host General Information</h6>
+                <a href="/machines/{{machine.id}}/logs" class="ml-auto"><button class="btn btn-sm btn-outline-primary" title="Scan logs"><i class="now-ui-icons text_align-center"></i></button></a>
+            </div>
             <div class="card-body">
                 <div class="my-auto">
-                    <h6 class="mt-3 pb-4">Host General Information</h6>
                     <!-- Machine General Information -->
 
                     {# Key/value dictionary #}
