@@ -98,7 +98,7 @@
                                                     {% for v in value %}
                                                         <tr><td>{{v}}</td></tr>
                                                     {% empty %}
-                                                        <span>No owners yet.</span>
+                                                        <span class="col-12 p-0">No owners yet.</span>
                                                     {% endfor %}
                                                 {% endif %}
                                             {% endfor %}
@@ -123,7 +123,7 @@
                                                     {% for v in value %}
                                                         <tr><td>{{v}}</td></tr>
                                                     {% empty %}
-                                                        <span>No owners yet.</span>
+                                                        <span class="col-12 p-0">No subscribers yet.</span>
                                                     {% endfor %}
                                                 {% endif %}
                                             {% endfor %}
@@ -692,8 +692,12 @@
                         new_row="<tr><td>"+email[0]+"@"+email[1]+"</td></tr>";
                         if (user_role== "S"){
                             $('#subscribersTable').append(new_row);
+                            // Remove no users message if exists
+                            $('#subscribersTable').parent().children("span").remove();
                         } else if (user_role=="O"){
                             $('#ownersTable').append(new_row);
+                            // Remove no users message if exists
+                            $('#ownersTable').parent().children("span").remove();
                         }
                         new_row="";
                     },
