@@ -199,18 +199,24 @@ const initVulsRiskLevelChart = () => {
           }
           var text = "Filtered by risk level <strong>" + label + "</strong>.";
           document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
+          $("#clearFilterVulnerabilities").removeClass("d-none");
         }
     };
 
     // on click event, clear filter
     document.getElementById("clearFilterVulnerabilities").onclick = function() {
+
+        $("#clearFilterVulnerabilities").addClass("d-none");
+
         var table  = document.getElementById("vulnerabilitiesTable");
         var tr =  table.getElementsByTagName("tr");
 
-          var i;
-          for (i = 0; i < table.rows.length; i++) {
+        var i;
+        for (i = 0; i < table.rows.length; i++) {
             tr[i].style.display = "";
-          }
+        }
+
+        $("#vulnerabilitiesTableFilterText").text("No filter applied to table.");
     }
 
 };

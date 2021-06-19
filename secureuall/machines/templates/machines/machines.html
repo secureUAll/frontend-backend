@@ -87,7 +87,7 @@
                     {# Owners/Subscribers #}
                     <div class="d-flex flex-row text-secondary mt-5">
                         <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl>
+                            <dl class="dl-line">
                                 <dt>Owners</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
@@ -112,7 +112,7 @@
                             {% endif %}
                         </div>
                         <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl>
+                            <dl class="dl-line">
                                 <dt>Subscribers</dt>
                                 <dd>
                                     <div class="table-responsive d-flex">
@@ -280,7 +280,22 @@
             </div>
         </div>
         <div class="card-body">
-            <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table.</p>
+            <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table. To filter by risk level click on the risk slice in the graph above.</p>
+            <div class="d-flex flex-row mb-3">
+                <button type="button" class="btn btn-primary mr-2 d-none" id="clearFilterVulnerabilities">
+                    <i class="now-ui-icons ui-1_simple-remove mr-2"></i>Clear Filters
+                </button>
+                {% if user_type == 'O' or user_type == 'A' %}
+                    <button type="button" class="btn btn-outline-primary mr-2" onclick="scanNow();">
+                        <i class="now-ui-icons arrows-1_refresh-69 mr-2"></i>Scan Host Now
+                    </button>
+                {% endif %}
+                <a href="/machines/{{machine.id}}/logs">
+                    <button type="button" class="btn btn-outline-primary mr-2">
+                        <i class="now-ui-icons text_align-center mr-2"></i>See scanning logs
+                    </button>
+                </a>
+            </div>
             <!-- Row Next Scan -->
             <div class="d-flex flex-row pb-3">
                 <div class="col-6 p-0 text-secondary my-auto">
@@ -343,11 +358,6 @@
                                 </dd>
                             {% endif %}
                         </dl>
-                        {% if user_type == 'O' or user_type == 'A' %}
-                        <div class="row">
-                            <button type="button" class="btn btn-outline-primary" onclick="scanNow();">Scan Host Now</button>
-                        </div>
-                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -416,15 +426,12 @@
             </div>
         </div>
         <div class="card-footer">
-            <div class="stats d-flex justify-content-center">
-                <button type="button" class="btn btn-outline-primary btn-lg" id="clearFilterVulnerabilities">Clear Filters</button>
-            </div>
             <div class="d-flex justify-content-between">
                 <div class="stats">
                     <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
                 </div>
                 <div class="stats">
-                    Scan done by worker <span class="text-muted font-weight-bold">{{machine.scans.last}}</span> 0 erros reported.
+                    Last scan done by worker <span class="text-muted font-weight-bold">{{machine.scans.last}}</span> 0 erros reported.
                 </div>
             </div>
         </div>
