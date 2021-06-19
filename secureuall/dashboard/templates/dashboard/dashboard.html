@@ -8,69 +8,115 @@
 {% block headerClass %}panel-header-lg{% endblock headerClass %}
 
 {% block header %}
-    <canvas id="vulnerabilitiesNumbersChart"></canvas>
+    <canvas
+        id="vulnerabilitiesNumbersChart"
+        data-helper="0"
+        data-placement="bottom"
+        title="Vulnerabilities evolution"
+        data-content="This graphic shows the number of vulnerabilities registered in your hosts in the past days."
+    ></canvas>
 {% endblock header %}
 
 {% block styles %}
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
     <link href="{% static 'assets/css/plugins/datatables.css' %}" rel="stylesheet" />
 {% endblock styles %}
 
 {% block content %}
-    <!-- Row of Graphs -->
-    <div class="row">
-        <!-- Card 1 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart">
+{% if user.is_admin %}
+    <!-- Row of General info -->
+    <div class="row mb-4">
+        <div class="col-md-8 d-flex">
+            <div class="card card-chart d-flex flex-column">
                 <div class="card-header">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">% of Machines per Risk Level</h4>
+                    <h4
+                        class="card-title"
+                        data-helper="1"
+                        data-placement="right"
+                        title="Alerts"
+                        data-content="In this panel you are notified of operations that require your action."
+                    >Alerts</h4>
                 </div>
-                <div class="card-body my-auto d-flex">
-                    <div class="chart-area my-auto">
-                        <canvas id="machinesRiskLevelChart"></canvas>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                <div class="card-body d-flex flex-column">
+                    {% if not alerts.workers and not alerts.requests and not alerts.machines %}
+                        <h6>All seems to be fine! &#128515;</h6>
+                    {% endif %}
+                    <div class="d-flex my-auto row">
+                        {% if alerts.workers %}
+                            <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                <h6 class="text-danger">
+                                    <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                    A total of {{alerts.workers|length}} workers are down!</h6>
+                                <ul>
+                                    {% for w in alerts.workers %}
+                                        <li>Worker {{w.name}}</li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="/workers?status=D" class="btn btn-outline-primary w-100 mt-auto">
+                                    <span class="mx-auto my-auto">Go to workers</span>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if alerts.requests %}
+                            <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                <h6 class="text-danger">
+                                    <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                    A total of {{alerts.requests|length}} requests are pending review!</h6>
+                                <ul>
+                                    {% with alerts.requests|first as newestRequest %}
+                                        <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                    {% endwith %}
+                                    {% if alerts.requests|length > 1 %}
+                                        {% with alerts.requests|last as oldestRequest %}
+                                            <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                        {% endwith %}
+                                    {% endif %}
+                                </ul>
+                                <a href="/machines/requests" class="btn btn-outline-primary w-100 mt-auto">
+                                    <span class="mx-auto my-auto">Go to requests</span>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if alerts.machines %}
+                            <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                <h6 class="text-danger">
+                                    <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                    A total of {{alerts.machines|length}} active machines are not associated to a worker!</h6>
+                                <ul>
+                                    {% for m in alerts.machines %}
+                                        <li>{{m}}</li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="/workers/machinesPending" class="btn btn-outline-primary w-100 mt-auto">
+                                    <span class="mx-auto my-auto">Associate to workers</span>
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Card 1 -->
-        <!-- Card 2 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart d-flex">
+
+        <div class="col-lg-4 col-md-4">
+            <!-- Numbers Card -->
+            <div class="card card-chart">
                 <div class="card-header mb-auto">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">Vulnerabilities by Group</h4>
-                </div>
-                <div class="card-body my-auto d-flex">
-                    <div class="chart-area my-auto">
-                        <canvas id="vulnerabilitiesByGroupChart"></canvas>
-                    </div>
-                </div>
-                <div class="card-footer mt-auto">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Card 2 -->
-        <!-- Card 3 -->
-        <div class="col-lg-4 col-md-6 d-flex">
-            <div class="card card-chart d-flex">
-                <div class="card-header mb-auto">
-                    <h5 class="card-category"></h5>
-                    <h4 class="card-title">secure(UA)ll in Numbers</h4>
+                    <h4
+                        class="card-title"
+                        data-helper="2"
+                        data-placement="top"
+                        title="Numbers"
+                        data-content="Here you can see some generic stats about the Secure(UA)ll system."
+                    >secure(UA)ll in Numbers</h4>
                 </div>
                 <div class="card-body my-auto d-flex">
                     <table class="text-center text-secondary col-12 my-auto">
                         <tr>
                             <td>
                                 <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
-                                <p class="mt-0">registered assets</p>
+                                <p class="mt-0">registered hosts</p>
                             </td>
                             <td>
                                 {% if ports %}
@@ -88,7 +134,7 @@
                         <tr>
                             <td>
                                 <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
-                                <p class="mt-0">scans performed</p>
+                                <p class="mt-0">performed scans</p>
                             </td>
                             <td>
                                 {% if vulnerabilities %}
@@ -111,118 +157,128 @@
                     </div>
                 </div>
             </div>
+            <!-- End Numbers Card -->
         </div>
-        <!-- End Card 3 -->
     </div>
-    <!-- End Row of Graphs -->
+    <!-- End Row of General info -->
 
-    <!-- Tables -->
-    <div class="row">
-        <!-- Latest Changes Table -->
-        <div class="col-lg-4 d-flex">
-            <div class="card d-flex">
-                <div class="card-header">
-                    <h4 class="card-title">Latest Changes</h4>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <!-- Machines Added/Removed -->
-                    <div class="my-auto">
-                        <h6 class="mb-0">Machines Added/Removed</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableAddRemoved">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for key, value in machines_addrem %}
-                                    <tr>
-                                        <td>
-                                            {{ key }}
-                                        </td>
-                                        <td>
-                                        {% if value %}
-                                            <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
-                                        {% else %}
-                                            <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
-                                        {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+    
+    <!-- Row Latest updates -->
+    <div class="row mb-4">
+        <div class="d-flex flex-row mb-auto w-100">
+            
+            <!-- Machines Added/Removed -->
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6
+                                class="mt-3"
+                                data-helper="3"
+                                data-placement="top"
+                                title="Changes"
+                                data-content="These 3 cards inform you of recent changes made to the hosts."
+                            >Host Added/Removed</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableAddRemoved">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, value in machines_addrem.items %}
+                                        <tr>
+                                            <td>
+                                                {{ key }}
+                                            </td>
+                                            <td>
+                                            {% if value %}
+                                                <span class="badge p-2 bg-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i></span>
+                                            {% else %}
+                                                <span class="badge p-2 bg-danger"><i class="now-ui-icons ui-1_simple-delete mr-2"></i></span>
+                                            {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <!-- End Machines Added/Removed -->
-
-                    <!-- Machines Updates -->
-                    <div class="my-auto">
-                        <h6 class="mt-3">Machines Updates</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableUpdates">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for key, value in machines_updates.items %}
-                                    <tr>
-                                        <td>
-                                            {{ key }}
-                                        </td>
-                                        <td>
-                                            {{ value }}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- End Machines Updates -->
-
-                    <!-- Machines Fixed Vulnerabilities -->
-                    <div class="my-auto">
-                        <h6 class="mt-3">Fixed Vulnerabilities</h6>
-                        <div class="table-responsive">
-                            <table class="table table-discreet" id="latestChangesTableFixedVulns">
-                                <thead class=" text-primary">
-                                    <th></th>
-                                </thead>
-                                <tbody>
-                                    {% for machine in fixed_vulns %}
-                                    <tr>
-                                        <td>
-                                            {{ machine }}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- End Fixed Vulnerabilities -->
-                </div>
-                <!-- End Tables -->
-                <div class="card-footer mt-auto">
-                    <div class="stats">
-                        <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- End Latest Changes Table -->
+            <!-- End Machines Added/Removed -->
 
-        <!-- Right Side Tables Row -->
-        <div class="col-lg-8">
+            <!-- Machines Updates -->
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6 class="mt-3">Host Updates</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableUpdates">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for key, value in machines_updates.items %}
+                                        <tr>
+                                            <td>
+                                                {{ key }}
+                                            </td>
+                                            <td>
+                                                {{ value }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Machines Updates -->
+
+            <!-- Machines Fixed Vulnerabilities -->
+            <div class="col-4 d-flex">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="my-auto">
+                            <h6 class="mt-3">Fixed Vulnerabilities</h6>
+                            <div class="table-responsive">
+                                <table class="table table-discreet" id="latestChangesTableFixedVulns">
+                                    <thead class=" text-primary">
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        {% for machine in fixed_vulns %}
+                                        <tr>
+                                            <td>
+                                                {{ machine }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Fixed Vulnerabilities -->
+        </div>
+    </div>
+    <!-- End Row Latest updates -->
+{% endif %}
+
+    <!-- Tables -->
+    <div class="row">
+        <!-- Machines ListRow -->
 
             {% include "machines/machinesWidget.html" %}
-
-            {% if user.is_admin %}
-                {% include "workers/workersWidget.html" %}
-            {% endif %}
-
-        </div>
-
+    </div>
 
 
 {% endblock content %}
@@ -238,16 +294,17 @@
     <!-- Custom JS -->
     <script src="{% static 'dashboard/charts.js' %}"></script>
     <script src="{% static 'dashboard/tables.js' %}"></script>
+    <!-- Bootstrap Table JS -->
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
     <!-- Activate charts -->
     <script>
         // Define charts values
         const vulnsNumbersLabels = {{ vulslabels|safe }};
         const vulnsNumbersValues = {{ vulnsdata|safe }};
-        const vulnsByGroupChartLabels = {{ barlabels|safe }};
-        const vulnsByGroupChartValues = {{ bardata|safe }};
         const machinesRiskLevelChartLabels = {{ pielabels|safe }};
         const machinesRiskLevelChartValues = {{ piedata|safe }};
         
+
         // Start charts
         $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js

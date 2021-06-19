@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $(document).ready(function () {
         $('#vulnerabilitiesTable').DataTable({
-            "lengthMenu": [ 10, 25, 50 ],
+            "lengthMenu": [ 25, 50, 100 ],
         });
         $('#servicesVersions').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
@@ -10,11 +10,12 @@ $(document).ready(function () {
             "ordering": false
         });
         $('#openPorts').DataTable({
-            "lengthMenu": [ 4, 10, 25 ],
+            "lengthMenu": [ 10, 10, 25 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
         });
+
         $('#vulnComments').DataTable({
             "lengthMenu": [ 4, 10, 25 ],
             "searching": false,

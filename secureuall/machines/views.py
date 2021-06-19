@@ -18,7 +18,7 @@ from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.notifyfactory import NotifyFactory
 from .forms import MachineNameForm
 
-from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment, Log
 from login.models import UserAccessRequest
 
 from datetime import datetime, timedelta, date
@@ -37,28 +37,23 @@ def MachinesView(request, id):
         return redirect('dashboard:dashboard')
 
     # If has access, proceed
-    barchart = {}
     machine_users_id = []
     machine_users= {'S':[],'O':[]}
-    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[], 'unclassified':[]}
+    pielabels = []
+    piedata = []
+    linechart = {}
+    vulncomments_set = []
+    users = []
+    allvulns = []
+    scanset = Scan.objects.filter(machine=id).order_by('-date')
 
     try:
         machine = Machine.objects.get(id=id)
         machine_users_id=machine.users.all().values_list("user", flat=True)
         
         if request.POST:
-            if 'machine_scanlevel' in request.POST:
-                machine.scanLevel = request.POST['machine_scanlevel']
-                machine.save()
-            if 'machine_periodicity' in request.POST:
-                p = request.POST['machine_periodicity']
-                if p=='Daily': machine.periodicity = 'D'
-                if p=='Weekly': machine.periodicity = 'W'
-                if p=='Monthly': machine.periodicity = 'M'
-                machine.save()
-            if 'scan_request' in request.POST:
-                KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
-                return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            # Everyone
             if 'vuln_comment' in request.POST:
                 VulnerabilityComment.objects.create(
                         vulnerability= Vulnerability.objects.get(id=request.POST['vuln_id_comment']),
@@ -66,38 +61,59 @@ def MachinesView(request, id):
                         comment=request.POST['vuln_comment'],
                     )
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            if 'new_sub' in request.POST:
-                u = None
-                try:
-                    u=User.objects.get(email=request.POST['new_sub'])
-                except User.DoesNotExist:
-                    u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
-                if not u.id in machine_users_id:
-                    MachineUser.objects.create(
-                        user=u, 
-                        machine=machine,
-                        userType=request.POST['user_role'],
-                    )
-                    UserAccessRequest.objects.create(
-                        user=u,
-                        role=request.POST['user_role'],
-                        motive=request.POST['user_motive'],
-                        machines=machine,
-                        approved=True,
-                        pending=False,
-                        notes="Automatically approved by the host owner",
-                        approvedby=request.user
-                    )
+            elif 'vuln_status' in request.POST:
+                vuln = Vulnerability.objects.get(scan_id=request.POST['scan_id'], id=request.POST['vuln_id'])
+                vuln.status = request.POST['vuln_status']
+                vuln.save()
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            if 'remove_user' in request.POST:
-                remu = None
-                try:
-                    remu=User.objects.get(email=request.POST['remove_user'])
-                    if remu.id in machine_users_id:
-                        users = MachineUser.objects.filter(user=remu.id, machine=id)
-                        for user in users: user.delete()
-                except User.DoesNotExist:
-                    print("user does not exist")
+            # ADMIN and OWNER ONLY
+            if request.user.is_admin or request.user.machines.all().filter(machine=machine, userType='O').exists():
+                if 'machine_scanlevel' in request.POST:
+                    machine.scanLevel = request.POST['machine_scanlevel']
+                    machine.save()
+                elif 'machine_periodicity' in request.POST:
+                    p = request.POST['machine_periodicity']
+                    if p=='Daily': machine.periodicity = 'D'
+                    if p=='Weekly': machine.periodicity = 'W'
+                    if p=='Monthly': machine.periodicity = 'M'
+                    machine.save()
+                elif 'scan_request' in request.POST:
+                    KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                elif 'new_sub' in request.POST:
+                    u = None
+                    try:
+                        u=User.objects.get(email=request.POST['new_sub'])
+                    except User.DoesNotExist:
+                        u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
+                    if not u.id in machine_users_id:
+                        MachineUser.objects.create(
+                            user=u,
+                            machine=machine,
+                            userType=request.POST['user_role'],
+                        )
+                        UserAccessRequest.objects.create(
+                            user=u,
+                            role=request.POST['user_role'],
+                            motive=request.POST['user_motive'],
+                            machines=machine,
+                            approved=True,
+                            pending=False,
+                            notes="Automatically approved by the host owner",
+                            approvedby=request.user
+                        )
+                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                elif 'remove_user' in request.POST:
+                    remu = None
+                    try:
+                        remu=User.objects.get(email=request.POST['remove_user'])
+                        if remu.id in machine_users_id:
+                            musers = MachineUser.objects.filter(user=remu.id, machine=id)
+                            for user in musers: user.delete()
+                    except User.DoesNotExist:
+                        print("user does not exist")
+            else:
+                return JsonResponse({'error': 'You don\'t have permissions to perform that operation.'}, status=401)
 
 
         machine_users_id=machine.users.all().values_list("user", flat=True)
@@ -105,28 +121,50 @@ def MachinesView(request, id):
             user = machine.users.get(user=u_id)
             machine_users[user.userType].append(User.objects.get(id=u_id).email)
 
+        # get logged user machine subscription type if user is not a system admin ('superuser')
+        if User.objects.get(id=request.user.id).is_superuser == 1: 
+            user_type = "A"
+        else: 
+            user_type = machine.users.get(user=request.user.id).userType
 
-        vulncomments_set = []
-        users = []
-        allvulns = []
-        scanset = Scan.objects.filter(machine=id).order_by('-date')
+
         for scan in scanset:
+            # adding to line chart
+            if scan.status=='Done':
+                    label = (str)(scan.date.day) + " "+ scan.date.strftime('%b')
+                    if not scan.date in linechart.keys():
+                        linechart[label] = scan.vulnerabilities.count()
+                    else: 
+                        count = linechart[label]
+                        count += scan.vulnerabilities.count()
+                        linechart[label] = count
+            # end of adding to line chart
             if scan.vulnerabilities.all():
                 vulnset = Vulnerability.objects.filter(scan_id=scan.id)
                 for vuln in vulnset:
+                    # get comments for vulnerabilities
                     if not vuln.comments.all()==None:
                         for comment in vuln.comments.all():
                             u = User.objects.get(id=comment.user_id)
                             if not u in users:
                                 users.append(u)
                         vulncomments_set.append(vuln.comments.all())
-                allvulns.append(vulnset)
+                allvulns.append(vulnset) # set of vulnerabilities
 
-        # THIS IS FOR CHARTS
+        # this is for pie chart
         for vset in allvulns:
-            print(vset.values())
             for v in vset:
-                piechart[str(v.risk)].append(v)
+                if v.risk == 0: piechart['unclassified'].append(v)
+                else: piechart[str(v.risk)].append(v)
+
+        # Line chart set up
+        lastScans = Scan.objects.filter(machine=machine).order_by('-date')[:7]
+        linelabels = [str(s.date) for s in lastScans][::-1]
+        linedata = [s.vulnerabilities.all().count() for s in lastScans][::-1]
+
+        pielabels = [x for x in piechart.keys()]
+        piedata = [len(v) for v in piechart.values()]
+        piedata_last = []
 
         context = {
             'machine': machine,
@@ -135,8 +173,12 @@ def MachinesView(request, id):
             'users': users,
             'scanset': scanset,
             'logged_user': User.objects.get(id=request.user.id),
-            'pielabels': [x for x in piechart.keys()],
-            'piedata': [len(v) for v in piechart.values()],
+            'user_type': user_type,
+            'pielabels': pielabels,
+            'piedata': piedata,
+            'piedata_last': piedata_last,
+            'linelabels': linelabels[::-1],
+            'linedata': linedata[::-1],
         }
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
@@ -230,6 +272,21 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
         self.context['requestSuccess'] = self.request.session['requestSuccess'] if 'requestSuccess' in self.request.session else False
         if 'requestSuccess' in self.request.session:
             self.request.session['requestSuccess']=None
+
+
+class LogView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+
+    def get(self, request, id=None, *args, **kwargs):
+        if Log.objects.filter(cod=id).exists():
+            return HttpResponse(
+                serializers.serialize('json', [Log.objects.get(cod=id)]),
+                content_type='application/json'
+            )
+        return HttpResponse(
+            json.dumps({'error': 'Log with given id does not exist!'}),
+            content_type='application/json',
+            status=400
+        )
 
 
 @login_required

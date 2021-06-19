@@ -11,7 +11,13 @@
 <div class="header text-center my-auto">
     <h2 class="title mb-3">Subscription Requests</h2>
     {% if not user.is_admin %}
-    <a href="/machines/requests/new"><button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add me-3"></i>Submit new request</button></a>
+        <a
+            href="/machines/requests/new"
+            data-helper="0"
+            data-placement="bottom"
+            title="New request"
+            data-content="Click here if you want to request access to a new host."
+        ><button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add me-3"></i>Submit new request</button></a>
     {% endif %}
 </div>  
 {% endblock header %}
@@ -22,15 +28,30 @@
 
 {% block content %}
 <!-- Vulnerabilities Report -->
-<div class="row">
+<div class="">
     <div class="card card-chart">
         <div class="card-header">
             <h5 class="card-category"></h5>
-            <h4 class="card-title">Requests ({{filter}})</h4>
+            <h4
+                class="card-title"
+                data-helper="1"
+                data-placement="top"
+                title="Requests"
+                {% if user.is_admin %}
+                    data-content="Here you can check the access requests made and review them."
+                {% else %}
+                    data-content="Here you can check your acess requests status."
+                {% endif %}
+            >Requests ({{filter}})</h4>
             <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                    data-toggle="dropdown">
+                    data-toggle="dropdown"
+                    data-helper="2"
+                    data-placement="top"
+                    title="Filter"
+                    data-content="Use this button to filter by the request status. The default is pending."
+                >
                     <i class="now-ui-icons loader_gear"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
@@ -44,7 +65,10 @@
         <div class="card-body">
             {% if requests %}
                 <div class="table-responsive">
-                    <table class="table table-discreet" id="requestsTable">
+                    <table
+                        class="table table-discreet"
+                        id="requestsTable"
+                    >
                         <thead class=" text-primary">
                             <th>Created</th>
                             {% if user.is_admin %}

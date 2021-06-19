@@ -3,6 +3,7 @@ from django.db.models import Q
 from .validators import *
 from model_utils import FieldTracker
 
+
 class Machine(models.Model):
     riskLevelsOps = (
         ('1', 1),
@@ -38,8 +39,6 @@ class Machine(models.Model):
     tracker = FieldTracker()
 
     def __str__(self):
-        if not self.ip and not self.dns:
-            return "Invalid!"
         if self.ip and self.dns:
             return f"{self.ip} / {self.dns}"
         return self.ip or self.dns
@@ -67,7 +66,14 @@ class Machine(models.Model):
 
     @staticmethod
     def exists(ip, dns):
-        return Machine.objects.filter((Q(dns=dns) & Q(dns__isnull=False) & ~Q(dns="")) | (Q(ip=ip) & Q(ip__isnull=False) & ~Q(ip="")))
+        # Different machines must have different IPs/DNS
+        # An IP can be shared by multiple machines if they have different DNS
+        # A DNS can be shared by multiple machines if they have different IPs
+        if dns and not ip and Machine.objects.filter(ip='', dns=dns).exists():
+            return Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns))
+        if ip and not dns and Machine.objects.filter(ip=ip, dns='').exists():
+            return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip))
+        return Machine.objects.filter(ip=ip, dns=dns)
 
     def save(self, *args, **kwargs):
         """ Automatically add "modified" to update_fields."""
@@ -103,12 +109,15 @@ class Scan(models.Model):
     date = models.DateField(auto_now=True)
     status = models.CharField(max_length=15)
 
+    def __str__(self):
+        return f"{self.date} at {self.worker}"
+
 
 class MachineService(models.Model):
     service = models.CharField(max_length=24)
     version = models.TextField()
 
-    def _str_(self):
+    def __str__(self):
         return str(self.service) + " (" + str(self.version) + ")"
 
     class Meta:
@@ -131,7 +140,7 @@ class MachinePort(models.Model):
 
 class Vulnerability(models.Model):
     risk = models.IntegerField()
-    type = models.CharField(max_length=12)
+    type = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
     location = models.TextField()
     status = models.CharField(max_length=12)
@@ -158,7 +167,7 @@ class VulnerabilityComment(models.Model):
 
 class Log(models.Model):
     cod = models.BigAutoField(primary_key=True)
-    date = models.DateField() # auto_now=True
+    date = models.DateTimeField()
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='logs')
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='logs')
     log = models.TextField()

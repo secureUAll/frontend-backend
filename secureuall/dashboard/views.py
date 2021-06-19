@@ -3,12 +3,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth.decorators import login_required
 
-from login.models import User
+from login.models import User, UserAccessRequest
 from machines.models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
 from workers.models import Worker
 
 from datetime import datetime, timedelta, date
 from django.utils import timezone
+
 
 # Create your views here.
 @login_required
@@ -16,51 +17,30 @@ from django.utils import timezone
 def DashboardView(request, *args, **kwargs):
     pielabels = []
     piedata = []
-    piechart = {}
-    barlabels = []
-    bardata = []
-    barchart = {}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
     vulnsdata = []
     vulnslabels = []
     active_vuln = 0
     fixed_vulns = []
     machines_updates = {}
     machines_addrem = {}
-    
 
-    # Define barchart (Vulnerabilities by Group) x and y axes values.
     vulnset = Vulnerability.objects.all().order_by('-scan')
-    for vuln in vulnset:
-        if vuln.type in barchart:
-            value = barchart.get(vuln.type)+1
-            barchart[vuln.type] = value
-        else:
-            barchart[vuln.type] = 1
-        # Calculates total of active vulnerabilities.
-        if vuln.status == "Not Fixed":
-            active_vuln+=1
-    for key in barchart.keys():
-        barlabels.append(key)
-    for value in barchart.values():
-        bardata.append(value)
-
 
     # Define piechart (% of Machines in a Risk Level) x and y axes values.
     machineset = Machine.objects.filter(active__exact=True).order_by('-created')
     for machine in machineset:
-        if machine.active:
-            if machine.risk in piechart:
-                value = piechart.get(machine.risk)+1
-                piechart[machine.risk] = value
+        # Ignore empty risks
+        if machine.risk:
+            if str(machine.risk) in piechart:
+                print(machine)
+                piechart[machine.risk].append(machine)
             else:
-                piechart[machine.risk] = 1
-
-    for key in piechart.keys():
-        pielabels.append(key)
-    for value in piechart.values():
-        percentage = round((value*100)/len(machineset))
-        piedata.append(percentage)
-
+                print(machine)
+                piechart[machine.risk].append(machine)
+    
+    pielabels = [x for x in piechart.keys()]
+    piedata = [len(v) for v in piechart.values()]
 
     # Calculates number of weeks without vulnerabilities.
     scanset = Scan.objects.all().order_by('-date')
@@ -107,13 +87,23 @@ def DashboardView(request, *args, **kwargs):
         if "scanLevel" in changes.keys(): machines_updates[machine] = "scan level update"
         if "active" in changes.keys(): machines_addrem[machine] = machine.active
     machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
-    for machineUser in machinuserset:
-        machine = machineUser.machine
-        if machineUser.userType=='S':
-            machines_updates[machine] = "subscriber added"
-        elif machineUser.userType=='O':
-            machines_updates[machine] = "owner added"
+    for machineuser in machinuserset:
+        if machineuser.userType=='S':
+            machines_updates[machineuser.machine] = "Subscriber added"
+        elif machineuser.userType=='O':
+            machines_updates[machineuser.machine] = "Owner added"
 
+    if not request.user.is_superuser:
+        machineset = machineset.filter(users__user__in=[request.user.id])
+
+    # ALERTS
+    alerts = {'workers': Worker.objects.filter(status='D'),
+              'requests': list(UserAccessRequest.objects.filter(pending=True).order_by('-created_at')),
+              'machines': Machine.objects.filter(active=True, workers__isnull=True), 'number': 0}
+    alerts['number'] += 1 if alerts['workers'].exists() else 0
+    alerts['number'] += 1 if alerts['machines'].exists() else 0
+    alerts['number'] += 1 if len(alerts['requests']) else 0
+        
     context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
@@ -124,13 +114,12 @@ def DashboardView(request, *args, **kwargs):
         'weeks_without_vulnerabilities': weeks_without_vuln,
         'pielabels': pielabels,
         'piedata': piedata,
-        'barlabels': barlabels,
-        'bardata': bardata,
         'vulnsdata': vulnsdata,
         'vulslabels': vulnslabels,
         'fixed_vulns': fixed_vulns,
         'machines_updates': machines_updates,
         'machines_addrem': machines_addrem,
+        'alerts': alerts
     }
 
     return render(request, "dashboard/dashboard.html", context)
