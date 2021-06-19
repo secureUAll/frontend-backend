@@ -27,6 +27,7 @@ services:
             - EMAIL_PORT=25
             - EMAIL_USER=deti-vuln-mon@ua.pt
             - EMAIL_PASSWORD=eGdgtY56eF#bve8AxeFe
+            - DEPLOY_URL=https://deti-vuln-mon.ua.pt
             - DJANGO_SUPERUSERS=["gmatos.ferreira@ua.pt", "margarida.martins@ua.pt", "isadora.fl@ua.pt", "pedro.bas@ua.pt", "eduardosantoshf@ua.pt", "moraisandre@ua.pt"]
         volumes:
             - ./data/djangostaticfiles:/app/static # Static files for nginx to serve
