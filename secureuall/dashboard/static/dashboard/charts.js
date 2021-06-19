@@ -323,6 +323,7 @@ const initMachinesRiskLevelChart = () => {
           }
           var text = "Filtered by risk level <strong>" + label + "</strong>.";
           document.getElementById("machinesTableFilterText").innerHTML = text;
+          $("#clearFilterMachines").removeClass("d-none");
         }
     };
 
@@ -331,10 +332,13 @@ const initMachinesRiskLevelChart = () => {
         var table  = document.getElementById("machinesTable");
         var tr =  table.getElementsByTagName("tr");
 
-          var i;
-          for (i = 0; i < table.rows.length; i++) {
+        var i;
+        for (i = 0; i < table.rows.length; i++) {
             tr[i].style.display = "";
-          }
+        }
+
+        $("#machinesTableFilterText").text("No filter applied to table. ");
+        $("#clearFilterMachines").addClass("d-none");
     }
     
 };
