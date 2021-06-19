@@ -2,7 +2,7 @@
 const initCharts = () => {
     initVulnsNumbersChart();
     initMachinesRiskLevelChart();
-    initVulnsByGroupChart();
+    //initVulnsByGroupChart();
 }
 
 
@@ -103,14 +103,42 @@ const initVulnsByGroupChart = () => {
     const ctx = document.getElementById('vulnerabilitiesByGroupChart').getContext("2d");
 
     // Colors
-    const chartColor = "#92d400";
-    const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
-
-    const gradientFillHover = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFillHover.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFillHover.addColorStop(1, "rgba(146, 212, 0, 1)");
+    const gradientFill = [
+        'rgba(2239, 231, 106, 0.2)',
+        'rgba(132, 90, 169, 0.2)',
+        'rgba(175, 198, 173, 0.2)',
+        'rgba(249, 149, 225, 0.2)',
+        'rgba(240, 42, 102, 0.2)',
+        'rgba(42, 216, 240, 0.2)',
+        'rgba(255, 152, 13, 0.2)',
+        'rgba(26, 184, 131, 0.2)',
+        'rgba(11, 42, 182, 0.2)',
+        'rgba(255, 128, 16, 0.2)',
+    ];
+    const gradientFillHover = [
+        'rgba(239, 231, 106, 0.6)',
+        'rgba(132, 90, 169, 0.6)',
+        'rgba(175, 198, 173, 0.6)',
+        'rgba(249, 149, 225, 0.6)',
+        'rgba(240, 42, 102, 0.6)',
+        'rgba(42, 216, 240, 0.6)',
+        'rgba(255, 152, 13, 0.6)',
+        'rgba(26, 184, 131, 0.6)',
+        'rgba(11, 42, 182, 0.6)',
+        'rgba(255, 128, 16, 0.6)',
+    ];
+    const borderColor = [
+        'rgb(239, 231, 106)',
+        'rgb(132, 90, 169)',
+        'rgb(175, 198, 173)',
+        'rgb(249, 149, 225)',
+        'rgb(240, 42, 102)',
+        'rgb(42, 216, 240)',
+        'rgb(255, 152, 13)',
+        'rgba(26, 184, 131)',
+        'rgba(11, 42, 182)',
+        'rgba(255, 128, 16)',
+    ];
 
     // Draw chart
     var myChart = {
@@ -121,13 +149,14 @@ const initVulnsByGroupChart = () => {
                 label: "Amount",
                 backgroundColor: gradientFill,
                 hoverBackgroundColor: gradientFillHover,
-                borderColor: chartColor,
+                borderColor: borderColor,
                 fill: true,
                 borderWidth: 1,
                 data: vulnsByGroupChartValues
             }]
         },
         options: {
+            responsive: true,
             layout: {
                 padding: {
                     top: 20
@@ -174,17 +203,47 @@ const initVulnsByGroupChart = () => {
 
 const initMachinesRiskLevelChart = () => {
     // Get element from DOM
-    var ctx = document.getElementById("machinesRiskLevelChart").getContext("2d");
+    var canvas = document.getElementById("machinesRiskLevelChart");
+    var ctx = canvas.getContext("2d");
+
+    //Colors
+    const gradientFill = [
+        'rgba(146, 212, 0, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(245,230,52, 0.7)',
+        'rgba(243,178,27, 0.7)',
+        'rgba(240, 89, 42, 0.7)',
+        'rgba(218, 223, 230, 0.7)',
+    ];
+    const gradientFillHover = [
+        'rgba(146, 212, 0, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(245,230,52, 1)',
+        'rgba(243,178,27, 1)',
+        'rgba(240, 89, 42, 1)',
+        'rgba(218, 223, 230, 1)',
+    ];
+    const borderColor = [
+        'rgba(146, 212, 0)',
+        'rgba(54, 162, 235)',
+        'rgba(245,230,52)',
+        'rgba(243,178,27)',
+        'rgba(240, 89, 42)',
+        'rgba(218, 223, 230)',
+      ];
 
     // Data
     const data = {
         labels: machinesRiskLevelChartLabels,
         datasets: [{
           data: machinesRiskLevelChartValues,
-          backgroundColor: [ 'rgba(146, 212, 0, .6)', 'rgba(122, 179, 0, .6)', 'rgba(87, 128, 0, .6)', 'rgba(52, 77, 0, .6)', 'rgba(17, 26, 0, .6)' ],
-          hoverBackgroundColor: [ '#92d400', '#7ab300', '#578000', '#344d00', '#111a00' ],
+          backgroundColor: gradientFill,
+          hoverBackgroundColor: gradientFillHover,
+          borderColor: borderColor,
+          fill: true,
+          borderWidth: 1,
         }]
-  };
+    };
 
     // Draw chart
     const myChart = {
@@ -197,18 +256,89 @@ const initMachinesRiskLevelChart = () => {
             },
             responsive: true,
             plugins: {
-                labels: {
-                    render: 'value',
-                    fontColor: '#fff',
-                    fontStyle: 'bold',
-                    precision: 2
+                /* labels: {
+                     render: 'value',
+                     fontColor: '#fff',
+                     fontStyle: 'bold',
+                     precision: 2
+                 } */
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let datasets = ctx.chart.data.datasets;
+                        if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+                            let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+                            let percentage = Math.round((value / sum) * 100) + '%';
+                            return percentage;
+                        }   else {
+                            return percentage;
+                       }
+                    },
+                color: '#fff',
                 }
             },
             tooltips: {
-                 enabled: false
-            }
+                enabled: true,
+                mode: 'single',
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        var i = tooltipItems.index;
+                        return "Risk level " + data.labels[i] + ": " + data.datasets[0].data[i] + " %";
+                    }
+                }
+            },
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
         },
     };
 
     var pieChart = new Chart(ctx, myChart);
+
+    // on click event, filter
+    canvas.onclick = function(evt) {
+        var activePoints = pieChart.getElementsAtEvent(evt);
+        if (activePoints[0]) {
+          var chartData = activePoints[0]['_chart'].config.data;
+          var idx = activePoints[0]['_index'];
+  
+          var label = chartData.labels[idx];
+          var table = document.getElementById("machinesTable");
+          var tr =  table.getElementsByTagName("tr");
+
+          var i, td;
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].querySelector("td span");
+            var regex = /^[a-zA-Z]+$/;
+            if (!label.match(regex)) {
+                td = tr[i].getElementsByTagName("td")[1];
+            }
+            if (td) {
+                if (td.innerText.indexOf(label) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+          }
+          var text = "Filtered by risk level <strong>" + label + "</strong>.";
+          document.getElementById("machinesTableFilterText").innerHTML = text;
+          $("#clearFilterMachines").removeClass("d-none");
+        }
+    };
+
+    // on click event, clear filter
+    document.getElementById("clearFilterMachines").onclick = function() {
+        var table  = document.getElementById("machinesTable");
+        var tr =  table.getElementsByTagName("tr");
+
+        var i;
+        for (i = 0; i < table.rows.length; i++) {
+            tr[i].style.display = "";
+        }
+
+        $("#machinesTableFilterText").text("No filter applied to table. ");
+        $("#clearFilterMachines").addClass("d-none");
+    }
+    
 };
