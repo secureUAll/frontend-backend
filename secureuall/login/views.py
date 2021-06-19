@@ -102,7 +102,7 @@ class WelcomeView(LoginRequiredMixin, View):
                     n = NotifyFactory.createNotification(un.type)
                     n\
                         .heading(f"Hello {a.first_name},")\
-                        .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} machines as {n.bold(uar.get_role_display())}.")\
+                        .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} hosts as {n.bold(uar.get_role_display())}.")\
                         .text("Access Secure(UA)ll page to approve or deny it.")\
                         .button(text='Requests page',url=''.join([settings.DEPLOY_URL, "/machines/requests"]))
                     n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='A new access request was submitted')
