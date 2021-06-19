@@ -266,7 +266,7 @@
     <div class="card card-chart">
         <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
-            <h4 class="card-title">Vulnerability Report</h4>
+            <h4 class="card-title" id="vulnreports">Vulnerability Report</h4>
             <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -299,7 +299,7 @@
             <!-- Row Next Scan -->
             <div class="d-flex flex-row pb-3">
                 <div class="col-6 p-0 text-secondary my-auto">
-                    <form method="POST"> {% csrf_token %}
+                    <form method="POST" action="?periodicity=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
                             <dt>Next scan </dt>
                             <dd>{{machine.nextScan}}</dd>
@@ -325,7 +325,7 @@
                     </form>
                 </div>
                 <div class="col-6 text-secondary my-auto">
-                    <form method="POST"> {% csrf_token %}
+                    <form method="POST" action="?scanlevel=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
                             <dt>Scan level </dt>
                             {% if user_type == 'O' or user_type == 'A' %}
@@ -581,11 +581,11 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST"> {% csrf_token %}
+            <form method="POST" action="?removedownersubs=true"> {% csrf_token %}
                 <div class="modal-body">
                     <p class="text-muted">You can remove this account from the list of users for this host.</p>
                     <div class="mb-3 row form-group">
-                        <label for="formControlRemoveUser" class="form-label">User</label>
+                        <label for="manageUserEmail" class="form-label">User</label>
                         <input name="remove_user" type="text" readonly class="form-control" id="manageUserEmail" value="">
                     </div>
                 </div>
@@ -613,6 +613,7 @@
     <!-- Custom JS -->
     <script src="{% static 'machines/charts.js' %}"></script>
     <script src="{% static 'machines/tables.js' %}"></script>
+    <script src="{% static 'machines/machinenotifications.js' %}"></script>
     <!-- Bootstrap Table JS -->
     <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
     <!-- Activate charts -->
@@ -649,9 +650,21 @@
                     },
                     success: function(json) {
                         console.log("Successfully sent scan request.");
+                        showNotification(
+                            "Scan request registered",
+                            "Your scan is now scheduled and will be executed soon. You will be notified as soon as it ends.",
+                            "success",
+                            "travel_info"
+                        );
                     },
                     error: function(response) {
                         console.log("Could not send request. Error: " + response);
+                        showNotification(
+                            "Scan request failed",
+                            "There was something wrong requesting the scan. Please try again.",
+                            "danger",
+                            "ui-2_settings-90"
+                        );
                     }
                 });
             } else {
@@ -696,6 +709,14 @@
                             $('#ownersTable').parent().children("span").remove();
                         }
                         new_row="";
+                        // Give feedback to user
+                        var role = user_role=="S" ? "subscriber" : "owner";
+                        showNotification(
+                            "User associated to machine!",
+                            "The user has now access to the machine as " + role,
+                            "success",
+                            "travel_info"
+                        );
                     },
                     error: function (response) {
                         console.log("Could not send request. Error: " + response);
@@ -719,7 +740,6 @@
             }
         });
         $(document).on('click', '#removeUser', function(event){
-            alert("Account removed from the list of users for this host.");
             $('#manageUserModal').modal('hide');
         });
 
@@ -727,17 +747,6 @@
         $("select").change(function(){
             $.trim($("#scanLevelSelect").children("option:selected").text());
         });
-        $(document).on('click', '#scanLevelSubmit', function(event){
-            scan_level = $.trim($("#scanLevelSelect").children("option:selected").text())
-            alert("Scan level changed for " + scan_level + ".");
-        });
-
-        // Periodicity selection
-        $(document).on('click', '#periodicitySubmit', function(event){
-            periodicity = $.trim($("#periodicitySelect").children("option:selected").text())
-            alert("Periodicity changed for " + periodicity + ".");
-        });
-
 
         // Vulnerability comments modal
         var modal_id = "";
@@ -774,7 +783,7 @@
                 },
                 success: function(json) {
                     console.log("Successfully added comment.");
-                    location.reload(true);
+                    location.replace("?comment=true&goto=vulnreports");
                 },
                 error: function(response) {
                     console.log("Could not add comment. Error: " + response);
@@ -798,8 +807,7 @@
                     scan_id: scan_id,
                 },
                 success: function(json) {
-                    alert("Vulnerability status changed for \"" + status + "\".");
-                    location.reload(true);
+                    location.replace("?scanStatus=true&goto=vulnreports");
                 },
                 error: function(response) {
                     console.log("Could not change vulnerability status. Error: " + response);
