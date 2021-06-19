@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sites.shortcuts import get_current_site
 from django.forms import formset_factory
 from django.shortcuts import render
 from django.views import View
@@ -14,6 +13,10 @@ from services.notify.notifyfactory import NotifyFactory
 from .forms import RequestAccessForm, UserNotificationForm
 
 from .models import UserAccessRequest, UserNotification
+
+from django.conf import settings
+
+
 
 # Create your views here.
 
@@ -101,7 +104,7 @@ class WelcomeView(LoginRequiredMixin, View):
                         .heading(f"Hello {a.first_name},")\
                         .text(f"User {n.bold(self.request.user.email)} has just submitted a request to access {n.bold(str(len(uar.get_machines())))} machines as {n.bold(uar.get_role_display())}.")\
                         .text("Access Secure(UA)ll page to approve or deny it.")\
-                        .button(text='Requests page',url=''.join(['http://', get_current_site(self.request).domain, "/machines/requests"]))
+                        .button(text='Requests page',url=''.join([settings.DEPLOY_URL, "/machines/requests"]))
                     n.send(subject='[Secure(UA)ll info] New access request', recipient=un.value, preview='A new access request was submitted')
             request.session['requestSuccess'] = True
             if not self.incoming:
