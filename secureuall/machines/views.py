@@ -56,28 +56,28 @@ def MachinesView(request, id):
             if 'machine_scanlevel' in request.POST:
                 machine.scanLevel = request.POST['machine_scanlevel']
                 machine.save()
-            if 'machine_periodicity' in request.POST:
+            elif 'machine_periodicity' in request.POST:
                 p = request.POST['machine_periodicity']
                 if p=='Daily': machine.periodicity = 'D'
                 if p=='Weekly': machine.periodicity = 'W'
                 if p=='Monthly': machine.periodicity = 'M'
                 machine.save()
-            if 'scan_request' in request.POST:
+            elif 'scan_request' in request.POST:
                 KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            if 'vuln_status' in request.POST:
+            elif 'vuln_status' in request.POST:
                 vuln = Vulnerability.objects.get(scan_id=request.POST['scan_id'], id=request.POST['vuln_id'])
                 vuln.status = request.POST['vuln_status']
                 vuln.save()
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200) 
-            if 'vuln_comment' in request.POST:
+            elif 'vuln_comment' in request.POST:
                 VulnerabilityComment.objects.create(
                         vulnerability= Vulnerability.objects.get(id=request.POST['vuln_id_comment']),
                         user=request.user,
                         comment=request.POST['vuln_comment'],
                     )
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            if 'new_sub' in request.POST:
+            elif 'new_sub' in request.POST:
                 u = None
                 try:
                     u=User.objects.get(email=request.POST['new_sub'])
@@ -100,13 +100,13 @@ def MachinesView(request, id):
                         approvedby=request.user
                     )
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            if 'remove_user' in request.POST:
+            elif 'remove_user' in request.POST:
                 remu = None
                 try:
                     remu=User.objects.get(email=request.POST['remove_user'])
                     if remu.id in machine_users_id:
-                        users = MachineUser.objects.filter(user=remu.id, machine=id)
-                        for user in users: user.delete()
+                        musers = MachineUser.objects.filter(user=remu.id, machine=id)
+                        for user in musers: user.delete()
                 except User.DoesNotExist:
                     print("user does not exist")
 
