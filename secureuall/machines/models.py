@@ -140,7 +140,7 @@ class MachinePort(models.Model):
 
 class Vulnerability(models.Model):
     risk = models.IntegerField()
-    type = models.CharField(max_length=12)
+    type = models.CharField(max_length=50)
     description = models.CharField(max_length=256)
     location = models.TextField()
     status = models.CharField(max_length=12)
