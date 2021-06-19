@@ -194,7 +194,7 @@
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex justify-content-between">
-                        <h6 class="mt-3 mr-auto p-2">Vulnerabilities per Risk Level</h6>
+                        <h6 class="mt-3 mr-auto">Vulnerabilities per Risk Level</h6>
                         <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -225,12 +225,12 @@
     <!-- End Pie Chart -->
 
     <!-- Line Graph -->  
-    <div class="col-6 d-flex pl-0"> 
+    <div class="col-6 d-flex pr-0">
         <div class="card card-chart">
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex">
-                        <h6 class="mt-3 mr-auto p-2">Vulnerabilities per scan</h6>
+                        <h6 class="mt-3 mr-auto">Vulnerabilities per scan</h6>
                    <!-- <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -451,23 +451,22 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="modal-body">
-                            <div class="row pb-3">
-                                <div class="col-3  text-secondary my-auto">
-                                    <dl class="row">
+                            <div class="d-flex flex-row pb-3">
+                                <div class="col-3 p-0 text-secondary">
+                                    <dl class="dl-line">
                                         <dt class="pb-0">Vulnerability</dt>
                                         <dd id="vuln{{vuln.id}}TypeModalScan{{scan.id}}" class="pb-2"></dd>
                                     </dl>
                                 </div>
-                                <div class="col-3  text-secondary my-auto">
-                                    <dl class="row">
+                                <div class="col-3 p-0  text-secondary">
+                                    <dl class="dl-line">
                                         <dt class="pb-0">Date</dt>
                                         <dd id="vuln{{vuln.id}}DateModalScan{{scan.id}}" class="pb-2"></dd>
                                     </dl>
                                 </div>
-                                <div class="col-6 text-secondary my-auto">
-                                    <dl class="row d-flex flex-column">
-                                        <dt class="col-12 pb-0">Status</dt>
+                                <div class="col-6 p-0 text-secondary my-auto">
+                                    <dl class="d-flex flex-column">
+                                        <dt class="pb-0">Status</dt>
                                         <dd class="flex-row d-flex pb-2">
                                             <select name="machine_status" id="vuln{{vuln.id}}StatusSelectionModalScan{{scan.id}}"
                                             type="button" class="btn text-center dropdown-toggle
@@ -487,15 +486,13 @@
                                     </dl>
                                 </div>
                             </div>
-                            <div class="row pb-3">
-                                <div class="col-12  text-secondary my-auto">
-                                    <dl class="row">
-                                        <dt class="pb-0">Description</dt>
-                                        <dd id="vuln{{vuln.id}}DescModalScan{{scan.id}}" class="pb-2"></dd>
-                                    </dl>
-                                </div>
+                            <div class="col-12 p-0 pb-3 text-secondary my-auto">
+                                <dl class="dl-line">
+                                    <dt class="pb-0">Description</dt>
+                                    <dd id="vuln{{vuln.id}}DescModalScan{{scan.id}}" class="pb-2"></dd>
+                                </dl>
                             </div>
-                            <div class="table-responsive col-12">
+                            <div class="table-responsive col-12 p-0">
                                 <table class="table table-discreet" id="vuln{{vuln.id}}CommentsScan{{scan.id}}">
                                     <thead class=" text-primary">
                                         <th data-field="Date">Date</th>
@@ -519,15 +516,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mb-3 row form-group">
-                                <label for="formControlUser" class="form-label">User</label>
+                            <div class="mb-3 form-group">
+                                <label for="addVuln{{vuln.id}}CommentUserScan{{scan.id}}" class="form-label">User</label>
                                 <input type="text" readonly class="form-control" id="addVuln{{vuln.id}}CommentUserScan{{scan.id}}" value="{{logged_user.email}}">
                             </div>
-                            <div class="mb-3 row form-group">
-                                <label for="formControlTextareaDesc" class="form-label">Comment</label>
+                            <div class="mb-3 form-group">
+                                <label for="addVuln{{vuln.id}}CommentDescriptionScan{{scan.id}}" class="form-label">Comment</label>
                                 <textarea class="form-control" type="text" id="addVuln{{vuln.id}}CommentDescriptionScan{{scan.id}}" rows="3" required></textarea>
                             </div>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <input type="submit" class="btn btn-primary add-user-comment" value="Add comment">
@@ -552,17 +548,17 @@
                 </div>
                 <div class="modal-body">
                     <form method="post">
-                        <div class="mb-3 row form-group">
-                            <label for="formControlRole" class="form-label">Role</label>
+                        <div class="mb-3 form-group">
+                            <label for="addUser" class="form-label">Role</label>
                             <input type="text" readonly class="form-control" id="addUser" value="">
                         </div>
-                        <div class="mb-3 row form-group">
-                            <label for="formControlInputEmail" class="form-label">Email address</label>
+                        <div class="mb-3 form-group">
+                            <label for="newUserEmail" class="form-label">Email address</label>
                             <input type="email" class="form-control" id="newUserEmail" placeholder="user@ua.pt" required>
                             </input>
                         </div>
-                        <div class="mb-3 row form-group">
-                            <label for="formControlTextareaDesc" class="form-label">Motive</label>
+                        <div class="mb-3 form-group">
+                            <label for="newUserDescription" class="form-label">Motive</label>
                             <textarea class="form-control" type="text" id="newUserDescription" rows="4" required></textarea>
                         </div>
                     </form>
