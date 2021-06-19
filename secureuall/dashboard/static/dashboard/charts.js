@@ -322,7 +322,7 @@ const initMachinesRiskLevelChart = () => {
             }
           }
           var text = "Filtered by risk level <strong>" + label + "</strong>.";
-          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
+          document.getElementById("machinesTableFilterText").innerHTML = text;
         }
     };
 
