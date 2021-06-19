@@ -9,7 +9,20 @@
 
 {% block header %}
 <div class="header text-center my-auto">
-    <h2 class="title">Host | {{machine}}</h2>
+    <h2 class="title">
+        Host | {{machine}}
+        {% if not machine.active %}
+            <span
+                class="badge p-2 bg-secondary"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="This machine was archived because a scan detected a DNS change. A new machine was created with the new DNS."
+            >
+                Archived
+                <small><i class="now-ui-icons travel_info ml-1"></i></small>
+            </span>
+        {% endif %}
+    </h2>
 </div>  
 {% endblock header %}
 
@@ -28,31 +41,33 @@
                 <div class="my-auto">
                     <h6 class="mt-3 pb-4">Host General Information</h6>
                     <!-- Machine General Information -->
-                    <div class="row pb-5">
-                        <div class="d-flex col-md-12 text-secondary">
-                            <dl class="col-md-6 px-1">
+
+                    {# Key/value dictionary #}
+                    <div class="row mx-0">
+                        <div class="d-flex col-md-12 p-0 text-secondary">
+                            <dl class="col-md-6 p-0">
                                 <dt>IP</dt>
-                                <dd>{{machine.ip}}</dd>
+                                <dd>
+                                    {% if machine.ip %}
+                                        {{machine.ip}}
+                                    {% else %}
+                                        No ip.
+                                    {% endif %}
+                                </dd>
                                 <dt>DNS</dt>
                                 <dd>
-                                {% if machine.dns %}
-                                    {{machine.dns}}
-                                {% else %}
-                                    No dns.
-                                {% endif %}
+                                    {% if machine.dns %}
+                                        {{machine.dns}}
+                                    {% else %}
+                                        No dns.
+                                    {% endif %}
                                 </dd>
                                 <dt>Registered</dt>
                                 <dd>{{machine.created}}</dd>
                             </dl>
-                            <dl class="col-md-6 px-1">
+                            <dl class="col-md-6 p-0">
                                 <dt>OS</dt>
                                 <dd>{{machine.os}}</dd>
-                                <dt>Status</dt>
-                                {% if machine.active %}
-                                    <dd class="text-primary">active</dd>
-                                {% else %}
-                                    <dd class="text-danger">inactive</dd>
-                                {% endif %}
                                 <dt>Risk</dt>
                                 {% if machine.risk == '1' %}
                                     <dd><span class="badge p-2 bg-primary">1</span></dd>
@@ -68,71 +83,69 @@
                             </dl>
                         </div>
                     </div>
+
+                    {# Owners/Subscribers #}
+                    <div class="d-flex flex-row text-secondary mt-5">
+                        <div class="col-md-6 p-0 d-flex flex-column">
+                            <dl>
+                                <dt>Owners</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                        <table class="table table-discreet table-users" id="ownersTable">
+                                            <tbody>
+                                            {% for key, value in machine_users.items %}
+                                                {% if key == 'O' %}
+                                                    {% for v in value %}
+                                                        <tr><td>{{v}}</td></tr>
+                                                    {% empty %}
+                                                        <span>No owners yet.</span>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </dd>
+                            </dl>
+                            {% if user_type == 'O' or user_type == 'A' %}
+                                <button class="btn btn-outline-primary mt-auto mr-auto" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 p-0 d-flex flex-column">
+                            <dl>
+                                <dt>Subscribers</dt>
+                                <dd>
+                                    <div class="table-responsive d-flex">
+                                        <table class="table table-discreet table-users" id="subscribersTable">
+                                            <tbody>
+                                            {% for key, value in machine_users.items %}
+                                                {% if key == 'S' %}
+                                                    {% for v in value %}
+                                                        <tr><td>{{v}}</td></tr>
+                                                    {% empty %}
+                                                        <span>No owners yet.</span>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </dd>
+                            </dl>
+                            {% if user_type == 'O' or user_type == 'A' %}
+                                <button class="btn btn-outline-primary mr-auto mt-auto" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
+                            {% endif %}
+                        </div>
+                    </div>
                     <!-- End Machine General Information -->
                 </div>
                 <div class="row">
                     <!-- Owners and Subscribers -->
                     <div class="my-auto">
                         <div class="row">
-                            <div class="d-flex col-md-12 text-secondary">
-                                <div class="col-md-6">
-                                    <dl class="row px-2">
-                                        <dt class="row">Owners</dt>
-                                        <dd class="row">
-                                            <div class="table-responsive d-flex">
-                                                <table class="table table-discreet table-users" id="ownersTable">
-                                                    <thead><th data-field="user"></th></thead>
-                                                    <tbody>
-                                                    {% for key, value in machine_users.items %}
-                                                        {% if key == 'O' %}
-                                                            {% for v in value %}
-                                                                <tr><td>{{v}}</td></tr>
-                                                            {% empty %}
-                                                                <span>No owners yet.</span>
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </dd>
-                                    </dl>
-                                </div>
-                                <div class="col-md-6">
-                                    <dl class="row px-2">
-                                        <dt class="row">Subscribers</dt>
-                                        <dd class="row">
-                                            <div class="table-responsive d-flex">
-                                                <table class="table table-discreet table-users" id="subscribersTable">
-                                                    <thead><th data-field="user"></th></thead>
-                                                    <tbody>
-                                                    {% for key, value in machine_users.items %}
-                                                        {% if key == 'S' %}
-                                                            {% for v in value %}
-                                                                <tr><td>{{v}}</td></tr>
-                                                            {% empty %}
-                                                                <span>No owners yet.</span>
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </dd>
-                                    </dl>
-                                </div>
-                            </div>
+
                         </div>
-                        {% if user_type == 'O' or user_type == 'A' %}
-                        <div class="row d-flex text-secondary">
-                            <div class="col-6">
-                                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
-                            </div>
-                            <div class="col-6">
-                                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>New</button>
-                            </div>
-                        </div>
-                        {% endif %}
+
                     </div>
                     <!-- End Owners and Subscribers -->
                 </div>
@@ -145,7 +158,7 @@
                 <!-- Open Ports -->
                 <div class="my-auto">
                     <h6 class="mt-3">Open Ports</h6>
-                    <div class="table-responsive col-12">
+                    <div class="table-responsive col-12 p-0">
                         <table class="table table-discreet" id="openPorts">
                             <thead class=" text-primary">
                                 <th>Number</th>
@@ -266,68 +279,68 @@
                 </div>
             </div>
         </div>
-        <div class="card-body mx-3">
+        <div class="card-body">
             <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table.</p>
             <!-- Row Next Scan -->
-            <div class="row pb-3">
-                <div class="col-6  text-secondary my-auto">
+            <div class="d-flex flex-row pb-3">
+                <div class="col-6 p-0 text-secondary my-auto">
                     <form method="POST"> {% csrf_token %}
-                        <dl class="row">
-                            <dt class="pb-0 col-3">Next scan </dt>
-                            <dd class="pb-2 col-9">{{machine.nextScan}}</dd>
+                        <dl class="dl-12">
+                            <dt>Next scan </dt>
+                            <dd>{{machine.nextScan}}</dd>
                         </dl>
-                        <dl class="row">
-                            <dt class="pb-0 col-3">Periodicity </dt>
+                        <dl class="dl-12">
+                            <dt>Periodicity </dt>
                             {% if user_type == 'O' or user_type == 'A' %}
-                            <dd class="col-9">
-                                <select name="machine_periodicity" id="periodicitySelect" type="text"
-                                class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
-                                <option value = "Daily" {% if machine.get_periodicity_display == 'Daily' %}selected="selected"{% endif %}>Daily</option>
-                                <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
-                                <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
-                                </select>
-                                <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
-                            </dd>
+                                <dd>
+                                    <select name="machine_periodicity" id="periodicitySelect" type="text"
+                                    class="dropdown-toggle text-secondary text-center" data-toggle="dropdown" aria-expanded="false">
+                                    <option value = "Daily" {% if machine.get_periodicity_display == 'Daily' %}selected="selected"{% endif %}>Daily</option>
+                                    <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
+                                    <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
+                                    </select>
+                                    <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
+                                </dd>
                             {% else %}
-                            <dd  class="pb-2 col-9">
-                                {{machine.get_periodicity_display}}
-                            </dd>
+                                <dd>
+                                    {{machine.get_periodicity_display}}
+                                </dd>
                             {% endif %}
                         </dl>
                     </form>
                 </div>
                 <div class="col-6 text-secondary my-auto">
                     <form method="POST"> {% csrf_token %}
-                        <dl class="row">
-                            <dt class="col-3">Scan level </dt>
+                        <dl class="dl-12">
+                            <dt>Scan level </dt>
                             {% if user_type == 'O' or user_type == 'A' %}
-                            <dd class="col-9">
-                                <select name="machine_scanlevel" id="scanLevelSelect" type="button"
-                                class="btn btn-sm dropdown-toggle
-                                {% if machine.scanLevel == '1' %} btn-info" 
-                                {% elif machine.scanLevel == '2' %} btn-alarm" 
-                                {% elif machine.scanLevel == '3' %} btn-warning" 
-                                {% elif machine.scanLevel == '4' %} btn-danger" 
-                                {% endif %} data-toggle="dropdown" aria-expanded="false">
-                                <option value = "1" {% if machine.scanLevel == '1' %}selected="selected"{% endif %}>1</option>
-                                <option value = "2" {% if machine.scanLevel == '2' %}selected="selected"{% endif %}> 2</option>
-                                <option value = "3" {% if machine.scanLevel == '3' %}selected="selected"{% endif %}> 3</option>
-                                <option value = "4" {% if machine.scanLevel == '4' %}selected="selected"{% endif %}> 4</option>
-                                </select>
-                                <button class="btn btn-outline-default" type="submit" id="scanLevelSubmit">Apply</button>
-                            </dd>
+                                <dd>
+                                    <select name="machine_scanlevel" id="scanLevelSelect" type="button"
+                                    class="btn btn-sm dropdown-toggle my-0 mx-2
+                                    {% if machine.scanLevel == '1' %} btn-info"
+                                    {% elif machine.scanLevel == '2' %} btn-alarm"
+                                    {% elif machine.scanLevel == '3' %} btn-warning"
+                                    {% elif machine.scanLevel == '4' %} btn-danger"
+                                    {% endif %} data-toggle="dropdown" aria-expanded="false">
+                                    <option value = "1" {% if machine.scanLevel == '1' %}selected="selected"{% endif %}>1</option>
+                                    <option value = "2" {% if machine.scanLevel == '2' %}selected="selected"{% endif %}> 2</option>
+                                    <option value = "3" {% if machine.scanLevel == '3' %}selected="selected"{% endif %}> 3</option>
+                                    <option value = "4" {% if machine.scanLevel == '4' %}selected="selected"{% endif %}> 4</option>
+                                    </select>
+                                    <button class="btn btn-outline-default my-0" type="submit" id="scanLevelSubmit">Apply</button>
+                                </dd>
                             {% else %}
-                            <dd  class="pb-2 col-9">
-                                {% if machine.scanLevel == '1' %}
-                                <dd><span class="badge p-2 bg-primary">1</span></dd>
-                                {% elif machine.scanLevel == '2' %}
-                                <dd><span class="badge p-2 bg-info">2</span></dd>
-                                {% elif machine.scanLevel == '3' %}
-                                <dd><span class="badge p-2 bg-alarm">3</span></dd>
-                                {% elif machine.scanLevel == '4' %}
-                                <dd><span class="badge p-2 bg-warning">4</span></dd>
-                                {% endif %}
-                            </dd>
+                                <dd>
+                                    {% if machine.scanLevel == '1' %}
+                                    <dd><span class="badge p-2 bg-primary">1</span></dd>
+                                    {% elif machine.scanLevel == '2' %}
+                                    <dd><span class="badge p-2 bg-info">2</span></dd>
+                                    {% elif machine.scanLevel == '3' %}
+                                    <dd><span class="badge p-2 bg-alarm">3</span></dd>
+                                    {% elif machine.scanLevel == '4' %}
+                                    <dd><span class="badge p-2 bg-warning">4</span></dd>
+                                    {% endif %}
+                                </dd>
                             {% endif %}
                         </dl>
                         {% if user_type == 'O' or user_type == 'A' %}
@@ -338,7 +351,7 @@
                     </form>
                 </div>
             </div>
-            <div class="row">
+            <div class="">
                 <!-- End Row Next Scan -->
                 <div class="table-responsive">
                     <table class="table table-discreet table-vulnerabilities" id="vulnerabilitiesTable">
