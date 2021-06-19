@@ -20,12 +20,72 @@
 {% if user.is_superuser %}
     <!-- Row of General info -->
     <div class="row">
-        <div class="col-lg-8 col-md-8">
-            <!-- Table Alerts -->
-            
-            {% include "workers/workersWidget.html" %}
-
-            <!-- End Table Alerts -->
+        {% if user.is_admin %}
+            {% if alerts.workers or alerts.requests %}
+                <div class="col-md-8 d-flex">
+                    <div class="card card-chart d-flex flex-column">
+                        <div class="card-header">
+                            <h5 class="card-category"></h5>
+                            <h4 class="card-title">Alerts</h4>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex my-auto row">
+                                {% if alerts.workers %}
+                                    <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                        <h6 class="text-danger">
+                                            <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                            A total of {{alerts.workers|length}} workers are down!</h6>
+                                        <ul>
+                                            {% for w in alerts.workers %}
+                                                <li>Worker {{w.name}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <a href="/workers?status=D" class="btn btn-outline-primary w-100 mt-auto">
+                                            <span class="mx-auto my-auto">Go to workers</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                {% if alerts.requests %}
+                                    <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                        <h6 class="text-danger">
+                                            <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                            A total of {{alerts.requests|length}} requests are pending review!</h6>
+                                        <ul>
+                                            {% with alerts.requests|first as newestRequest %}
+                                                <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                            {% endwith %}
+                                            {% if alerts.requests|length > 1 %}
+                                                {% with alerts.requests|last as oldestRequest %}
+                                                    <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                                {% endwith %}
+                                            {% endif %}
+                                        </ul>
+                                        <a href="/machines/requests" class="btn btn-outline-primary w-100 mt-auto">
+                                            <span class="mx-auto my-auto">Go to requests</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                {% if alerts.machines %}
+                                    <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                        <h6 class="text-danger">
+                                            <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                            A total of {{alerts.machines|length}} active machines are not associated to a worker!</h6>
+                                        <ul>
+                                            {% for m in alerts.machines %}
+                                                <li>{{m}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        <a href="/workers/machinesPending" class="btn btn-outline-primary w-100 mt-auto">
+                                            <span class="mx-auto my-auto">Associate to workers</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         </div>
         
         <div class="col-lg-4 col-md-4">
@@ -192,8 +252,6 @@
 
             {% include "machines/machinesWidget.html" %}
 
-        <!-- End Machines List Row -->
-    </div>
 
 {% endblock content %}
 

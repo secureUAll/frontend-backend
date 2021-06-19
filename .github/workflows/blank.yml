@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest # Using linux machine
+
+    steps:
+      - uses: actions/checkout@v2 # Checkout the code
+
+      - name: Install project requirements
+        working-directory: secureuall
+        run: pip install -r requirements.txt
+
+      - name: Set up Django project
+        working-directory: secureuall
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+          python manage.py collectstatic --no-input
+
+      - name: Run Django tests
+        working-directory: secureuall
+        run: |
+          python manage.py test --verbosity 2
+

@@ -32,84 +32,158 @@
 
 {% block content %}
     <!-- Row of Tables -->
-    <div class="row">
+    <div class="row" id="workers">
+        {# Filters #}
+        <div class="col-12 d-flex">
+            <div class="card card-chart d-flex flex-column">
+                <div class="card-header d-flex">
+                    <h5 class="card-category"></h5>
+                    <h4 class="card-title text-secondary">Filters</h4>
+                    <div class="ml-auto my-auto d-flex flex-row flex-wrap">
+                        <a href="?status=A" class=""><button class="btn {% if filter == 'A' %}active{% endif %} btn-outline-primary ml-2">Active</button></a>
+                        <a href="?status=D" class=""><button class="btn {% if filter == 'D' %}active{% endif %} btn-outline-danger ml-2">Down</button></a>
+                        <a href="?status=I" class=""><button class="btn {% if filter == 'I' %}active{% endif %} btn-outline-dark ml-2">Idle</button></a>
+                        {% if filter %}
+                            <a href="?" class=""><button class="btn btn-outline-secondary ml-2"><i class="now-ui-icons ui-1_simple-remove"></i> Remove filters</button></a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+
+                </div>
+            </div>
+        </div>
+
+        {# Workers list #}
         {% for worker in workers %}
-            <div class="col-lg-6 d-flex mx-auto" id="worker{{worker.id}}">
+            <div class="col-lg-12 d-flex mx-auto" id="worker{{worker.id}}">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header d-flex">
-                        <h4 class="card-title">Worker {{worker.name}}</h4>
+                        <h4 class="card-title">
+                            Worker
+                            <a
+                                data-pk="{{worker.id}}"
+                                data-url="/workers/{{worker.id}}/"
+                                id="editName_worker{{worker.id}}"
+                                href="#"
+                                class="workerTitle"
+                                title="Click to edit"
+                            >{{worker.name}}</a>
+                            {% csrf_token %}
+                            <i class="small text-primary now-ui-icons design-2_ruler-pencil" title="Click on text to edit"></i>
+                        </h4>
                         {% if worker.machines.all %}
-                        <div class="ms-auto">
-                            <a href="/workers/{{worker.id}}/machines/add"><button class="btn btn-sm btn-outline-primary" title="Add machines"><i class="now-ui-icons ui-1_simple-add"></i></button></a>
-                            <a href="/workers/{{worker.id}}/machines/edit"><button class="btn btn-sm btn-outline-primary" title="Edit machines"><i class="now-ui-icons design-2_ruler-pencil"></i></button></a>
+                        <div class="ml-auto my-auto d-flex flex-row">
                         </div>
                         {% endif %}
                     </div>
                     <div class="card-body my-auto d-flex flex-column">
                         <!-- Worker data -->
-                        <div class="d-flex col-12 text-secondary">
-                            <dl class="col-6">
+                        <div class="d-flex col-12 p-0 text-secondary">
+                            <dl class="col-6 p-0">
                                 <dt>Name</dt>
                                 <dd>{{worker.name}}</dd>
                                 <dt>Failures</dt>
                                 <dd>{{worker.failures}}</dd>
                             </dl>
-                            <dl class="col-6">
+                            <dl class="col-6 p-0">
                                 <dt>Status</dt>
                                 <dd>
                                     <span class="text-{{worker.get_status_display|color}}">{{worker.get_status_display}}</span>
                                 </dd>
-                                <dt>Machines</dt>
-                                <dd>{{worker.machines.all|length}}</dd>
-                            </dl>
-                        </div>
-                        <div class="d-flex col-12 text-secondary">
-                            <dl class="dl-12">
                                 <dt>Created</dt>
                                 <dd>{{worker.created}}</dd>
                             </dl>
                         </div>
                         <!-- Machines table -->
                         {% if worker.machines.all %}
-                            <div class="table-responsive col-12 my-4">
-                                <table class="table table-discreet workersTable" id="table{{worker.id}}">
-                                    <thead class=" text-primary">
-                                        <th>Machine</th>
-                                        <th>Location</th>
-                                        <th>Scan level</th>
-                                        <th>Risk</th>
-                                        <th>Periodicity</th>
-                                        <th>Next scan</th>
-                                    </thead>
-                                    <tbody>
-                                            {% for machineworker in worker.machines.all|dictsort:"machine.nextScan" %}
-                                                {% with machine=machineworker.machine %}
-                                                    <tr title="See machine page" onClick="window.location='/machines/{{machine.id}}'">
-                                                        <td>{{machine}}</td>
-                                                        <td>{% if machine.location %}{{machine.location}}{% endif %}</td>
-                                                        <td><span class="badge p-2 bg-{{machine.scanLevel}}">{{machine.get_scanLevel_display}}</span></td>
-                                                        <td>
-                                                            {% if machine.risk %}
-                                                            <span class="badge p-2 bg-{{machine.risk}}">{{machine.risk}}</span>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>{{machine.get_periodicity_display}}</td>
-                                                        <td>{{machine.nextScan}}</td>
-                                                    </tr>
-                                                {% endwith %}
-                                            {% endfor %}
-
-                                    </tbody>
-                                </table>
+                            <div class="mt-3 d-flex flex-row">
+                                <h5 class="mb-0">{{worker.machines.all|length}} hosts associated</h5>
+                                <div class="ml-auto d-flex flex-row flex-wrap">
+                                    <button
+                                        class="btn btn-outline-primary"
+                                        data-toggle="collapse"
+                                        data-target="#workerMachines{{worker.id}}"
+                                        aria-expanded="false"
+                                        aria-controls="workerMachines{{worker.id}}"
+                                        id="workerMachines{{worker.id}}Collapse"
+                                    >
+                                        <i class="now-ui-icons tech_laptop mr-2"></i> See hosts
+                                    </button>
+                                    <div class="dropdown dropdown-free ml-1">
+                                        <button class="btn btn-outline-primary" data-toggle="dropdown">
+                                            <i class="now-ui-icons ui-1_simple-add mr-1"></i> Add hosts
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-left">
+                                            <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
+                                            <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/range">IP Range</a>
+                                        </div>
+                                    </div>
+                                    <a href="/workers/{{worker.id}}/machines/edit" class="ml-2">
+                                        <button class="btn btn-outline-primary">
+                                            <i class="now-ui-icons design-2_ruler-pencil mr-1"></i> Edit hosts
+                                        </button>
+                                    </a>
+                                    <a href="/workers/{{worker.id}}/logs" class="ml-2">
+                                        <button class="btn btn-outline-primary">
+                                            <i class="now-ui-icons text_align-center mr-1"></i> Scanning logs
+                                        </button>
+                                    </a>
+                                </div>
                             </div>
+                            <div
+                                class="collapse"
+                                aria-labelledby="workerMachines{{worker.id}}Collapse"
+                                id="workerMachines{{worker.id}}"
+                                data-parent="#workers"
+                            >
+                                <div class="table-responsive col-12 my-4">
+                                    <table class="table table-discreet workersTable" id="table{{worker.id}}">
+                                        <thead class=" text-primary">
+                                            <th>Machine</th>
+                                            <th>Location</th>
+                                            <th>Scan level</th>
+                                            <th>Risk</th>
+                                            <th>Periodicity</th>
+                                            <th>Next scan</th>
+                                        </thead>
+                                        <tbody>
+                                                {% for machineworker in worker.machines.all|dictsort:"machine.nextScan" %}
+                                                    {% with machine=machineworker.machine %}
+                                                        <tr title="See machine page" onClick="window.location='/machines/{{machine.id}}'">
+                                                            <td>{{machine}}</td>
+                                                            <td>{% if machine.location %}{{machine.location}}{% endif %}</td>
+                                                            <td><span class="badge p-2 bg-{{machine.scanLevel}}">{{machine.get_scanLevel_display}}</span></td>
+                                                            <td>
+                                                                {% if machine.risk %}
+                                                                <span class="badge p-2 bg-{{machine.risk}}">{{machine.risk}}</span>
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>{{machine.get_periodicity_display}}</td>
+                                                            <td>{{machine.nextScan}}</td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                        </div>
                         {% else %}
-                        <div class="my-auto p-5 text-center">
-                            <h5 class="">No machines associated.</h5>
-                            <a href="/workers/{{worker.id}}/machines/add">
-                                <button class="btn btn-outline-primary">
-                                    <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add machines
-                                </button>
-                            </a>
+                            <div class="mt-3 d-flex flex-row">
+                                <h5 class="text-warning">No hosts associated!</h5>
+                                <div class="dropdown ml-auto dropdown-free">
+                                    <button
+                                        class="btn btn-outline-warning"
+                                        data-toggle="dropdown"
+                                    >
+                                        <i class="now-ui-icons ui-1_simple-add mr-2"></i> Add hosts
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/batch">Batch mode</a>
+                                        <a class="dropdown-item" href="/workers/{{worker.id}}/machines/add/range">IP Range</a>
+                                    </div>
+                                </div>
                         </div>
                         {% endif %}
                     </div>
@@ -120,12 +194,30 @@
                     </div>
                 </div>
             </div>
+        {% empty %}
+            <div class="col-12 d-flex">
+                <div class="card card-chart d-flex flex-column">
+                    <div class="card-header">
+                        <h5 class="card-category"></h5>
+                        <h4 class="card-title">No workers found!</h4>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        {% if filter %}
+                            <p>Try to filter by other status.</p>
+                        {% else %}
+                            <p>There are no workers registered in the database.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </div>
 
 {% endblock content %}
 
 {% block scripts %}
+    <!-- Editable -->
+    <script src="{% static 'assets/js/plugins/bootstrap-editable.min.js' %}"></script>
     <!-- Data Tables Script -->
     <script src="{% static 'assets/js/plugins/datatables.min.js' %}"></script>
     <!-- Custom JS -->
@@ -135,7 +227,7 @@
     <script>
         {% if machinesWithoutWorker %}
             showNotification(
-                "There are {{machinesWithoutWorker}} machines without a worker!",
+                "There are {{machinesWithoutWorker}} hosts without a worker!",
                 "To see the full list and associate them to a worker click <a class=\"text-white\" href=\"#\">here</a>.",
                 "warning",
                 "ui-2_settings-90"
@@ -144,7 +236,7 @@
         {% if machinesAdded %}
             showNotification(
                 "Changes applied to worker {{machinesAdded.worker}}!",
-                "{{machinesAdded.machines}} machines where associated, {{machinesAdded.new}} new machine was created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
+                "{{machinesAdded.machines}} hosts where associated, {{machinesAdded.new}} new hosts were created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
                 "success",
                 "tech_laptop"
             );

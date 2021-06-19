@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth.decorators import login_required
 
-from login.models import User
-from machines.models import Machine, MachineUser, Subscription, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from login.models import User, UserAccessRequest
+from machines.models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
 from workers.models import Worker
 
 from datetime import datetime, timedelta, date
@@ -95,8 +95,16 @@ def DashboardView(request, *args, **kwargs):
 
     if not request.user.is_superuser:
         machineset = machineset.filter(users__user__in=[request.user.id])
+
+    # ALERTS
+    alerts = {'workers': Worker.objects.filter(status='D'),
+              'requests': list(UserAccessRequest.objects.filter(pending=True).order_by('-created_at')),
+              'machines': Machine.objects.filter(active=True, workers__isnull=True), 'number': 0}
+    alerts['number'] += 1 if alerts['workers'].exists() else 0
+    alerts['number'] += 1 if alerts['machines'].exists() else 0
+    alerts['number'] += 1 if len(alerts['requests']) else 0
         
-    return render(request, "dashboard/dashboard.html", {
+    context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
         'ports': MachinePort.objects.all(),
@@ -111,4 +119,7 @@ def DashboardView(request, *args, **kwargs):
         'fixed_vulns': fixed_vulns,
         'machines_updates': machines_updates,
         'machines_addrem': machines_addrem,
-    })
+        'alerts': alerts
+    }
+
+    return render(request, "dashboard/dashboard.html", context)

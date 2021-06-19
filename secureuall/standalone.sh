@@ -26,17 +26,20 @@ echo
 echo "Django set up..."
 python manage.py makemigrations
 python manage.py migrate
-export DJANGO_SUPERUSER_PASSWORD=aJAG72Jas
-export DJANGO_SUPERUSER_USERNAME=secureuall
-export DJANGO_SUPERUSER_EMAIL=secureuall@secureuall.pt
-python manage.py createsuperuser --noinput
-echo -e "from login.models import User\nimport os\nu=User.objects.get(username=os.environ.get('DJANGO_SUPERUSER_USERNAME', ''))\nu.is_admin=True\nu.save()\nprint(f\"Superuser ({u.username}) with admin status created! :)\")" | python manage.py shell
 python manage.py collectstatic --no-input
 
-# Load sample data
+# Boot script
 echo
-echo "Loading sample data..."
-python manage.py loaddata fixture
+echo "Running boot scripts..."
+export DJANGO_SUPERUSERS='["secureuall@secureuall.pt"]'
+python manage.py shell < boot_script.py
+python manage.py dbshell < boot_db.sql
+
+# Env vars
+export EMAIL_HOST=exchange.ua.pt
+export EMAIL_PORT=25
+export EMAIL_USER=deti-vuln-mon@ua.pt
+export EMAIL_PASSWORD=eGdgtY56eF#bve8AxeFe
 
 # Run local server
 echo

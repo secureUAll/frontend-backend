@@ -1,10 +1,10 @@
+
 // This function initializes all the charts
 const initCharts = () => {
-    initVulnsByGroupChart();
+    //initVulnsByGroupChart();
     initVulsRiskLevelChart();
+    initVulnsByScanChart();
 }
-
-console.log("oi goncalo! :)");
 
 const initVulnsByGroupChart = () => {
     // Get element from DOM
@@ -24,7 +24,7 @@ const initVulnsByGroupChart = () => {
     var myChart = {
         type: "bar",
         data: {
-            labels: initVulnsByGroupChartLabels,
+            labels: vulnsByGroupChartLabels,
             datasets: [{
                 label: "Amount",
                 backgroundColor: gradientFill,
@@ -32,7 +32,7 @@ const initVulnsByGroupChart = () => {
                 borderColor: chartColor,
                 fill: true,
                 borderWidth: 1,
-                data: initVulnsByGroupChartValues
+                data: vulnsByGroupChartValues
             }]
         },
         options: {
@@ -54,7 +54,7 @@ const initVulnsByGroupChart = () => {
                 yPadding: 10,
                 caretPadding: 10,
             },
-            responsive: 1,
+            responsive: true,
             scales: {
                 yAxes: [{
                     gridLines: 0,
@@ -79,31 +79,45 @@ const initVulnsByGroupChart = () => {
 
 const initVulsRiskLevelChart = () => {
     // Get element from DOM
-    var ctx = document.getElementById("vulnerabilitiesByRiskLevel").getContext("2d");
+    var canvas = document.getElementById("vulnerabilitiesByRiskLevel");
+    var ctx = canvas.getContext("2d");
 
-    // Colors
-    const chartColor = "#92d400";
+    //Colors
+    const gradientFill = [
+        'rgba(146, 212, 0, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(245,230,52, 0.7)',
+        'rgba(243,178,27, 0.7)',
+        'rgba(240, 89, 42, 0.7)',
+        'rgba(218, 223, 230, 0.7)',
+    ];
+    const gradientFillHover = [
+        'rgba(146, 212, 0, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(245,230,52, 1)',
+        'rgba(243,178,27, 1)',
+        'rgba(240, 89, 42, 1)',
+        'rgba(218, 223, 230, 1)',
+    ];
+    const borderColor = [
+        'rgba(146, 212, 0)',
+        'rgba(54, 162, 235)',
+        'rgba(245,230,52)',
+        'rgba(243,178,27)',
+        'rgba(240, 89, 42)',
+        'rgba(218, 223, 230)',
+      ];
 
     // Data
-    const DATA_COUNT = 5;
-    const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
     const data = {
-        labels: [ '1', '2', '3', '4', '5' ],
+        labels: vulsRiskLevelChartLabels,
         datasets: [{
           data: vulsRiskLevelChartValues,
-          /*
-          // Multicolor
-          backgroundColor: [ '#92d400', '#42d3b8', '#9878d3', '#f3b21b', '#f0592a' ],
-          pointHoverBackgroundColor: [ '#7ab300', '#2cbaa0', '#7b52c7', '#da9c0b','#d73e0f' ]
-          */
-          /*
-          // Green variation
-          backgroundColor: [ '#92d400', '#7ab300', '#578000', '#344d00', '#111a00' ],
-          pointHoverBackgroundColor: [ '#8bcc00', '#699900', '#466600', '#233300','#000000' ]
-          */
-          // Green variation smooth
-          backgroundColor: [ 'rgba(146, 212, 0, .6)', 'rgba(122, 179, 0, .6)', 'rgba(87, 128, 0, .6)', 'rgba(52, 77, 0, .6)', 'rgba(17, 26, 0, .6)' ],
-          hoverBackgroundColor: [ '#92d400', '#7ab300', '#578000', '#344d00', '#111a00' ],
+          backgroundColor: gradientFill,
+          hoverBackgroundColor: gradientFillHover,
+          borderColor: borderColor,
+          fill: true,
+          borderWidth: 1,
         }]
   };
 
@@ -118,17 +132,126 @@ const initVulsRiskLevelChart = () => {
             },
             responsive: true,
             plugins: {
-                labels: {
+               /* labels: {
                     render: 'value',
                     fontColor: '#fff',
                     fontStyle: 'bold',
-                }
+                    precision: 2
+                } */
+                datalabels: {
+                    formatter: (value, ctx) => {
+                      let datasets = ctx.chart.data.datasets;
+                      if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+                        let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = Math.round((value / sum) * 100) + '%';
+                        return percentage;
+                      } else {
+                        return percentage;
+                      }
+                    },
+                    color: '#fff',
+                  }
             },
             tooltips: {
-                 enabled: false
-            }
+                enabled: true,
+                mode: 'single',
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        var i = tooltipItems.index;
+                        return "Risk level " + data.labels[i];
+                    }
+                }
+            },
+        },
+        animation: {
+            animateScale: true,
+            animateRotate: true
         },
     };
 
     var pieChart = new Chart(ctx, myChart);
+
+    // on click event, filter
+    canvas.onclick = function(evt) {
+        var activePoints = pieChart.getElementsAtEvent(evt);
+        if (activePoints[0]) {
+          var chartData = activePoints[0]['_chart'].config.data;
+          var idx = activePoints[0]['_index'];
+  
+          var label = chartData.labels[idx];
+          var table = document.getElementById("vulnerabilitiesTable");
+          var tr =  table.getElementsByTagName("tr");
+
+          var i, td;
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].querySelector("td span");
+            var regex = /^[a-zA-Z]+$/;
+            if (!label.match(regex)) {
+                td = tr[i].getElementsByTagName("td")[0];
+            }
+            if (td) {
+                if (td.innerText.indexOf(label) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+          }
+          var text = "Filtered by risk level <strong>" + label + "</strong>.";
+          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
+          $("#clearFilterVulnerabilities").removeClass("d-none");
+        }
+    };
+
+    // on click event, clear filter
+    document.getElementById("clearFilterVulnerabilities").onclick = function() {
+
+        $("#clearFilterVulnerabilities").addClass("d-none");
+
+        var table  = document.getElementById("vulnerabilitiesTable");
+        var tr =  table.getElementsByTagName("tr");
+
+        var i;
+        for (i = 0; i < table.rows.length; i++) {
+            tr[i].style.display = "";
+        }
+
+        $("#vulnerabilitiesTableFilterText").text("No filter applied to table.");
+    }
+
 };
+
+const initVulnsByScanChart = () => {
+    // Get element from DOM
+    const ctx = document.getElementById('lineChart').getContext("2d");
+
+    // Colors
+    const chartColor = "#92d400";
+    const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
+    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
+    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
+
+    // Draw chart
+    myChart = new Chart(ctx, {
+        type: 'line',
+        responsive: true,
+        data: {
+            labels: vulnsByScanChartLabels,
+            datasets: [{
+                label: "Vulnerabilities found",
+                borderColor: chartColor,
+                pointBorderColor: "#FFF",
+                pointBackgroundColor: chartColor,
+                pointBorderWidth: 2,
+                pointHoverRadius: 4,
+                pointHoverBorderWidth: 1,
+                pointRadius: 4,
+                fill: true,
+                backgroundColor: gradientFill,
+                borderWidth: 2,
+                data: vulnsByScanChartValues,
+            }]
+        },
+        //options: gradientChartOptionsConfiguration,
+    });
+}

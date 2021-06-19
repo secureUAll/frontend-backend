@@ -35,7 +35,7 @@ LOGOUT_REDIRECT_URL = "/login/"
 
 if PRODUCTION or DOCKER_DEBUG:
     # Update configs as you wish
-    if not DOCKER_DEBUG:
+    if DOCKER_DEBUG:
         print("REST API running in production environment with local authentication.")
     else:
         print("REST API running in production environment with UA IdP authentication.")
@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     'dashboard',
     'workers',
     'machines',
+    # Testing,
+    'behave_django'
 ]
 
 MIDDLEWARE = [
@@ -177,3 +179,13 @@ MIDDLEWARE.append('djangosaml2.middleware.SamlSessionMiddleware')
 SAML_SESSION_COOKIE_NAME = 'saml_session'
 
 from login.sp_pysaml2 import *
+
+# Email config
+#Email stuff
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+EMAIL_USE_TLS = True
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000

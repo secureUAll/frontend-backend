@@ -20,13 +20,14 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 
 echo
-echo "Creating createsuperuser..."
-python3 manage.py createsuperuser --noinput
-echo -e "from login.models import User\nimport os\nu=User.objects.get(username=os.environ.get('DJANGO_SUPERUSER_USERNAME', ''))\nu.is_admin=True\nu.save()\nprint(f\"Superuser ({u.username}) with admin status created! :)\")" | python manage.py shell
-
-echo
 echo "Collecting static..."
 python3 manage.py collectstatic --no-input
+
+# Boot script
+echo
+echo "Running boot scripts..."
+python manage.py shell < boot_script.py
+python manage.py dbshell < boot_db.sql
 
 echo
 echo "All set! :) Starting server on port 9000..."
