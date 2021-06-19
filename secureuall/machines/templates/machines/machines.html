@@ -481,7 +481,7 @@
                                             <option value = "Fixing" {% if vuln.status == 'Fixing' %}selected="selected"{% endif %}>Fixing</option>
                                             <option value = "Invalid" {% if vuln.status == 'Invalid' %}selected="selected"{% endif %}>Invalid</option>
                                             </select>
-                                            <button class="btn btn-outline-default vuln-status" type="submit" id="vuln{{vuln.id}}StatusSubmitModalScan{{scan.id}}">Apply</button>
+                                            <button class="btn btn-outline-default change-vuln-status" type="submit" id="vuln{{vuln.id}}StatusSubmitModalScan{{scan.id}}">Apply</button>
                                         </dd>
                                     </dl>
                                 </div>
@@ -793,7 +793,7 @@
             $(modal_id).modal('hide');
         });
         // POST vulnerability status
-        $(document).on('click', '.vuln-status', function(event){
+        $(document).on('click', '.change-vuln-status', function(event){
             var status_id = "#vuln"+vuln_id+"StatusSelectionModalScan"+scan_id;
             var status = $(status_id).children(':selected').text();
             $.ajax({
