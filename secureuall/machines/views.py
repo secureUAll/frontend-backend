@@ -83,9 +83,9 @@ def MachinesView(request, id):
                 elif 'new_sub' in request.POST:
                     u = None
                     try:
-                        u=User.objects.get(email=request.POST['new_sub'])
+                        u=User.objects.get(email=request.POST['new_sub'].strip())
                     except User.DoesNotExist:
-                        u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
+                        u=User.objects.create_user(request.POST['new_sub'].strip(), request.POST['new_sub'])
                     if not u.id in machine_users_id:
                         MachineUser.objects.create(
                             user=u,
