@@ -38,7 +38,17 @@
     <div class="col-6 d-flex pl-0">
         <div class="card">
             <div class="card-header d-flex">
-                <h6 class="mt-3 pb-4">Host General Information</h6>
+                <h6
+                    class="mt-3 pb-4"
+                    data-helper="0"
+                    data-placement="right"
+                    title="General information"
+                    {% if user_type == 'O' or user.is_admin %}
+                        data-content="Here you can learn some basic information about the host and associate users to it."
+                    {% else %}
+                        data-content="Here you can learn some basic information about the host."
+                    {% endif %}
+                >Host General Information</h6>
             </div>
             <div class="card-body">
                 <div class="my-auto">
@@ -110,7 +120,20 @@
                                 </dd>
                             </dl>
                             {% if user_type == 'O' or user_type == 'A' %}
-                                <button class="btn btn-outline-primary mt-auto mr-auto" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
+                                <button
+                                    class="btn btn-outline-primary mt-auto mr-auto"
+                                    data-toggle="modal"
+                                    data-target="#addUserModal"
+                                    id="addNewOwner"
+                                    data-helper="1"
+                                    data-placement="bottom"
+                                    title="Owners"
+                                    {% if user.is_admin %}
+                                        data-content="Use this button with caution! Owners are free to make all operations in the host."
+                                    {% else %}
+                                        data-content="Use this button with caution! Owners are free to make all operations in the host, including revoking your permissions."
+                                    {% endif %}
+                                ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
                             {% endif %}
                         </div>
                         <div class="col-md-6 p-0 d-flex flex-column">
@@ -135,21 +158,20 @@
                                 </dd>
                             </dl>
                             {% if user_type == 'O' or user_type == 'A' %}
-                                <button class="btn btn-outline-primary mr-auto mt-auto" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
+                                <button
+                                    class="btn btn-outline-primary mr-auto mt-auto"
+                                    data-toggle="modal"
+                                    data-target="#addUserModal"
+                                    id="addNewSubscriber"
+                                    data-helper="2"
+                                    data-placement="bottom"
+                                    title="Subscribers"
+                                    data-content="This role grants read-only permissions. The only authorized actions for subscribers are changing a vulnerability status and adding comments to it."
+                                ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
                             {% endif %}
                         </div>
                     </div>
                     <!-- End Machine General Information -->
-                </div>
-                <div class="row">
-                    <!-- Owners and Subscribers -->
-                    <div class="my-auto">
-                        <div class="row">
-
-                        </div>
-
-                    </div>
-                    <!-- End Owners and Subscribers -->
                 </div>
             </div>
         </div>
@@ -159,7 +181,13 @@
             <div class="card-body">
                 <!-- Open Ports -->
                 <div class="my-auto">
-                    <h6 class="mt-3">Open Ports</h6>
+                    <h6
+                        class="mt-3"
+                        data-helper="3"
+                        data-placement="right"
+                        title="Open ports"
+                        data-content="This section displays the ports that have been identified during the scans."
+                    >Open Ports</h6>
                     <div class="table-responsive col-12 p-0">
                         <table class="table table-discreet" id="openPorts">
                             <thead class=" text-primary">
@@ -196,7 +224,13 @@
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex justify-content-between">
-                        <h6 class="mt-3 mr-auto">Vulnerabilities per Risk Level</h6>
+                        <h6
+                            class="mt-3 mr-auto"
+                            data-helper="4"
+                            data-placement="right"
+                            title="Risk level graph"
+                            data-content="Like in the homepage, more than giving you aggregated information about your hosts, you can click on the slices to filter the hosts list by risk level."
+                        >Vulnerabilities per Risk Level</h6>
                         <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -232,7 +266,13 @@
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex">
-                        <h6 class="mt-3 mr-auto">Vulnerabilities per scan</h6>
+                        <h6
+                            class="mt-3 mr-auto"
+                            data-helper="5"
+                            data-placement="right"
+                            title="Vulnerabilities evolution"
+                            data-content="Here you can check the history of vulnerabilities number identified in this host."
+                        >Vulnerabilities per scan</h6>
                    <!-- <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -268,7 +308,10 @@
     <div class="card card-chart">
         <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
-            <h4 class="card-title" id="vulnreports">Vulnerability Report</h4>
+            <h4
+                class="card-title"
+                id="vulnreports"
+            >Vulnerability Report</h4>
             <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -288,22 +331,48 @@
                     <i class="now-ui-icons ui-1_simple-remove mr-2"></i>Clear Filters
                 </button>
                 {% if user_type == 'O' or user_type == 'A' %}
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="scanNow();">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mr-2"
+                        onclick="scanNow();"
+                        data-helper="6"
+                        data-placement="bottom"
+                        title="Request instant scan"
+                        data-content="If you have made changes in your host and don't want to wait for the next scheduled scan, you can ask for an instant one."
+                    >
                         <i class="now-ui-icons arrows-1_refresh-69 mr-2"></i>Scan Host Now
                     </button>
                 {% endif %}
-                <a href="/machines/{{machine.id}}/logs">
-                    <button type="button" class="btn btn-outline-primary mr-2">
-                        <i class="now-ui-icons text_align-center mr-2"></i>See scanning logs
-                    </button>
-                </a>
+                {% if user.is_admin %}
+                    <a href="/machines/{{machine.id}}/logs">
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary mr-2"
+                            data-helper="7"
+                            data-placement="bottom"
+                            title="Scanning logs"
+                            data-content="In this page you can check the logs of the tools used to scan this host for debugging purposes."
+                        >
+                            <i class="now-ui-icons text_align-center mr-2"></i>See scanning logs
+                        </button>
+                    </a>
+                {% endif %}
             </div>
             <!-- Row Next Scan -->
             <div class="d-flex flex-row pb-3">
                 <div class="col-6 p-0 text-secondary my-auto">
                     <form method="POST" action="?periodicity=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
-                            <dt>Next scan </dt>
+                            <dt
+                                data-helper="8"
+                                data-placement="top"
+                                title="Next scan"
+                                {% if user_type == 'O' or user.is_admin %}
+                                    data-content="When is the next scan? You can change the periodicity here."
+                                {% else %}
+                                    data-content="When is the next scan? You can check its periodicity here."
+                                {% endif %}
+                            >Next scan </dt>
                             <dd>{{machine.nextScan}}</dd>
                         </dl>
                         <dl class="dl-12">
@@ -329,7 +398,12 @@
                 <div class="col-6 text-secondary my-auto">
                     <form method="POST" action="?scanlevel=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
-                            <dt>Scan level </dt>
+                            <dt
+                                data-helper="9"
+                                data-placement="top"
+                                title="Scan level"
+                                data-content="The scan level determines how intrusive the scans are, being 1 the less intrusive."
+                            >Scan level </dt>
                             {% if user_type == 'O' or user_type == 'A' %}
                                 <dd>
                                     <select name="machine_scanlevel" id="scanLevelSelect" type="button"
@@ -366,7 +440,14 @@
             <div class="">
                 <!-- End Row Next Scan -->
                 <div class="table-responsive">
-                    <table class="table table-discreet table-vulnerabilities" id="vulnerabilitiesTable">
+                    <table
+                        class="table table-discreet table-vulnerabilities"
+                        id="vulnerabilitiesTable"
+                        data-helper="10"
+                        data-placement="top"
+                        title="Vulnerabilities report"
+                        data-content="Finally, here you have the list of vulnerabilities found during the scans. Click on the host to see more information on the vulnerability, change its status and add comments."
+                    >
                         <thead class=" text-primary">
                             <th>Risk</th>
                             <th>Type</th>
