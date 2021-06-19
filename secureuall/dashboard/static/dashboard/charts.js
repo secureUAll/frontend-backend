@@ -213,6 +213,7 @@ const initMachinesRiskLevelChart = () => {
         'rgba(245,230,52, 0.7)',
         'rgba(243,178,27, 0.7)',
         'rgba(240, 89, 42, 0.7)',
+        'rgba(218, 223, 230, 0.7)',
     ];
     const gradientFillHover = [
         'rgba(146, 212, 0, 1)',
@@ -220,6 +221,7 @@ const initMachinesRiskLevelChart = () => {
         'rgba(245,230,52, 1)',
         'rgba(243,178,27, 1)',
         'rgba(240, 89, 42, 1)',
+        'rgba(218, 223, 230, 1)',
     ];
     const borderColor = [
         'rgba(146, 212, 0)',
@@ -227,6 +229,7 @@ const initMachinesRiskLevelChart = () => {
         'rgba(245,230,52)',
         'rgba(243,178,27)',
         'rgba(240, 89, 42)',
+        'rgba(218, 223, 230)',
       ];
 
     // Data
@@ -252,14 +255,27 @@ const initMachinesRiskLevelChart = () => {
                 position: 'left',
             },
             responsive: true,
-            /* plugins: {
-                labels: {
-                    render: 'value',
-                    fontColor: '#fff',
-                    fontStyle: 'bold',
-                    precision: 2
+            plugins: {
+                /* labels: {
+                     render: 'value',
+                     fontColor: '#fff',
+                     fontStyle: 'bold',
+                     precision: 2
+                 } */
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let datasets = ctx.chart.data.datasets;
+                        if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+                            let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+                            let percentage = Math.round((value / sum) * 100) + '%';
+                            return percentage;
+                        }   else {
+                            return percentage;
+                       }
+                    },
+                color: '#fff',
                 }
-            },*/
+            },
             tooltips: {
                 enabled: true,
                 mode: 'single',
@@ -305,8 +321,20 @@ const initMachinesRiskLevelChart = () => {
                 }
             }
           }
-          console.log(label);
+          var text = "Filtered by risk level <strong>" + label + "</strong>.";
+          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
         }
     };
+
+    // on click event, clear filter
+    document.getElementById("clearFilterMachines").onclick = function() {
+        var table  = document.getElementById("machinesTable");
+        var tr =  table.getElementsByTagName("tr");
+
+          var i;
+          for (i = 0; i < table.rows.length; i++) {
+            tr[i].style.display = "";
+          }
+    }
     
 };

@@ -17,7 +17,7 @@
 {% endblock styles %}
 
 {% block content %}
-    {% if logged_user.is_admin %}
+{% if logged_user.is_superuser %}
     <!-- Row of General info -->
     <div class="row">
         <div class="col-lg-8 col-md-8">
@@ -84,27 +84,6 @@
                 </div>
             </div>
             <!-- End Numbers Card -->
-
-            <!-- Bar Graph 
-            <div class="row">
-                <div class="card card-chart d-flex">
-                    <div class="card-header mb-auto">
-                        <h5 class="card-category"></h5>
-                        <h4 class="card-title">Vulnerabilities by Group</h4>
-                    </div>
-                    <div class="card-body my-auto d-flex">
-                        <div class="chart-area my-auto">
-                            <canvas id="vulnerabilitiesByGroupChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card-footer mt-auto">
-                        <div class="stats">
-                            <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                        </div>
-                    </div>
-                </div>
-            </div>
-             End Bar Graph -->
         </div>
     </div>
     <!-- End Row of General info -->
@@ -205,7 +184,7 @@
         </div>
     </div>
     <!-- End Row Latest updates -->
-    {% endif %}
+{% endif %}
 
     <!-- Tables -->
     <div class="row">
@@ -240,13 +219,6 @@
         const vulnsByGroupChartValues = {{ bardata|safe }};
         const machinesRiskLevelChartLabels = {{ pielabels|safe }};
         const machinesRiskLevelChartValues = {{ piedata|safe }};
-        
-        // on click event, clear filter
-        $(document).on('click', '#clearFilterMachines', function(event){
-            alert("Isadora vai dormir por favor!");
-            var table = $('#machinesTable').DataTable();
-        });
-
         
 
         // Start charts

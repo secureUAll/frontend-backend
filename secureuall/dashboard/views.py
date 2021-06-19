@@ -18,43 +18,25 @@ def DashboardView(request, *args, **kwargs):
     pielabels = []
     piedata = []
     piechart = {}
-    barlabels = []
-    bardata = []
-    barchart = {}
     vulnsdata = []
     vulnslabels = []
     active_vuln = 0
     fixed_vulns = []
     machines_updates = {}
     machines_addrem = {}
-    
 
-    # Define barchart (Vulnerabilities by Group) x and y axes values.
     vulnset = Vulnerability.objects.all().order_by('-scan')
-    for vuln in vulnset:
-        if vuln.type in barchart:
-            value = barchart.get(vuln.type)+1
-            barchart[vuln.type] = value
-        else:
-            barchart[vuln.type] = 1
-        # Calculates total of active vulnerabilities.
-        if vuln.status == "Not Fixed":
-            active_vuln+=1
-    for key in barchart.keys():
-        barlabels.append(key)
-    for value in barchart.values():
-        bardata.append(value)
-
 
     # Define piechart (% of Machines in a Risk Level) x and y axes values.
     machineset = Machine.objects.filter(active__exact=True).order_by('-created')
     for machine in machineset:
-        if machine.active:
-            if machine.risk in piechart:
-                value = piechart.get(machine.risk)+1
-                piechart[machine.risk] = value
-            else:
-                piechart[machine.risk] = 1
+        if machine.risk in piechart:
+            value = piechart.get(machine.risk)+1
+            piechart[machine.risk] = value
+        else:
+            piechart[machine.risk] = 1
+
+
     
     for key in sorted(piechart.keys()):
         pielabels.append(key)
@@ -114,12 +96,15 @@ def DashboardView(request, *args, **kwargs):
         elif user.userType=='O':
             machines_updates[machine] = "owner added"
 
-    print(request.user)
-    if request.user.is_admin:
-        #machineset = Machine.objects.filter(users__contains=request.user.id)
-        print(machineset)
+
+
+    if not request.user.is_superuser:
+        machineset = machineset.filter(users__in=[request.user.id])
+    else:
+        print("ISADORA F LOREDO")
+        
     return render(request, "dashboard/dashboard.html", {
-        'logged_user': request.user,
+        'logged_user': User.objects.get(id=request.user.id),
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
         'ports': MachinePort.objects.all(),
@@ -129,8 +114,6 @@ def DashboardView(request, *args, **kwargs):
         'weeks_without_vulnerabilities': weeks_without_vuln,
         'pielabels': pielabels,
         'piedata': piedata,
-        'barlabels': barlabels,
-        'bardata': bardata,
         'vulnsdata': vulnsdata,
         'vulslabels': vulnslabels,
         'fixed_vulns': fixed_vulns,
