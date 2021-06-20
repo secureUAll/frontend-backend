@@ -261,8 +261,8 @@
                             </dd>
                             <dt>Valid until</dt>
                             <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
-                                {% with expireDate as machine.sslExpired|date:"Y/m/d" %}
-                                    {{expireDate|default:"-"}}
+                                {% with machine.sslExpired|date:"Y/m/d" as expiredDate %}
+                                    {{expiredDate|default:"-"}}
                                 {% endwith %}
                             </dd>
                         </dl>
