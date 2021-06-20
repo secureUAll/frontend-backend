@@ -61,7 +61,6 @@ def MachinesView(request, id):
                 for v in vset:
                     if v.risk == 0: piechart['unclassified'].append(v)
                     else: piechart[str(v.risk)].append(v)
-                    print(v)
                     count+=1
             return count
 
@@ -93,7 +92,8 @@ def MachinesView(request, id):
 
         # get data for pie chart (vulnerabilities by risk)
         count_vulns = get_piechartdata(allvulns)
-        
+
+
         # POST requests from interface
         if request.POST:
             # Everyone
@@ -109,14 +109,12 @@ def MachinesView(request, id):
                 vuln.status = request.POST['vuln_status']
                 vuln.save()
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
-            elif 'last_scan' or 'last_month' or 'all_scans' in request.POST:
+            elif ('last_scan' in request.POST) or ('last_month' in request.POST) or ('all_scans' in request.POST):
                 req = list(request.POST)[1]
                 scans = []
                 count_vulns = 0
                 if req == 'last_scan': 
                     scans = scanset[:1]
-                    print("LAST SCAN: ")
-                    print(scans)
                     scan_filter = "Last scan"
                 elif req == 'last_month': 
                     scans = scanset.filter(date__gte=timezone.now()-timedelta(days=30))
@@ -214,8 +212,7 @@ def MachinesView(request, id):
         else: 
             user_type = machine.users.get(user=request.user.id).userType
 
-        print("\n\n\n\nHEREEE\n\n\n")
-        
+
         context = {
             'machine': machine,
             'machine_users': machine_users,
@@ -239,9 +236,6 @@ def MachinesView(request, id):
             request.session['workersMachines'] = None
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
-
-    print("RETURNING CONTECT")
-    print(context)
 
     return render(request, "machines/machines.html", context)
 
