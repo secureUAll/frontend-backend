@@ -36,7 +36,7 @@ class LogInline(admin.TabularInline):
     extra = 0
 
 class MachineAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'ip', 'dns', 'scanLevel', 'location', 'nextScan']
+    list_display = ['__str__', 'ip', 'dns', 'active', 'scanLevel', 'location', 'nextScan']
     list_filter = ['location', 'scanLevel', 'nextScan']
     inlines = [MachineWorkerInline, VulnerabilityInline, MachineUserInline, ScanInline, MachinePortInline, LogInline]
 
