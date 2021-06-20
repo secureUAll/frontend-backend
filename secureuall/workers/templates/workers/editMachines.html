@@ -37,7 +37,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="progress mb-4">
-                          <div class="progress-bar bg-blur-primary me-2" role="progressbar" style="width: {% if add %}66%{% else %}50%{% endif %};" aria-valuenow="{% if add %}66%{% else %}50%{% endif %}" aria-valuemin="0" aria-valuemax="100"></div
+                          <div class="progress-bar bg-blur-primary mr-2" role="progressbar" style="width: {% if add %}66%{% else %}50%{% endif %};" aria-valuenow="{% if add %}66%{% else %}50%{% endif %}" aria-valuemin="0" aria-valuemax="100"></div
                           <span>{% if add %}66%{% else %}50%{% endif %}</span>
                         </div>
                         {% if add %}
@@ -53,7 +53,7 @@
                             {% csrf_token %}
                             <input type="hidden" name="validateMachines" value="validateMachines" />
 
-                            {% include "dashboard/formsetTable.html" with form=form deleteRewrite="Disassociate" %}
+                            {% include "dashboard/formsetTable.html" with formset=formset deleteRewrite="Disassociate" %}
 
                             <div class="row m-0 d-flex flex-row flex-nowrap">
                                 <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">

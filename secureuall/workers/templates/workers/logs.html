@@ -61,7 +61,7 @@
                                     {% for log in logs %}
                                     <tr title="Click to see log">
                                         <td>
-                                            {{ log.date|date:"Y/m/d G:i" }}<span class="d-none">{{ log.cod }}</span>
+                                            {{ log.date|date:"Y/m/d H:i" }}<span class="d-none">{{ log.cod }}</span>
                                         </td>
                                         <td>
                                             {% if worker %}

@@ -28,7 +28,7 @@ class Machine(models.Model):
     dns = models.CharField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
-    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
+    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='1')
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
@@ -70,10 +70,10 @@ class Machine(models.Model):
         # An IP can be shared by multiple machines if they have different DNS
         # A DNS can be shared by multiple machines if they have different IPs
         if dns and not ip and Machine.objects.filter(ip='', dns=dns).exists():
-            return Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns))
+            return Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns) & Q(active=True))
         if ip and not dns and Machine.objects.filter(ip=ip, dns='').exists():
-            return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip))
-        return Machine.objects.filter(ip=ip, dns=dns)
+            return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip) & Q(active=True))
+        return Machine.objects.filter(ip=ip, dns=dns, active=True)
 
     def save(self, *args, **kwargs):
         """ Automatically add "modified" to update_fields."""

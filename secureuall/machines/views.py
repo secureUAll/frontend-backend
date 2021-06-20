@@ -78,8 +78,11 @@ def MachinesView(request, id):
                     if p=='Monthly': machine.periodicity = 'M'
                     machine.save()
                 elif 'scan_request' in request.POST:
-                    KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
-                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                    if settings.PRODUCTION:
+                        KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                    else:
+                        return JsonResponse({'status': False, 'message': "Not in production! Can't schedule requests."}, status=500)
+                    return JsonResponse({'status':True,'message':"Validation passed"}, status=200)
                 elif 'new_sub' in request.POST:
                     u = None
                     try:
@@ -179,7 +182,12 @@ def MachinesView(request, id):
             'piedata_last': piedata_last,
             'linelabels': linelabels[::-1],
             'linedata': linedata[::-1],
+            'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
         }
+
+        # Clean session vars
+        if 'workersMachines' in request.session:
+            request.session['workersMachines'] = None
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
     return render(request, "machines/machines.html", context)
@@ -225,14 +233,14 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             # Through every notification type active
             for un in req.user.notifications.all():
                 n = NotifyFactory.createNotification(un.type)
-                n.heading(f"Hello {self.request.user.first_name},")
+                n.heading(f"Hello {req.user.first_name},")
                 if req.approved:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at)} has been approved! &#128522;")\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at.strftime('%Y/%m/%d %H:%M'))} has been approved! &#128522;")\
                         .text("You can access the hosts you were granted access at Secure(UA)ll dashboard.")
                 else:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at)} has been denied.")\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at.strftime('%Y/%m/%d %H:%M'))} has been denied.")\
                         .text("You can check the motive and fill a new request at at Secure(UA)ll dashboard.")
                 n.button(
                     url=''.join([settings.DEPLOY_URL, "/"]),
