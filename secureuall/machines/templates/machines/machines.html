@@ -566,7 +566,7 @@
                         data-helper="13"
                         data-placement="top"
                         title="Vulnerabilities report"
-                        data-content="Finally, here you have the list of vulnerabilities found during the scans. Click on the host to see more information on the vulnerability, change its status and add comments."
+                        data-content="Finally, here you have the list of vulnerabilities found during the scans. Click on the host to see more information on the vulnerability, change its status and add comments. You can filter them using the search field."
                     >
                         <thead class=" text-primary">
                             <th>Risk</th>
@@ -597,6 +597,7 @@
                                     {% elif vuln.risk == 5 %}
                                         <span class="badge p-2 bg-danger">5</span>
                                     {% endif %}
+                                        <span class="d-none">RISK-{{vuln.getriskdisplay}}</span>
                                     </td>
                                     <td class="vuln-type">{{vuln.type}}</td>
                                     <td class="vuln-date">{{vuln.scan.date}}</td>

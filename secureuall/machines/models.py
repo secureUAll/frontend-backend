@@ -151,6 +151,9 @@ class Vulnerability(models.Model):
     def locationsplit(self):
         return self.location.split(" ")
 
+    def getriskdisplay(self):
+        return "unclassified" if not self.risk else self.risk
+
 
 class VulnerabilityComment(models.Model):
     vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name='comments')
