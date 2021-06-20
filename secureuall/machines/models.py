@@ -142,6 +142,10 @@ class Vulnerability(models.Model):
     def __str__(self):
         return "(" + str(self.risk) + ") " + self.description
 
+    def locationsplit(self):
+    # {{vuln.locationsplit}}
+        return self.location.split(" ")
+
 
 class VulnerabilityComment(models.Model):
     vulnerability = models.ForeignKey(Vulnerability, on_delete=models.CASCADE, related_name='comments')

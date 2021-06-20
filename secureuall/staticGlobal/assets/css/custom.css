@@ -645,6 +645,7 @@ table.table-discreet tbody tr:hover {
     color: #000!important;
 }
 
+table.table-discreet tbody tr .bg-0 { background-color: rgba(151, 151, 151, .6)!important; color: #FFFFFF; }
 table.table-discreet tbody tr .bg-1 { background-color: rgba(146, 212, 0, .6)!important; color: #FFFFFF; }
 table.table-discreet tbody tr .bg-2 { background-color: rgba(75, 181, 255, .6)!important; color: #FFFFFF; }
 table.table-discreet tbody tr .bg-3 { background-color: rgba(232, 215, 26, .6)!important; color: #FFFFFF; }

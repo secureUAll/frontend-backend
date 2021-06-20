@@ -96,11 +96,11 @@
                 <div class="card-body my-auto d-flex">
                     <table class="text-center text-secondary col-12 my-auto">
                         <tr>
-                            <td>
+                            <td class="px-2">
                                 <h3 class="fw-bold mb-0">{{ machines|length }}</h3>
                                 <p class="mt-0">registered hosts</p>
                             </td>
-                            <td>
+                            <td class="px-2">
                                 {% if ports %}
                                 <h3 class="fw-bold mb-0">{{ ports|length }}</h3>
                                 {% else %}
@@ -108,17 +108,17 @@
                                 {% endif %}
                                 <p class="mt-0">exposed ports</p>
                             </td>
-                            <td>
+                            <td class="px-2">
                                 <h3 class="fw-bold mb-0">{{ active_vulnerabilities|length }}</h3>
                                 <p class="mt-0">active vulnerabilities</p>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="px-2">
                                 <h3 class="fw-bold mb-0">{{ scans|length }}</h3>
                                 <p class="mt-0">performed scans</p>
                             </td>
-                            <td>
+                            <td class="px-2">
                                 {% if vulnerabilities %}
                                 <h3 class="fw-bold mb-0">{{ vulnerabilities|length }}</h3>
                                 {% else %}
@@ -126,7 +126,7 @@
                                 {% endif %}
                                 <p class="mt-0">total vulnerabilities</p>
                             </td>
-                            <td>
+                            <td class="px2">
                                 <h3 class="fw-bold mb-0">{{ weeks_without_vulnerabilities }}</h3>
                                 <p class="mt-0">weeks without vulnerabilities</p>
                             </td>
@@ -206,10 +206,10 @@
                                         {% for m in machines_updates %}
                                         <tr onClick="window.location='/machines/{{m.machine.id}}'">
                                             <td>
-                                                {% if m.machine.ip %}
-                                                    {{ m.machine.ip }} 
-                                                {% else %}
+                                                {% if m.machine.dns %}
                                                     {{ m.machine.dns }} 
+                                                {% else %}
+                                                    {{ m.machine.ip }} 
                                                 {% endif %}
                                             </td>
                                             {% if m.type == 'S' %} <td> scan level update </td>

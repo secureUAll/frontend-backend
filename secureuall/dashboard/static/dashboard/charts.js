@@ -234,7 +234,7 @@ const initMachinesRiskLevelChart = () => {
             tr[i].style.display = "";
         }
 
-        $("#machinesTableFilterText").text("No filter applied to table. ");
+        $("#machinesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph on the right.");
         $("#clearFilterMachines").addClass("d-none");
     }
     

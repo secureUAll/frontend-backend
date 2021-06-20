@@ -18,7 +18,7 @@ from login.forms import UserAccessRequestApprovalForm, RequestAccessForm
 from services.notify.notifyfactory import NotifyFactory
 from .forms import MachineNameForm
 
-from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment, Log
+from .models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment, Log, MachineChanges
 from login.models import UserAccessRequest
 
 from datetime import datetime, timedelta, date
@@ -40,18 +40,59 @@ def MachinesView(request, id):
     machine_users_id = []
     machine_users= {'S':[],'O':[]}
     piechart = {'1':[],'2':[], '3':[],'4':[], '5':[], 'unclassified':[]}
-    pielabels = []
-    piedata = []
     linechart = {}
     vulncomments_set = []
     users = []
     allvulns = []
     scanset = Scan.objects.filter(machine=id).order_by('-date')
+    count_vulns = 0
+    scan_filter = "All scans"
 
     try:
         machine = Machine.objects.get(id=id)
         machine_users_id=machine.users.all().values_list("user", flat=True)
+
+        # pie chart set up (vulnerabilities by risk)
+        def get_piechartdata(vulns):
+            count=0
+            for vset in vulns:
+                for v in vset:
+                    if v.risk == 0: piechart['unclassified'].append(v)
+                    else: piechart[str(v.risk)].append(v)
+                    print(v)
+                    count+=1
+            return count
+
+        # get comments for vulnerabilities
+        for scan in scanset:
+            if scan.vulnerabilities.all():
+                vulnset = Vulnerability.objects.filter(scan_id=scan.id)
+                for vuln in vulnset:
+                    # get comments for vulnerabilities
+                    if not vuln.comments.all()==None:
+                        for comment in vuln.comments.all():
+                            u = User.objects.get(id=comment.user_id)
+                            if not u in users:
+                                users.append(u)
+                        vulncomments_set.append(vuln.comments.all())
+                allvulns.append(vulnset) # set of vulnerabilities for piechart
         
+        # get data for line chart (vulnerabilities per scan)
+        for scan in scanset:
+            # adding to line chart
+            if scan.status=='Done':
+                label = (str)(scan.date.day) + " "+ scan.date.strftime('%b')
+                if not scan.date in linechart.keys():
+                    linechart[label] = scan.vulnerabilities.count()
+                else: 
+                    count = linechart[label]
+                    count += scan.vulnerabilities.count()
+                    linechart[label] = count
+
+        # get data for pie chart (vulnerabilities by risk)
+        count_vulns = get_piechartdata(allvulns)
+        
+        # POST requests from interface
         if request.POST:
             # Everyone
             if 'vuln_comment' in request.POST:
@@ -66,17 +107,50 @@ def MachinesView(request, id):
                 vuln.status = request.POST['vuln_status']
                 vuln.save()
                 return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+            elif 'last_scan' or 'last_month' or 'all_scans' in request.POST:
+                req = list(request.POST)[1]
+                scans = []
+                count_vulns = 0
+                if req == 'last_scan': 
+                    scans = scanset[:1]
+                    print("LAST SCAN: ")
+                    print(scans)
+                    scan_filter = "Last scan"
+                elif req == 'last_month': 
+                    scans = scanset.filter(date__gte=timezone.now()-timedelta(days=30))
+                    scan_filter = "Last month"
+                elif req == 'all_scans':
+                    scans = scanset
+                    scan_filter = "All scans"
+                allvulns = []
+                for k in piechart.keys():
+                    piechart[k] = []
+                for scan in scans:
+                    if scan.vulnerabilities.all:
+                        vulnset = Vulnerability.objects.filter(scan_id=scan.id)
+                        allvulns.append(vulnset)
+                count_vulns = get_piechartdata(allvulns)
             # ADMIN and OWNER ONLY
             if request.user.is_admin or request.user.machines.all().filter(machine=machine, userType='O').exists():
                 if 'machine_scanlevel' in request.POST:
                     machine.scanLevel = request.POST['machine_scanlevel']
                     machine.save()
+                    changes = MachineChanges.objects.get(machine=machine, type='S')
+                    if not changes:
+                        MachineChanges.objects.create(machine=machine, type='S')
+                    else:
+                        changes.save()
                 elif 'machine_periodicity' in request.POST:
                     p = request.POST['machine_periodicity']
                     if p=='Daily': machine.periodicity = 'D'
                     if p=='Weekly': machine.periodicity = 'W'
                     if p=='Monthly': machine.periodicity = 'M'
                     machine.save()
+                    changes = MachineChanges.objects.get(machine=machine, type='P')
+                    if not changes:
+                        MachineChanges.objects.create(machine=machine, type='P')
+                    else:
+                        changes.save()
                 elif 'scan_request' in request.POST:
                     KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
                     return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
@@ -116,6 +190,7 @@ def MachinesView(request, id):
                 return JsonResponse({'error': 'You don\'t have permissions to perform that operation.'}, status=401)
 
 
+        # get list of users (owners and subscribers) of this machine
         machine_users_id=machine.users.all().values_list("user", flat=True)
         for u_id in machine_users_id:
             user = machine.users.get(user=u_id)
@@ -126,59 +201,22 @@ def MachinesView(request, id):
             user_type = "A"
         else: 
             user_type = machine.users.get(user=request.user.id).userType
-
-
-        for scan in scanset:
-            # adding to line chart
-            if scan.status=='Done':
-                    label = (str)(scan.date.day) + " "+ scan.date.strftime('%b')
-                    if not scan.date in linechart.keys():
-                        linechart[label] = scan.vulnerabilities.count()
-                    else: 
-                        count = linechart[label]
-                        count += scan.vulnerabilities.count()
-                        linechart[label] = count
-            # end of adding to line chart
-            if scan.vulnerabilities.all():
-                vulnset = Vulnerability.objects.filter(scan_id=scan.id)
-                for vuln in vulnset:
-                    # get comments for vulnerabilities
-                    if not vuln.comments.all()==None:
-                        for comment in vuln.comments.all():
-                            u = User.objects.get(id=comment.user_id)
-                            if not u in users:
-                                users.append(u)
-                        vulncomments_set.append(vuln.comments.all())
-                allvulns.append(vulnset) # set of vulnerabilities
-
-        # this is for pie chart
-        for vset in allvulns:
-            for v in vset:
-                if v.risk == 0: piechart['unclassified'].append(v)
-                else: piechart[str(v.risk)].append(v)
-
-        # Line chart set up
-        lastScans = Scan.objects.filter(machine=machine).order_by('-date')[:7]
-        linelabels = [str(s.date) for s in lastScans][::-1]
-        linedata = [s.vulnerabilities.all().count() for s in lastScans][::-1]
-
-        pielabels = [x for x in piechart.keys()]
-        piedata = [len(v) for v in piechart.values()]
-        piedata_last = []
-
+        
         context = {
             'machine': machine,
             'machine_users': machine_users,
             'vuln_comments': vulncomments_set,
+            'vulnerabilities': Vulnerability.objects.filter(machine_id=id).order_by('-created'),
             'users': users,
             'scanset': scanset,
             'logged_user': User.objects.get(id=request.user.id),
             'user_type': user_type,
-            'pielabels': pielabels,
-            'piedata': piedata,
-            'piedata_last': piedata_last,
-            'linelabels': linelabels[::-1],
-            'linedata': linedata[::-1],
+            'pielabels': [x for x in piechart.keys()],
+            'piedata': [len(v) for v in piechart.values()],
+            'linelabels': [x for x in linechart.keys()][::-1],
+            'linedata': [v for v in linechart.values()][::-1],
+            'count_vulns': count_vulns,
+            'scan_filter': scan_filter,
         }
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')

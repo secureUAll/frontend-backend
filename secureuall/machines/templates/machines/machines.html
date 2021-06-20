@@ -204,8 +204,21 @@
                                 <i class="now-ui-icons arrows-1_minimal-down"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" onclick="filterVulnPerRisk('last scan')">Last scan</a>
-                                <a class="dropdown-item" onclick="filterVulnPerRisk('all scans')">All scans</a>
+                                <form method="POST" id="piechart_lastscan"> {% csrf_token %}
+                                    <input type="hidden" value="last_scan" name="last_scan">
+                                    <a class="dropdown-item" href="javascript:void(0);" id="btnPieChartLastScan"
+                                    onclick="document.getElementById('piechart_lastscan').submit();">Last scan</a>
+                                </form>
+                                <form method="POST" id="piechart_lastmonth"> {% csrf_token %}
+                                    <input type="hidden" value="last_month" name="last_month">
+                                    <a class="dropdown-item" href="javascript:void(0);" id="btnPieChartLastMonth"
+                                    onclick="document.getElementById('piechart_lastmonth').submit();">Last month</a>
+                                </form>
+                                <form method="POST" id="piechart_allscans"> {% csrf_token %}
+                                    <input type="hidden" value="all_scans" name="all_scans">
+                                    <a class="dropdown-item" href="javascript:void(0);" id="btnPieChartAllScans"
+                                    onclick="document.getElementById('piechart_allscans').submit();">All scans</a>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -219,7 +232,7 @@
             <div class="card-footer">
                 <div class="stats">
                     <i class="now-ui-icons arrows-1_refresh-69"></i>
-                    <span id="pieChartFilter">All scans</span>
+                    <span id="pieChartFilter">{{scan_filter}}</span>
                 </div>
             </div>
         </div>
@@ -233,17 +246,7 @@
                 <div class="my-auto">
                     <div class="mb-3 d-flex">
                         <h6 class="mt-3 mr-auto">Vulnerabilities per scan</h6>
-                   <!-- <div class="dropdown p-2">
-                            <button type="button"
-                                class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
-                                data-toggle="dropdown">
-                                <i class="now-ui-icons arrows-1_minimal-down"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item">Last scan</a>
-                                <a class="dropdown-item">All scans</a>
-                            </div>
-                        </div> -->
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -251,9 +254,9 @@
                         <canvas id="lineChart"></canvas>
                     </div>
                 </div>
-                <div class="card-footer pt-2">
+                <div class="card-footer pt-4 pb-0 mb-0">
                     <div class="stats">
-                        <i class="now-ui-icons arrows-1_refresh-69"></i> Last scan
+                        <i class="now-ui-icons arrows-1_refresh-69"></i> All scans
                     </div>
                 </div>
             </div>
@@ -269,20 +272,33 @@
         <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
             <h4 class="card-title" id="vulnreports">Vulnerability Report</h4>
-            <div class="dropdown">
+            <div class="dropdown p-2">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                     data-toggle="dropdown">
                     <i class="now-ui-icons arrows-1_minimal-down"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item">Last scan</a>
-                    <a class="dropdown-item">All scans</a>
+                    <form method="POST" id="vulntable_lastscan"> {% csrf_token %}
+                        <input type="hidden" value="last_scan" name="last_scan">
+                        <a class="dropdown-item" href="javascript:void(0);"
+                        onclick="document.getElementById('vulntable_lastscan').submit();">Last scan</a>
+                    </form>
+                    <form method="POST" id="vulntable_lastmonth"> {% csrf_token %}
+                        <input type="hidden" value="last_month" name="last_month">
+                        <a class="dropdown-item" href="javascript:void(0);" 
+                        onclick="document.getElementById('vulntable_lastmonth').submit();">Last month</a>
+                    </form>
+                    <form method="POST" id="vulntable_allscans"> {% csrf_token %}
+                        <input type="hidden" value="all_scans" name="all_scans">
+                        <a class="dropdown-item" href="javascript:void(0);" 
+                        onclick="document.getElementById('vulntable_allscans').submit();">All scans</a>
+                    </form>
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table. To filter by risk level click on the risk slice in the graph above.</p>
+            <p class="card-text" id="vulnerabilitiesTableFilterText">No filter applied to table. To filter per risk level click on the risk slice in the graph above.</p>
             <div class="d-flex flex-row mb-3">
                 <button type="button" class="btn btn-primary mr-2 d-none" id="clearFilterVulnerabilities">
                     <i class="now-ui-icons ui-1_simple-remove mr-2"></i>Clear Filters
@@ -379,46 +395,52 @@
                             <th style="display:none">Vulnerability ID</th>
                         </thead>
                         <tbody>
-                            {% for vuln in machine.vulnerabilities.all %}
-                            <tr>
-                                <td class="vuln-risk">
-                                {% if vuln.risk == 0 %}
-                                    <span class="badge p-2 bg-secondary">unclassified</span>
-                                {% elif vuln.risk == 1 %}
-                                    <span class="badge p-2 bg-primary">1</span>
-                                {% elif vuln.risk == 2 %}
-                                    <span class="badge p-2 bg-info">2</span>
-                                {% elif vuln.risk == 3 %}
-                                    <span class="badge p-2 bg-alarm">3</span>
-                                {% elif vuln.risk == 4 %}
-                                    <span class="badge p-2 bg-warning">4</span>
-                                {% elif vuln.risk == 5 %}
-                                    <span class="badge p-2 bg-danger">5</span>
+                            {% for vuln in vulnerabilities %}
+                                {% if forloop.counter0 < count_vulns %}
+                                <tr>
+                                    <td class="vuln-risk">
+                                    {% if vuln.risk == 0 %}
+                                        <span class="badge p-2 bg-secondary">unclassified</span>
+                                    {% elif vuln.risk == 1 %}
+                                        <span class="badge p-2 bg-primary">1</span>
+                                    {% elif vuln.risk == 2 %}
+                                        <span class="badge p-2 bg-info">2</span>
+                                    {% elif vuln.risk == 3 %}
+                                        <span class="badge p-2 bg-alarm">3</span>
+                                    {% elif vuln.risk == 4 %}
+                                        <span class="badge p-2 bg-warning">4</span>
+                                    {% elif vuln.risk == 5 %}
+                                        <span class="badge p-2 bg-danger">5</span>
+                                    {% endif %}
+                                    </td>
+                                    <td class="vuln-type">{{vuln.type}}</td>
+                                    <td class="vuln-date">{{vuln.scan.date}}</td>
+                                    <td class="vuln-desc">{{vuln.description}}</td>
+                                    <td class="vuln-location">
+                                        {% for location in vuln.locationsplit %}
+                                        <p class="text-muted mb-0">{{location}}</p>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="vuln-status">
+                                    {% if vuln.status == 'Fixed' %}
+                                        <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
+                                    {% elif vuln.status == 'Not Fixed' %}
+                                        <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
+                                    {% elif vuln.status == 'Fixing' %}
+                                        <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
+                                    {% elif vuln.status == 'Invalid' %}
+                                        <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
+                                    {% endif %}
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="ms-auto">
+                                            <button class="btn btn-sm btn-outline-primary" title="Add comment" data-toggle="modal" data-target="#vulnCommentModal"><i class="now-ui-icons ui-1_simple-add"></i></button>
+                                        </div>
+                                    </td>
+                                    <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
+                                    <td class="vuln-id" style="display:none">{{vuln.id}}</td>
+                                </tr>
                                 {% endif %}
-                                </td>
-                                <td class="vuln-type">{{vuln.type}}</td>
-                                <td class="vuln-date">{{vuln.scan.date}}</td>
-                                <td class="vuln-desc">{{vuln.description}}</td>
-                                <td class="vuln-location">{{vuln.location}}</td>
-                                <td class="vuln-status">
-                                {% if vuln.status == 'Fixed' %}
-                                    <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
-                                {% elif vuln.status == 'Not Fixed' %}
-                                    <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
-                                {% elif vuln.status == 'Fixing' %}
-                                    <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
-                                {% elif vuln.status == 'Invalid' %}
-                                    <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
-                                {% endif %}
-                                </td>
-                                <td class="align-middle">
-                                    <div class="ms-auto">
-                                        <button class="btn btn-sm btn-outline-primary" title="Add comment" data-toggle="modal" data-target="#vulnCommentModal"><i class="now-ui-icons ui-1_simple-add"></i></button>
-                                    </div>
-                                </td>
-                                <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
-                                <td class="vuln-id" style="display:none">{{vuln.id}}</td>
-                            </tr>
                             {% empty %}
                                 <span>No vulnerabilities to show.</span>
                             {% endfor %}
@@ -430,7 +452,6 @@
         <div class="card-footer">
             <div class="d-flex justify-content-between">
                 <div class="stats">
-                    <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
                 </div>
                 <div class="stats">
                     Last scan done by worker <span class="text-muted font-weight-bold">{{machine.scans.last}}</span> 0 erros reported.
@@ -626,18 +647,11 @@
         const vulnsByScanChartLabels = {{ linelabels|safe }};
         const vulnsByScanChartValues = {{ linedata|safe }}; 
 
+        // Pie chart footer
+        $(document).on('click', '#btnPieChartLastScan', function(event){
+            $('#pieChartFilter').html('Last Scan');
+        });
 
-        // Filter pie chart
-        function filterVulnPerRisk(filter) {
-            alert(filter);
-            if (filter=="last scan"){
-                vulsRiskLevelChartValues = "{{ piedata|safe }}";
-            } else if ( filter=="all scans"){
-                vulsRiskLevelChartValues = "{{ piedata|safe }}";
-            }
-            initCharts();
-            $("#pieChartFilter").html("Filtered by <strong>" + filter + "</strong>.");
-        }
 
         // Scan host now
         function scanNow() {

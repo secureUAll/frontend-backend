@@ -1,79 +1,8 @@
 
 // This function initializes all the charts
 const initCharts = () => {
-    //initVulnsByGroupChart();
     initVulsRiskLevelChart();
     initVulnsByScanChart();
-}
-
-const initVulnsByGroupChart = () => {
-    // Get element from DOM
-    const ctx = document.getElementById('vulnerabilitiesByGroupChart').getContext("2d");
-
-    // Colors
-    const chartColor = "#92d400";
-    const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
-
-    const gradientFillHover = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFillHover.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFillHover.addColorStop(1, "rgba(146, 212, 0, 1)");
-
-    // Draw chart
-    var myChart = {
-        type: "bar",
-        data: {
-            labels: vulnsByGroupChartLabels,
-            datasets: [{
-                label: "Amount",
-                backgroundColor: gradientFill,
-                hoverBackgroundColor: gradientFillHover,
-                borderColor: chartColor,
-                fill: true,
-                borderWidth: 1,
-                data: vulnsByGroupChartValues
-            }]
-        },
-        options: {
-            layout: {
-                padding: {
-                    top: 20
-                }
-            },
-            maintainAspectRatio: false,
-            legend: {
-                display: false
-            },
-            tooltips: {
-                bodySpacing: 4,
-                mode: "nearest",
-                intersect: 0,
-                position: "nearest",
-                xPadding: 10,
-                yPadding: 10,
-                caretPadding: 10,
-            },
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    gridLines: 0,
-                    gridLines: {
-                        zeroLineColor: "transparent",
-                        drawBorder: false
-                    }
-                }],
-                xAxes: [{
-                    display: 1,
-                }]
-            },
-            plugins: {
-                labels: false
-            },
-        }
-    };
-
-    var viewsChart = new Chart(ctx, myChart);
 }
 
 
@@ -216,7 +145,7 @@ const initVulsRiskLevelChart = () => {
             tr[i].style.display = "";
         }
 
-        $("#vulnerabilitiesTableFilterText").text("No filter applied to table.");
+        $("#vulnerabilitiesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph above.");
     }
 
 };
@@ -226,10 +155,10 @@ const initVulnsByScanChart = () => {
     const ctx = document.getElementById('lineChart').getContext("2d");
 
     // Colors
-    const chartColor = "#92d400";
+    const chartColor = "#ed9dd8";
     const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
+    gradientFill.addColorStop(0, "rgba(237, 157, 216, 0)");
+    gradientFill.addColorStop(1, "rgba(237, 157, 216, 0.40)");
 
     // Draw chart
     myChart = new Chart(ctx, {
@@ -252,6 +181,17 @@ const initVulnsByScanChart = () => {
                 data: vulnsByScanChartValues,
             }]
         },
+        options: {
+            responsive: true,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function(value) {if (value % 1 === 0) {return value;}}
+                    }
+                }]
+            }
+        }
         //options: gradientChartOptionsConfiguration,
     });
 }
