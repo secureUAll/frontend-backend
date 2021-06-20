@@ -17,7 +17,7 @@
             data-placement="bottom"
             title="New request"
             data-content="Click here if you want to request access to a new host."
-        ><button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add me-3"></i>Submit new request</button></a>
+        ><button class="btn btn-outline-primary"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Submit new request</button></a>
     {% endif %}
 </div>  
 {% endblock header %}
@@ -83,6 +83,8 @@
                             {% endif %}
                             {% if filter in "pending" and user.is_admin %}
                                 <th>Approval</th>
+                            {% elif user.is_admin %}
+                                <th>Reviewed by</th>
                             {% endif %}
                         </thead>
                         <tbody>
@@ -139,6 +141,8 @@
                                             ></i>
                                         </div>
                                     </td>
+                                {% elif user.is_admin %}
+                                    <td>{{request.approvedby.email}}</td>
                                 {% endif %}
 
                             </tr>
