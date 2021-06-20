@@ -20,7 +20,7 @@ def DashboardView(request, *args, **kwargs):
     piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
     vulnsdata = []
     vulnslabels = []
-    active_vuln = 0
+    active_vuln = Vulnerability.objects.all().exclude(status="Fixed").count()
     fixed_vulns = []
     machines_updates = {}
     machines_addrem = {}
