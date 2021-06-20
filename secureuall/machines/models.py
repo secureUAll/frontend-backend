@@ -27,13 +27,18 @@ class Machine(models.Model):
     dns = models.CharField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
-    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
+    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='1')
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    # SSL data
+    sslVersion = models.CharField(max_length=50, null=True, blank=True)
+    sllAlgorithm = models.CharField(max_length=30, null=True, blank=True)
+    sslExpired = models.DateField(null=True, blank=True)
+    sslInvalid = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         if self.ip and self.dns:
@@ -143,7 +148,6 @@ class Vulnerability(models.Model):
         return "(" + str(self.risk) + ") " + self.description
 
     def locationsplit(self):
-    # {{vuln.locationsplit}}
         return self.location.split(" ")
 
 

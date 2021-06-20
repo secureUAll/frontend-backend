@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
 from django.db.models import Q
 from django.forms import formset_factory
 from django.shortcuts import render, redirect
@@ -152,14 +152,22 @@ def MachinesView(request, id):
                     else:
                         changes.save()
                 elif 'scan_request' in request.POST:
-                    KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
-                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                    # Validate that machine has workers
+                    if not machine.workers.all().exists():
+                        return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because this machine does not have a worker associated."}, status=200)
+                    elif not machine.workers.all().exclude(status='D').exists():
+                        return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because all workers that machine is associated with are down."}, status=200)
+                    if settings.PRODUCTION:
+                        KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                    else:
+                        return JsonResponse({'status': False, 'message': "Not in production! Can't schedule requests."}, status=500)
+                    return JsonResponse({'status':True,'message':"Validation passed"}, status=200)
                 elif 'new_sub' in request.POST:
                     u = None
                     try:
-                        u=User.objects.get(email=request.POST['new_sub'])
+                        u=User.objects.get(email=request.POST['new_sub'].strip())
                     except User.DoesNotExist:
-                        u=User.objects.create_user(request.POST['new_sub'], request.POST['new_sub'])
+                        u=User.objects.create_user(request.POST['new_sub'].strip(), request.POST['new_sub'])
                     if not u.id in machine_users_id:
                         MachineUser.objects.create(
                             user=u,
@@ -217,7 +225,12 @@ def MachinesView(request, id):
             'linedata': [v for v in linechart.values()][::-1],
             'count_vulns': count_vulns,
             'scan_filter': scan_filter,
+            'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
         }
+
+        # Clean session vars
+        if 'workersMachines' in request.session:
+            request.session['workersMachines'] = None
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
     return render(request, "machines/machines.html", context)
@@ -263,17 +276,17 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             # Through every notification type active
             for un in req.user.notifications.all():
                 n = NotifyFactory.createNotification(un.type)
-                n.heading(f"Hello {self.request.user.first_name},")
+                n.heading(f"Hello {req.user.first_name},")
                 if req.approved:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been approved! &#128522;")\
-                        .text("You can access the machines you were granted access at Secure(UA)ll dashboard.")
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at.strftime('%Y/%m/%d %H:%M'))} has been approved! &#128522;")\
+                        .text("You can access the hosts you were granted access at Secure(UA)ll dashboard.")
                 else:
                     n\
-                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} machines submitted {n.bold(req.created_at)} has been denied.")\
+                        .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at.strftime('%Y/%m/%d %H:%M'))} has been denied.")\
                         .text("You can check the motive and fill a new request at at Secure(UA)ll dashboard.")
                 n.button(
-                    url=''.join(['http://', get_current_site(self.request).domain, "/"]),
+                    url=''.join([settings.DEPLOY_URL, "/"]),
                     text='Dashboard'
                 )
                 print("Sending notification for ", un.value)

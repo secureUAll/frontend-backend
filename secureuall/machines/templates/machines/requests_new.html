@@ -19,11 +19,17 @@
 
 {% block content %}
 <!-- Vulnerabilities Report -->
-<div class="row">
+<div class="">
     <div class="card card-chart">
         <div class="card-header">
             <h5 class="card-category"></h5>
-            <h4 class="card-title">Fill the form below</h4>
+            <h4
+                class="card-title"
+                data-helper="1"
+                data-placement="top"
+                title="Access request"
+                data-content="If you don't have a host associated, here you can request access to a new one.<br/>Consider the following roles:<ul><li>Owner: Host administrator, can perform all operations;</li><li>Subscriber: Can access host information but can't perform operations.</li></ul>"
+            >Fill the form below</h4>
             <p>When you finish, press "Submit request".</p>
         </div>
         <div class="card-body">
@@ -54,7 +60,7 @@
         {% if formRequest.errors|length or formMachines.total_error_count %}
             showNotification(
                 "Invalid form!",
-                "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
+                "Please make sure you have filled the motive and at least one hosts data with valid names/IPs.",
                 "danger",
                 "ui-2_settings-90"
             );

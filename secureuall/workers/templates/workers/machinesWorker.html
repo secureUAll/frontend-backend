@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+
+{% comment "About" %}
+
+    This template renders a table to associate machines to workers.
+
+    -- Context
+
+{% endcomment %}
+
+{% load static %}
+{% load dashboard_filters %}
+
+{% block meta %}
+    <title>Secure(ua)ll | {{title}}</title>
+{% endblock meta %}
+
+{% block header %}
+    <div class="header text-center my-auto">
+        <h2 class="title mb-0">{{title}}</h2>
+    </div>
+{% endblock header %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block content %}
+
+    <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Please select the workers you want to scan each host with</h4>
+                        <p class=""></p>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="validateMachines" value="validateMachines" />
+
+                            {% include "dashboard/formsetTable.html" with formset=formset deleteRewrite="Disassociate" flagsdown=True %}
+
+                            <div class="row m-0 d-flex flex-row flex-nowrap">
+                                <btn class="btn btn-outline-primary col-4" type="submit" onClick="window.history.back()">
+                                    {% if add %}
+                                        Edit input
+                                    {% else %}
+                                        Go back to workers list
+                                    {% endif %}
+                                </btn>
+                                <button class="btn btn-primary col-8" type="submit">
+                                    {% if add %}
+                                        Add machines
+                                    {% else %}
+                                        Submit changes
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    {# Notifications to show on redirect from batch input  form #}
+    {# Notifications for form validation #}
+    {% if formset.total_error_count %}
+        showNotification(
+            "Error processing request!",
+            "There was an error processing your request. Please try again.",
+            "danger",
+            "ui-2_settings-90"
+        );
+    {% endif %}
+</script>
+{% endblock scripts %}

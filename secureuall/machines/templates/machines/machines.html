@@ -35,16 +35,21 @@
 
 <!-- Row Latest updates -->
 <div class="d-flex flex-row flex-wrap mb-auto">
-    <div class="col-6 d-flex pl-0">
-        <div class="card">
-            <div class="card-header d-flex">
-                <h6 class="mt-3 pb-4">Host General Information</h6>
-            </div>
-            <div class="card-body">
-                <div class="my-auto">
-                    <!-- Machine General Information -->
 
-                    {# Key/value dictionary #}
+    <div class="col-6 pl-0 d-flex flex-column flex-wrap">
+        {# General info #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <h6
+                        class="mt-3 mb-3"
+                        data-helper="0"
+                        data-placement="right"
+                        title="General information"
+                        data-content="Here you can learn some basic information about the host."
+                    >Host General Information</h6>
+                </div>
+                <div class="card-body">
                     <div class="row mx-0">
                         <div class="d-flex col-md-12 p-0 text-secondary">
                             <dl class="col-md-6 p-0">
@@ -65,11 +70,11 @@
                                     {% endif %}
                                 </dd>
                                 <dt>Registered</dt>
-                                <dd>{{machine.created}}</dd>
+                                <dd>{{machine.created|date:"Y/m/d H:i"}}</dd>
                             </dl>
                             <dl class="col-md-6 p-0">
                                 <dt>OS</dt>
-                                <dd>{{machine.os}}</dd>
+                                <dd>{% if machine.os %}{{machine.os}}{% else %}-{% endif %}</dd>
                                 <dt>Risk</dt>
                                 {% if machine.risk == '1' %}
                                     <dd><span class="badge p-2 bg-primary">1</span></dd>
@@ -85,103 +90,231 @@
                             </dl>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
 
-                    {# Owners/Subscribers #}
-                    <div class="d-flex flex-row text-secondary mt-5">
-                        <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl class="dl-line">
-                                <dt>Owners</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table table-discreet table-users" id="ownersTable">
-                                            <tbody>
-                                            {% for key, value in machine_users.items %}
-                                                {% if key == 'O' %}
-                                                    {% for v in value %}
-                                                        <tr><td>{{v}}</td></tr>
-                                                    {% empty %}
-                                                        <span class="col-12 p-0">No owners yet.</span>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </dd>
-                            </dl>
-                            {% if user_type == 'O' or user_type == 'A' %}
-                                <button class="btn btn-outline-primary mt-auto mr-auto" data-toggle="modal" data-target="#addUserModal" id="addNewOwner"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl class="dl-line">
-                                <dt>Subscribers</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table table-discreet table-users" id="subscribersTable">
-                                            <tbody>
-                                            {% for key, value in machine_users.items %}
-                                                {% if key == 'S' %}
-                                                    {% for v in value %}
-                                                        <tr><td>{{v}}</td></tr>
-                                                    {% empty %}
-                                                        <span class="col-12 p-0">No subscribers yet.</span>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </dd>
-                            </dl>
-                            {% if user_type == 'O' or user_type == 'A' %}
-                                <button class="btn btn-outline-primary mr-auto mt-auto" data-toggle="modal" data-target="#addUserModal" id="addNewSubscriber"><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
-                            {% endif %}
+        {# Workers #}
+        {% if user.is_admin and machine.active %}
+            <div class="d-flex flex-grow-1 pl-0">
+                <div class="card">
+                    <div class="card-header d-flex">
+                        <h6
+                            class="mt-3 mb-3"
+                            data-helper="1"
+                            data-placement="right"
+                            title="General information"
+                            data-content="Check the workers that scan this host. You can edit or make new associations by clicking on the button."
+                        >Workers</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex fle-row">
+                            <div class="col-md-6 p-0 d-flex flex-column">
+                                <dl class="dl-line">
+                                    <dt class="text-secondary">Workers</dt>
+                                    {% if machine.workers.all %}
+                                    <dd>
+                                        <div class="table-responsive d-flex">
+                                            <table class="table table-discreet">
+                                                <tbody>
+                                                {% for mw in machine.workers.all %}
+                                                    <tr>
+                                                        <td onclick="window.location='/workers#worker{{mw.worker.id}}';">Worker {{mw.worker.name}}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </dd>
+                                    {% else %}
+                                    <p class="text-danger">No workers associated!</p>
+                                    {% endif %}
+                                </dl>
+                            </div>
+                            <a href="/machines/{{machine.id}}/workers" class="my-auto ml-auto">
+                                <button
+                                    class="btn btn-outline-primary"
+                                ><i class="now-ui-icons ui-2_settings-90 mr-2"></i>Associate to workers</button>
+                            </a>
                         </div>
                     </div>
-                    <!-- End Machine General Information -->
+                    <div class="card-footer"></div>
                 </div>
-                <div class="row">
-                    <!-- Owners and Subscribers -->
-                    <div class="my-auto">
-                        <div class="row">
+            </div>
+        {% endif %}
 
-                        </div>
-
+        {# Owners/Subcribers #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <h6
+                        class="mt-3 mb-3"
+                        data-helper="2"
+                        data-placement="right"
+                        title="Owners/Subscribers"
+                        data-content="Here you can see the users associated to the host."
+                    >Owners and subscribers</h6>
+                </div>
+                <div class="card-body d-flex flex-row">
+                    <div class="col-md-6 pl-0 d-flex flex-column">
+                        <dl class="dl-line">
+                            <dt>Owners</dt>
+                            <dd>
+                                <div class="table-responsive d-flex">
+                                    <table class="table table-discreet table-users" id="ownersTable">
+                                        <tbody>
+                                        {% for key, value in machine_users.items %}
+                                            {% if key == 'O' %}
+                                                {% for v in value %}
+                                                    <tr><td>{{v}}</td></tr>
+                                                {% empty %}
+                                                    <span class="col-12 p-0">No owners yet.</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </dd>
+                        </dl>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                            <button
+                                class="col-12 btn btn-outline-primary mt-auto"
+                                data-toggle="modal"
+                                data-target="#addUserModal"
+                                id="addNewOwner"
+                                data-helper="3"
+                                data-placement="bottom"
+                                title="Owners"
+                                {% if user.is_admin %}
+                                    data-content="Use this button with caution! Owners are free to make all operations in the host."
+                                {% else %}
+                                    data-content="Use this button with caution! Owners are free to make all operations in the host, including revoking your permissions."
+                                {% endif %}
+                            ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
+                        {% endif %}
                     </div>
-                    <!-- End Owners and Subscribers -->
+                    <div class="col-md-6 pr-0 d-flex flex-column">
+                        <dl class="dl-line">
+                            <dt>Subscribers</dt>
+                            <dd>
+                                <div class="table-responsive d-flex">
+                                    <table class="table table-discreet table-users" id="subscribersTable">
+                                        <tbody>
+                                        {% for key, value in machine_users.items %}
+                                            {% if key == 'S' %}
+                                                {% for v in value %}
+                                                    <tr><td>{{v}}</td></tr>
+                                                {% empty %}
+                                                    <span class="col-12 p-0">No subscribers yet.</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </dd>
+                        </dl>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                            <button
+                                class="col-12 btn btn-outline-primary mt-auto"
+                                data-toggle="modal"
+                                data-target="#addUserModal"
+                                id="addNewSubscriber"
+                                data-helper="4"
+                                data-placement="bottom"
+                                title="Subscribers"
+                                data-content="This role grants read-only permissions. The only authorized actions for subscribers are changing a vulnerability status and adding comments to it."
+                            ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
+                        {% endif %}
+                    </div>
                 </div>
+                <div class="card-footer"></div>
             </div>
         </div>
     </div>
-    <div class="col-6 pr-0 d-flex">
-        <div class="card">
-            <div class="card-body">
-                <!-- Open Ports -->
-                <div class="my-auto">
-                    <h6 class="mt-3">Open Ports</h6>
-                    <div class="table-responsive col-12 p-0">
-                        <table class="table table-discreet" id="openPorts">
-                            <thead class=" text-primary">
-                                <th>Number</th>
-                                <th>Service</th>
-                                <th>Version</th>
-                                <th>Vulnerable</th>
-                            </thead>
-                            <tbody>
-                            {% for port in machine.ports.all %}
-                                <tr {% if port.vulnerable %} class="text-danger" {% endif %}>
-                                    <td>{{port.port}}</td>
-                                    <td>{{port.service.service}}</td>
-                                    <td>{{port.service.version}}</td>
-                                    <td>{{port.vulnerable}}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+
+    <div class="col-6 pr-0 d-flex flex-column flex-wrap">
+        {# SSL #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <h6
+                        class="mt-3 mb-3"
+                        data-helper="5"
+                        data-placement="right"
+                        title="SSL"
+                        data-content="Here are displayed the SSL configurations detected during the scans."
+                    >SSL Information</h6>
                 </div>
-                <!-- End Open Ports -->
+                <div class="card-body">
+                    {% if machine.sslVersion or machine.sllAlgorithm or machine.sslExpired %}
+                        <dl class="col-md-6 p-0">
+                            <dt>Version</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {{machine.sslVersion|default:"-"}}
+                            </dd>
+                            <dt>Algorithm</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {{machine.sllAlgorithm|default:"-"}}
+                            </dd>
+                            <dt>Valid until</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {% with expireDate as machine.sslExpired|date:"Y/m/d" %}
+                                    {{expireDate|default:"-"}}
+                                {% endwith %}
+                            </dd>
+                        </dl>
+                        {% if machine.sslInvalid %}
+                            <p class="mt-3">
+                                <span class="font-weight-bold text-danger">Attention!</span>
+                                Your SSL configuration is invalid. This does not necessarily mean that any of the attributes presented here are wrong. Look at the email you received with the scan report for more details.
+                            </p>
+                        {% endif %}
+                    {% else %}
+                        <p>No information to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Open ports #}
+        <div class="d-flex flex-grow-1">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Open Ports -->
+                    <div class="my-auto">
+                        <h6
+                            class="mt-3"
+                            data-helper="6"
+                            data-placement="right"
+                            title="Open ports"
+                            data-content="This section displays the ports that have been identified during the scans."
+                        >Open Ports</h6>
+                        <div class="table-responsive col-12 p-0">
+                            <table class="table table-discreet" id="openPorts">
+                                <thead class=" text-primary">
+                                    <th>Number</th>
+                                    <th>Service</th>
+                                    <th>Version</th>
+                                    <th>Vulnerable</th>
+                                </thead>
+                                <tbody>
+                                {% for port in machine.ports.all %}
+                                    <tr {% if port.vulnerable %} class="text-danger" {% endif %}>
+                                        <td>{{port.port}}</td>
+                                        <td>{{port.service.service}}</td>
+                                        <td>{{port.service.version}}</td>
+                                        <td>{{port.vulnerable}}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- End Open Ports -->
+                </div>
             </div>
         </div>
     </div>
@@ -196,7 +329,13 @@
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex justify-content-between">
-                        <h6 class="mt-3 mr-auto">Vulnerabilities per Risk Level</h6>
+                        <h6
+                            class="mt-3 mr-auto"
+                            data-helper="7"
+                            data-placement="right"
+                            title="Risk level graph"
+                            data-content="Like in the homepage, more than giving you aggregated information about your hosts, you can click on the slices to filter the hosts list by risk level."
+                        >Vulnerabilities per Risk Level</h6>
                         <div class="dropdown p-2">
                             <button type="button"
                                 class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
@@ -245,8 +384,13 @@
             <div class="card-header">
                 <div class="my-auto">
                     <div class="mb-3 d-flex">
-                        <h6 class="mt-3 mr-auto">Vulnerabilities per scan</h6>
-
+                        <h6
+                            class="mt-3 mr-auto"
+                            data-helper="8"
+                            data-placement="right"
+                            title="Vulnerabilities evolution"
+                            data-content="Here you can check the history of vulnerabilities number identified in this host."
+                        >Vulnerabilities per scan</h6>
                     </div>
                 </div>
                 <div class="card-body">
@@ -271,8 +415,11 @@
     <div class="card card-chart">
         <div class="card-header pb-3 ">
             <h5 class="card-category"></h5>
-            <h4 class="card-title" id="vulnreports">Vulnerability Report</h4>
-            <div class="dropdown p-2">
+            <h4
+                class="card-title"
+                id="vulnreports"
+            >Vulnerability Report</h4>
+            <div class="dropdown">
                 <button type="button"
                     class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret"
                     data-toggle="dropdown">
@@ -304,23 +451,49 @@
                     <i class="now-ui-icons ui-1_simple-remove mr-2"></i>Clear Filters
                 </button>
                 {% if user_type == 'O' or user_type == 'A' %}
-                    <button type="button" class="btn btn-outline-primary mr-2" onclick="scanNow();">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary mr-2"
+                        onclick="scanNow();"
+                        data-helper="9"
+                        data-placement="bottom"
+                        title="Request instant scan"
+                        data-content="If you have made changes in your host and don't want to wait for the next scheduled scan, you can ask for an instant one."
+                    >
                         <i class="now-ui-icons arrows-1_refresh-69 mr-2"></i>Scan Host Now
                     </button>
                 {% endif %}
-                <a href="/machines/{{machine.id}}/logs">
-                    <button type="button" class="btn btn-outline-primary mr-2">
-                        <i class="now-ui-icons text_align-center mr-2"></i>See scanning logs
-                    </button>
-                </a>
+                {% if user.is_admin %}
+                    <a href="/machines/{{machine.id}}/logs">
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary mr-2"
+                            data-helper="10"
+                            data-placement="bottom"
+                            title="Scanning logs"
+                            data-content="In this page you can check the logs of the tools used to scan this host for debugging purposes."
+                        >
+                            <i class="now-ui-icons text_align-center mr-2"></i>See scanning logs
+                        </button>
+                    </a>
+                {% endif %}
             </div>
             <!-- Row Next Scan -->
             <div class="d-flex flex-row pb-3">
                 <div class="col-6 p-0 text-secondary my-auto">
                     <form method="POST" action="?periodicity=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
-                            <dt>Next scan </dt>
-                            <dd>{{machine.nextScan}}</dd>
+                            <dt
+                                data-helper="11"
+                                data-placement="top"
+                                title="Next scan"
+                                {% if user_type == 'O' or user.is_admin %}
+                                    data-content="When is the next scan? You can change the periodicity here."
+                                {% else %}
+                                    data-content="When is the next scan? You can check its periodicity here."
+                                {% endif %}
+                            >Next scan </dt>
+                            <dd>{{machine.nextScan|date:"Y/m/d"}}</dd>
                         </dl>
                         <dl class="dl-12">
                             <dt>Periodicity </dt>
@@ -345,7 +518,12 @@
                 <div class="col-6 text-secondary my-auto">
                     <form method="POST" action="?scanlevel=true&goto=vulnreports"> {% csrf_token %}
                         <dl class="dl-12">
-                            <dt>Scan level </dt>
+                            <dt
+                                data-helper="12"
+                                data-placement="top"
+                                title="Scan level"
+                                data-content="The scan level determines how intrusive the scans are, being 1 the less intrusive."
+                            >Scan level </dt>
                             {% if user_type == 'O' or user_type == 'A' %}
                                 <dd>
                                     <select name="machine_scanlevel" id="scanLevelSelect" type="button"
@@ -382,7 +560,14 @@
             <div class="">
                 <!-- End Row Next Scan -->
                 <div class="table-responsive">
-                    <table class="table table-discreet table-vulnerabilities" id="vulnerabilitiesTable">
+                    <table
+                        class="table table-discreet table-vulnerabilities"
+                        id="vulnerabilitiesTable"
+                        data-helper="13"
+                        data-placement="top"
+                        title="Vulnerabilities report"
+                        data-content="Finally, here you have the list of vulnerabilities found during the scans. Click on the host to see more information on the vulnerability, change its status and add comments."
+                    >
                         <thead class=" text-primary">
                             <th>Risk</th>
                             <th>Type</th>
@@ -441,6 +626,30 @@
                                     <td class="vuln-id" style="display:none">{{vuln.id}}</td>
                                 </tr>
                                 {% endif %}
+                                </td>
+                                <td class="vuln-type">{{vuln.type}}</td>
+                                <td class="vuln-date">{{vuln.scan.date}}</td>
+                                <td class="vuln-desc">{{vuln.description}}</td>
+                                <td class="vuln-location">{{vuln.location}}</td>
+                                <td class="vuln-status">
+                                {% if vuln.status == 'Fixed' %}
+                                    <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
+                                {% elif vuln.status == 'Not Fixed' %}
+                                    <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
+                                {% elif vuln.status == 'Fixing' %}
+                                    <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
+                                {% elif vuln.status == 'Invalid' %}
+                                    <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
+                                {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <div class="ml-auto">
+                                        <button class="btn btn-sm btn-outline-primary" title="Add comment" data-toggle="modal" data-target="#vulnCommentModal"><i class="now-ui-icons ui-1_simple-add"></i></button>
+                                    </div>
+                                </td>
+                                <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
+                                <td class="vuln-id" style="display:none">{{vuln.id}}</td>
+                            </tr>
                             {% empty %}
                                 <span>No vulnerabilities to show.</span>
                             {% endfor %}
@@ -665,13 +874,23 @@
                         'scan_request': {{machine.id}},
                     },
                     success: function(json) {
-                        console.log("Successfully sent scan request.");
-                        showNotification(
-                            "Scan request registered",
-                            "Your scan is now scheduled and will be executed soon. You will be notified as soon as it ends.",
-                            "success",
-                            "travel_info"
-                        );
+                        // Validate that is was successfull
+                        if (json['status']) {
+                            console.log("Successfully sent scan request.");
+                            showNotification(
+                                "Scan request registered",
+                                "Your scan is now scheduled and will be executed soon. You will be notified as soon as it ends.",
+                                "success",
+                                "travel_info"
+                            );
+                        } else {
+                            showNotification(
+                                "There was an error scheduling your scan",
+                                json['message'],
+                                "danger",
+                                "ui-2_settings-90"
+                            );
+                        }
                     },
                     error: function(response) {
                         console.log("Could not send request. Error: " + response);
@@ -849,5 +1068,14 @@
             // Javascript method's body can be found in assets/js/demos.js
             initCharts();
         });
+
+        {% if workersMachines %}
+            showNotification(
+                "Changes applied with success",
+                "The host will be scanned by the selected workers from now on.",
+                "success",
+                "tech_laptop"
+            );
+        {% endif %}
     </script>
 {% endblock scripts %}

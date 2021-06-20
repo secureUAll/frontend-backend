@@ -1,0 +1,28 @@
+{% extends "login/base.html" %}
+{% load static %}
+
+{% block meta %}
+    <title>Secure(UA)ll | About</title>
+{% endblock meta %}
+
+{% block header %}
+{% endblock header %}
+
+{% block styles %}
+{% endblock styles %}
+
+{% block content %}
+    <div class="col-md-4 mx-auto">
+        <h2 class="title text-left">Secure(UA)ll</h2>
+        <p>UA security exposure sentinel</p>
+
+        <div class="mt-5 d-flex flex-row flex-wrap">
+            <a href="https://github.com/secureUAll" target="_blank" class="btn btn-outline-primary mr-2">
+                <i class="now-ui-icons design-2_ruler-pencil mr-1"></i>Code repositories
+            </a>
+            <a href="http://xcoa.av.it.pt/~pi202021g04/" target="_blank" class="btn btn-outline-primary mr-2">
+                <i class="now-ui-icons files_single-copy-04 mr-1"></i>Documentation
+            </a>
+        </div>
+    </div>
+{% endblock content %}

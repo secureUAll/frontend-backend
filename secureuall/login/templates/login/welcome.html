@@ -19,26 +19,32 @@
         <div class="border border-warning rounded p-2 mb-3">
             <p class="text-warning fw-bold mb-1"><i class="now-ui-icons travel_info mr-2"></i> You don't have access to the dashboard!</p>
             {% if requests.pending %}
-                <p class="mb-0">You have request(s) to access machine(s) pending for approval. When they change status you will be notified by email.</p>
+                <p class="mb-0">You have request(s) to access host(s) pending for approval. When they change status you will be notified by email.</p>
             {% else %}
-                <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a machine vulnerabilities data.</p>
+                <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a host vulnerabilities data.</p>
             {% endif %}
         </div>
 
         <!-- Requests history -->
         {% if user.accessRequest.all %}
-            <div class="col-12 d-flex text-dark">
+            <div class="col-12 p-0 d-flex text-dark">
                 <div class="card card-chart">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
-                        <h4 class="card-title">Your requests</h4>
+                        <h4
+                            class="card-title"
+                            data-helper="0"
+                            data-placement="right"
+                            title="Requests history"
+                            data-content="Here you can see all your access requests and monitor their status change."
+                        >Your requests</h4>
                     </div>
                     <div class="card-body my-auto d-flex flex-column">
                         <table class="table" id="requestsTable">
                             <thead class=" text-primary">
                                 <tr>
                                     <th>Created</th>
-                                    <th>Machines</th>
+                                    <th>Hosts</th>
                                     <th>Role</th>
                                     <th>Status</th>
                                     <th>Notes</th>
@@ -47,7 +53,7 @@
                             <tbody>
                                 {% for r in user.accessRequest.all|dictsortreversed:"created_at" %}
                                     <tr>
-                                        <td>{{r.created_at}}</td>
+                                        <td>{{r.created_at|date:"Y/m/d H:i"}}</td>
                                         <td>
                                             {% for m in r.get_machines %}
                                             <span>{{m}}</span><br/>
@@ -70,11 +76,17 @@
 
         <!-- Card Form Request Machine -->
         {% if not requests.pending %}
-            <div class="col-12 d-flex text-dark">
+            <div class="col-12 p-0 d-flex text-dark">
                 <div class="card card-chart">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
-                        <h4 class="card-title">Request access to machines vulnerabilities data</h4>
+                        <h4
+                            class="card-title"
+                            data-helper="1"
+                            data-placement="right"
+                            title="Access request"
+                            data-content="If you don't have a host associated, here you can request access to a new one.<br/>Consider the following roles:<ul><li>Owner: Host administrator, can perform all operations;</li><li>Subscriber: Can access host information but can't perform operations.</li></ul>"
+                        >Request access to hosts vulnerabilities data</h4>
                     </div>
                     <div class="card-body my-auto d-flex flex-column">
                         <form method="POST" class="">
@@ -105,7 +117,7 @@
         {% if formRequest.errors|length or formMachines.total_error_count %}
             showNotification(
                 "Invalid form!",
-                "Please make sure you have filled the motive and at least one machines data with valid names/IPs.",
+                "Please make sure you have filled the motive and at least one hosts data with valid names/IPs.",
                 "danger",
                 "ui-2_settings-90"
             );

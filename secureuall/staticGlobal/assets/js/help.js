@@ -43,7 +43,7 @@ $(document).ready(() => {
         if ($("[data-helper][title][data-content]").length==i+1) {
             action += '<p class="btn btn-sm btn-primary mb-0 ml-auto finishHelper">Finish</p>';
         }
-        if (i==0) {
+        if (i==0 && $("[data-helper][title][data-content]").length!=i+1) {
             action += '<p class="btn btn-sm btn-outline-primary mb-0 mr-auto finishHelper">Finish</p>';
         }
         action += ($("[data-helper][title][data-content]").length>i+1) ? '<p class="btn btn-sm btn-primary mb-0 ml-auto nextHelper">Next</p>' : '';
@@ -103,5 +103,8 @@ $(document).ready(() => {
         $(".nextHelper").unbind('click').click(() => nextHelper());
         $(".finishHelper").unbind('click').click(() => finishHelper());
         $(".previousHelper").unbind('click').click(() => prevHelper());
+
+        // Scroll to element
+        helpers[Object.keys(helpers)[index]].element.scrollIntoView({ behavior: 'smooth', block: 'center'});
     }
 });

@@ -8,7 +8,13 @@
 {% block headerClass %}panel-header-lg{% endblock headerClass %}
 
 {% block header %}
-    <canvas id="vulnerabilitiesNumbersChart"></canvas>
+    <canvas
+        id="vulnerabilitiesNumbersChart"
+        data-helper="0"
+        data-placement="bottom"
+        title="Vulnerabilities evolution"
+        data-content="This graphic shows the number of vulnerabilities registered in your hosts in the past days."
+    ></canvas>
 {% endblock header %}
 
 {% block styles %}
@@ -24,7 +30,13 @@
             <div class="card card-chart d-flex flex-column">
                 <div class="card-header">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">Alerts</h4>
+                    <h4
+                        class="card-title"
+                        data-helper="1"
+                        data-placement="right"
+                        title="Alerts"
+                        data-content="In this panel you are notified of operations that require your action."
+                    >Alerts</h4>
                 </div>
                 <div class="card-body d-flex flex-column">
                     {% if not alerts.workers and not alerts.requests and not alerts.machines %}
@@ -46,6 +58,17 @@
                                 </a>
                             </div>
                         {% endif %}
+                        {% if alerts.noworkers %}
+                            <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                <h6 class="text-danger">
+                                    <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                    There are no workers registered!
+                                </h6>
+                                <p>
+                                    The system can not make scans without one.
+                                </p>
+                            </div>
+                        {% endif %}
                         {% if alerts.requests %}
                             <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
                                 <h6 class="text-danger">
@@ -53,11 +76,11 @@
                                     A total of {{alerts.requests|length}} requests are pending review!</h6>
                                 <ul>
                                     {% with alerts.requests|first as newestRequest %}
-                                        <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                        <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d H:i"}}</li>
                                     {% endwith %}
                                     {% if alerts.requests|length > 1 %}
                                         {% with alerts.requests|last as oldestRequest %}
-                                            <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                            <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d H:i"}}</li>
                                         {% endwith %}
                                     {% endif %}
                                 </ul>
@@ -76,7 +99,7 @@
                                         <li>{{m}}</li>
                                     {% endfor %}
                                 </ul>
-                                <a href="/workers/machinesPending" class="btn btn-outline-primary w-100 mt-auto">
+                                <a href="/workers/machineslost" class="btn btn-outline-primary w-100 mt-auto">
                                     <span class="mx-auto my-auto">Associate to workers</span>
                                 </a>
                             </div>
@@ -91,7 +114,13 @@
             <div class="card card-chart">
                 <div class="card-header mb-auto">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title">secure(UA)ll in Numbers</h4>
+                    <h4
+                        class="card-title"
+                        data-helper="2"
+                        data-placement="top"
+                        title="Numbers"
+                        data-content="Here you can see some generic stats about the Secure(UA)ll system."
+                    >secure(UA)ll in Numbers</h4>
                 </div>
                 <div class="card-body my-auto d-flex">
                     <table class="text-center text-secondary col-12 my-auto">
@@ -156,7 +185,13 @@
                     </div>
                     <div class="card-body">
                         <div class="my-auto">
-                            <h6 class="mt-3">Host Added/Removed</h6>
+                            <h6
+                                class="mt-3"
+                                data-helper="3"
+                                data-placement="top"
+                                title="Changes"
+                                data-content="These 3 cards inform you of recent changes made to the hosts."
+                            >Host Added/Removed</h6>
                             <div class="table-responsive">
                                 <table class="table table-discreet" id="latestChangesTableAddRemoved">
                                     <thead class=" text-primary">

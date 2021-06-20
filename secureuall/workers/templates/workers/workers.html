@@ -22,7 +22,16 @@
 
 {% block header %}
     <div class="header text-center my-auto">
-        <h2 class="title mb-0">Workers</h2>
+        <h2 class="title mb-3">Workers</h2>
+        {% if filter or workers %}
+            <a
+                href="/workers/machines/"
+                data-helper="0"
+                data-placement="bottom"
+                title="Hosts workers"
+                data-content="Click here to see all the hosts and change the workers associated with each."
+            ><button class="btn btn-outline-primary"><i class="now-ui-icons design-2_ruler-pencil mr-3"></i>Edit hosts workers</button></a>
+        {% endif %}
     </div>
 {% endblock header %}
 
@@ -31,14 +40,20 @@
 {% endblock styles %}
 
 {% block content %}
-    <!-- Row of Tables -->
+    {# Filters #}
+    {% if filter or workers %}
     <div class="row" id="workers">
-        {# Filters #}
         <div class="col-12 d-flex">
             <div class="card card-chart d-flex flex-column">
                 <div class="card-header d-flex">
                     <h5 class="card-category"></h5>
-                    <h4 class="card-title text-secondary">Filters</h4>
+                    <h4
+                        class="card-title text-secondary"
+                        data-helper="1"
+                        data-placement="top"
+                        title="Filters"
+                        data-content="You can filter the workers by status."
+                    >Filters</h4>
                     <div class="ml-auto my-auto d-flex flex-row flex-wrap">
                         <a href="?status=A" class=""><button class="btn {% if filter == 'A' %}active{% endif %} btn-outline-primary ml-2">Active</button></a>
                         <a href="?status=D" class=""><button class="btn {% if filter == 'D' %}active{% endif %} btn-outline-danger ml-2">Down</button></a>
@@ -53,13 +68,22 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         {# Workers list #}
         {% for worker in workers %}
             <div class="col-lg-12 d-flex mx-auto" id="worker{{worker.id}}">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header d-flex">
-                        <h4 class="card-title">
+                        <h4
+                            class="card-title"
+                            {% if forloop.counter0 == 0 %}
+                                data-helper="2"
+                                data-placement="top"
+                                title="Worker card"
+                                data-content="For each worker a card gives you some general data. Click on its name to edit it."
+                            {% endif %}
+                        >
                             Worker
                             <a
                                 data-pk="{{worker.id}}"
@@ -92,7 +116,7 @@
                                     <span class="text-{{worker.get_status_display|color}}">{{worker.get_status_display}}</span>
                                 </dd>
                                 <dt>Created</dt>
-                                <dd>{{worker.created}}</dd>
+                                <dd>{{worker.created|date:"Y/m/d H:i"}}</dd>
                             </dl>
                         </div>
                         <!-- Machines table -->
@@ -107,11 +131,26 @@
                                         aria-expanded="false"
                                         aria-controls="workerMachines{{worker.id}}"
                                         id="workerMachines{{worker.id}}Collapse"
+                                        {% if forloop.counter0 == 0 %}
+                                            data-helper="3"
+                                            data-placement="bottom"
+                                            title="Hosts"
+                                            data-content="Click here to see the hosts associated to the worker."
+                                        {% endif %}
                                     >
                                         <i class="now-ui-icons tech_laptop mr-2"></i> See hosts
                                     </button>
                                     <div class="dropdown dropdown-free ml-1">
-                                        <button class="btn btn-outline-primary" data-toggle="dropdown">
+                                        <button
+                                            class="btn btn-outline-primary"
+                                            data-toggle="dropdown"
+                                            {% if forloop.counter0 == 0 %}
+                                                data-helper="4"
+                                                data-placement="bottom"
+                                                title="Associate hosts"
+                                                data-content="Use this button to associate new hosts. There are two methods available:<ul><li>Batch mode: Insert hosts with a text list;</li><li>IP range: Insert hosts in an IP range.</li></ul>"
+                                            {% endif %}
+                                        >
                                             <i class="now-ui-icons ui-1_simple-add mr-1"></i> Add hosts
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-left">
@@ -120,12 +159,28 @@
                                         </div>
                                     </div>
                                     <a href="/workers/{{worker.id}}/machines/edit" class="ml-2">
-                                        <button class="btn btn-outline-primary">
+                                        <button
+                                            class="btn btn-outline-primary"
+                                            {% if forloop.counter0 == 0 %}
+                                                data-helper="5"
+                                                data-placement="bottom"
+                                                title="Edit hosts"
+                                                data-content="Click here to remove users from worker and/or change settings like the scanning level."
+                                            {% endif %}
+                                        >
                                             <i class="now-ui-icons design-2_ruler-pencil mr-1"></i> Edit hosts
                                         </button>
                                     </a>
                                     <a href="/workers/{{worker.id}}/logs" class="ml-2">
-                                        <button class="btn btn-outline-primary">
+                                        <button
+                                            class="btn btn-outline-primary"
+                                            {% if forloop.counter0 == 0 %}
+                                                data-helper="6"
+                                                data-placement="bottom"
+                                                title="Scanning logs"
+                                                data-content="In this page you can check the logs of the tools used to scan this host for debugging purposes."
+                                            {% endif %}
+                                        >
                                             <i class="now-ui-icons text_align-center mr-1"></i> Scanning logs
                                         </button>
                                     </a>
@@ -160,7 +215,7 @@
                                                                 {% endif %}
                                                             </td>
                                                             <td>{{machine.get_periodicity_display}}</td>
-                                                            <td>{{machine.nextScan}}</td>
+                                                            <td>{{machine.nextScan|date:"Y/m/d"}}</td>
                                                         </tr>
                                                     {% endwith %}
                                                 {% endfor %}
@@ -195,7 +250,7 @@
                 </div>
             </div>
         {% empty %}
-            <div class="col-12 d-flex">
+            <div class="col-12 p-0 d-flex">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
@@ -225,10 +280,10 @@
     <script src="{% static 'assets/js/refresh.js' %}"></script>
 
     <script>
-        {% if machinesWithoutWorker %}
+        {% if workers and machinesWithoutWorker or filter and machinesWithoutWorker %}
             showNotification(
                 "There are {{machinesWithoutWorker}} hosts without a worker!",
-                "To see the full list and associate them to a worker click <a class=\"text-white\" href=\"#\">here</a>.",
+                "Click <a class=\"text-white font-weight-bold\" href=\"/workers/machineslost\">here</a> to see the full list and associate them to a worker.",
                 "warning",
                 "ui-2_settings-90"
             );
@@ -237,6 +292,14 @@
             showNotification(
                 "Changes applied to worker {{machinesAdded.worker}}!",
                 "{{machinesAdded.machines}} hosts where associated, {{machinesAdded.new}} new hosts were created, {{machinesAdded.edited}} edited and {{machinesAdded.disassociated}} disassociated with success!",
+                "success",
+                "tech_laptop"
+            );
+        {% endif %}
+        {% if workersMachines %}
+            showNotification(
+                "Changes applied with success",
+                "The hosts will be scanned by the selected workers from now on.",
                 "success",
                 "tech_laptop"
             );

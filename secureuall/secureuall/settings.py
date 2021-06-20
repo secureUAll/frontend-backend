@@ -189,3 +189,6 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 EMAIL_USE_TLS = True
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
+# Deploy config
+DEPLOY_URL = os.environ.get("DEPLOY_URL")
