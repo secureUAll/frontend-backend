@@ -201,15 +201,18 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     # all=True shows all machines, with or without worker
     all = True
 
-    def get(self, request, *args, **kwargs):
-        self.getContext()
+    def get(self, request, machineid=None, *args, **kwargs):
+        self.getContext(machineid)
         # If there are no workers, redirect
         if not Worker.objects.all() or not self.context['machines']:
-            return redirect('workers:workers')
+            if machineid:
+                return redirect('machines:machines', id=machineid)
+            else:
+                return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
-    def post(self, request, *args, **kwargs):
-        self.getContext()
+    def post(self, request, machineid=None, *args, **kwargs):
+        self.getContext(machineid)
         valid = self.context['formset'].is_valid()
         if valid:
             # Same form to db
@@ -227,11 +230,16 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             # Store session data for success feedback on workers list
             request.session['workersMachines'] = {'associated': True}
             # Redirect to worker
-            return redirect('workers:workers')
+            if machineid:
+                return redirect('machines:machines', id=machineid)
+            else:
+                return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
-    def getContext(self):
-        if self.all:
+    def getContext(self, machineid):
+        if machineid:
+            machines = Machine.objects.filter(id=machineid, active=True)
+        elif self.all:
             machines = Machine.objects.filter(active=True)
         else:
             machines = Machine.objects.filter(active=True, workers__isnull=True)

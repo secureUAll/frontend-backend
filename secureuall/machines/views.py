@@ -182,7 +182,12 @@ def MachinesView(request, id):
             'piedata_last': piedata_last,
             'linelabels': linelabels[::-1],
             'linedata': linedata[::-1],
+            'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
         }
+
+        # Clean session vars
+        if 'workersMachines' in request.session:
+            request.session['workersMachines'] = None
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
     return render(request, "machines/machines.html", context)
