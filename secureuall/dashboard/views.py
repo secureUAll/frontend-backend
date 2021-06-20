@@ -28,7 +28,10 @@ def DashboardView(request, *args, **kwargs):
     vulnset = Vulnerability.objects.all().order_by('-scan')
 
     # Define piechart (% of Machines in a Risk Level) x and y axes values.
-    machineset = Machine.objects.filter(active__exact=True).order_by('-created')
+    if request.user.is_admin:
+        machineset = Machine.objects.filter(active__exact=True).order_by('-created')
+    else:
+        machineset = Machine.objects.filter(active__exact=True, users__user=request.user).order_by('-created')
     for machine in machineset:
         # Ignore empty risks
         if machine.risk:
@@ -92,9 +95,6 @@ def DashboardView(request, *args, **kwargs):
             machines_updates[machineuser.machine] = "Subscriber added"
         elif machineuser.userType=='O':
             machines_updates[machineuser.machine] = "Owner added"
-
-    if not request.user.is_superuser:
-        machineset = machineset.filter(users__user__in=[request.user.id])
 
     # ALERTS
     alerts = {'workers': Worker.objects.filter(status='D'),
