@@ -22,7 +22,16 @@
 
 {% block header %}
     <div class="header text-center my-auto">
-        <h2 class="title mb-0">Workers</h2>
+        <h2 class="title mb-3">Workers</h2>
+        {% if filter or workers %}
+            <a
+                href="/workers/machines/"
+                data-helper="0"
+                data-placement="bottom"
+                title="Hosts workers"
+                data-content="Click here to see all the hosts and change the workers associated with each."
+            ><button class="btn btn-outline-primary"><i class="now-ui-icons design-2_ruler-pencil mr-3"></i>Edit hosts workers</button></a>
+        {% endif %}
     </div>
 {% endblock header %}
 
@@ -40,7 +49,7 @@
                     <h5 class="card-category"></h5>
                     <h4
                         class="card-title text-secondary"
-                        data-helper="0"
+                        data-helper="1"
                         data-placement="top"
                         title="Filters"
                         data-content="You can filter the workers by status."
@@ -69,7 +78,7 @@
                         <h4
                             class="card-title"
                             {% if forloop.counter0 == 0 %}
-                                data-helper="1"
+                                data-helper="2"
                                 data-placement="top"
                                 title="Worker card"
                                 data-content="For each worker a card gives you some general data. Click on its name to edit it."
@@ -123,7 +132,7 @@
                                         aria-controls="workerMachines{{worker.id}}"
                                         id="workerMachines{{worker.id}}Collapse"
                                         {% if forloop.counter0 == 0 %}
-                                            data-helper="2"
+                                            data-helper="3"
                                             data-placement="bottom"
                                             title="Hosts"
                                             data-content="Click here to see the hosts associated to the worker."
@@ -136,7 +145,7 @@
                                             class="btn btn-outline-primary"
                                             data-toggle="dropdown"
                                             {% if forloop.counter0 == 0 %}
-                                                data-helper="3"
+                                                data-helper="4"
                                                 data-placement="bottom"
                                                 title="Associate hosts"
                                                 data-content="Use this button to associate new hosts. There are two methods available:<ul><li>Batch mode: Insert hosts with a text list;</li><li>IP range: Insert hosts in an IP range.</li></ul>"
@@ -153,7 +162,7 @@
                                         <button
                                             class="btn btn-outline-primary"
                                             {% if forloop.counter0 == 0 %}
-                                                data-helper="4"
+                                                data-helper="5"
                                                 data-placement="bottom"
                                                 title="Edit hosts"
                                                 data-content="Click here to remove users from worker and/or change settings like the scanning level."
@@ -166,7 +175,7 @@
                                         <button
                                             class="btn btn-outline-primary"
                                             {% if forloop.counter0 == 0 %}
-                                                data-helper="5"
+                                                data-helper="6"
                                                 data-placement="bottom"
                                                 title="Scanning logs"
                                                 data-content="In this page you can check the logs of the tools used to scan this host for debugging purposes."

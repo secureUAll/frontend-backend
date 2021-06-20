@@ -197,12 +197,15 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     context = {}
     template_name = "workers/machinesWorker.html"
     MachineWorkerFormSet = formset_factory(MachineWorkerForm, extra=0, can_delete=False)
+    # By default, this view only shows machines without worker
+    # all=True shows all machines, with or without worker
+    all = True
 
     def get(self, request, *args, **kwargs):
-        # If there are no workers, redirect
-        if not Worker.objects.all():
-            return redirect('workers:workers')
         self.getContext()
+        # If there are no workers, redirect
+        if not Worker.objects.all() or not self.context['machines']:
+            return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
@@ -213,15 +216,13 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             for f in self.context['formset']:
                 f = f.cleaned_data # {'machine': 'gmatos.pt', 'id': 4, workersTrue': [1], 'workersFalse': [2]}
                 print("CLEANED_DATA", f)
-                print("TRUE", f['workersTrue'], type(f['workersTrue']))
-                print("FALSE", f['workersFalse'], type(f['workersFalse']))
                 # For associations, create if does not exist already
                 for wid in f['workersTrue']:
                     if not MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
                         MachineWorker.objects.create(worker_id=wid, machine_id=f['id'])
                 # For disassociation, delete if exists already
                 for wid in f['workersFalse']:
-                    if not MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
+                    if MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
                         MachineWorker.objects.filter(worker_id=wid, machine_id=f['id']).delete()
             # Store session data for success feedback on workers list
             request.session['workersMachines'] = {'associated': True}
@@ -230,9 +231,21 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         return render(request, self.template_name, self.context)
 
     def getContext(self):
+        if self.all:
+            machines = Machine.objects.filter(active=True)
+        else:
+            machines = Machine.objects.filter(active=True, workers__isnull=True)
+        forminit = []
+        for m in machines:
+            minit = { 'machine': str(m), 'id': m.id }
+            for w in Worker.objects.all():
+                minit[f'worker_{w.id}'] = MachineWorker.objects.filter(machine=m, worker=w).exists()
+            forminit.append(minit)
+
         self.context = {
+            'machines': machines,
             'formset': \
-                self.MachineWorkerFormSet(initial=[{'machine': str(m), 'id': m.id, 'worker': True} for m in Machine.objects.filter(active=True, workers__isnull=True)]) \
+                self.MachineWorkerFormSet(initial=forminit) \
                 if not self.request.POST else self.MachineWorkerFormSet(self.request.POST)
             ,
             'title': 'Workers | Associate machines'
