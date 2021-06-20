@@ -83,7 +83,7 @@
                             {{ hidden }}
 
                             {# Show icon if icon matches any of the available #}
-                            {% if "Id" in hidden.label and hidden.value %}
+                            {% if "Id" in hidden.label and hidden.value and not flagsdown %}
                                 <i
                                     class="now-ui-icons ui-2_settings-90 text-warning fw-bold"
                                     data-bs-toggle="tooltip"

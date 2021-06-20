@@ -12,6 +12,7 @@ from .models import Worker
 from machines.models import Machine, MachineWorker, Log
 
 from machines.forms import MachineWorkerBatchInputForm, MachineForm, IPRangeForm
+from .forms import MachineWorkerForm
 from django.forms import formset_factory
 
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
@@ -27,7 +28,8 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         context = {
             'workers': Worker.objects.all().order_by('-created'),
             'machinesAdded': request.session['machinesAdded'] if 'machinesAdded' in request.session else None,
-            'machinesWithoutWorker': Machine.objects.filter(workers=None).count(),
+            'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
+            'machinesWithoutWorker': Machine.objects.filter(workers=None, active=True).count(),
             'filter': request.GET.get('status') if 'status' in request.GET else None
         }
         # If status param, filter by status
@@ -35,7 +37,9 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             context['workers'] = context['workers'].filter(status=request.GET.get('status'))
         # Remove session data after adding to context
         if 'machinesAdded' in request.session:
-            request.session['machinesAdded']=None
+            request.session['machinesAdded'] = None
+        if 'workersMachines' in request.session:
+            request.session['workersMachines'] = None
         return render(request, "workers/workers.html", context)
 
 
@@ -186,4 +190,47 @@ class WorkerLogsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             'worker': w,
             'machine': m,
             'logs': Log.objects.filter(worker=w).order_by('-date') if w else Log.objects.filter(machine=m).order_by('-date')
+        }
+
+
+class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+    context = {}
+    template_name = "workers/machinesWorker.html"
+    MachineWorkerFormSet = formset_factory(MachineWorkerForm, extra=0, can_delete=False)
+
+    def get(self, request, *args, **kwargs):
+        self.getContext()
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        self.getContext()
+        valid = self.context['formset'].is_valid()
+        if valid:
+            # Same form to db
+            for f in self.context['formset']:
+                f = f.cleaned_data # {'machine': 'gmatos.pt', 'id': 4, workersTrue': [1], 'workersFalse': [2]}
+                print("CLEANED_DATA", f)
+                print("TRUE", f['workersTrue'], type(f['workersTrue']))
+                print("FALSE", f['workersFalse'], type(f['workersFalse']))
+                # For associations, create if does not exist already
+                for wid in f['workersTrue']:
+                    if not MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
+                        MachineWorker.objects.create(worker_id=wid, machine_id=f['id'])
+                # For disassociation, delete if exists already
+                for wid in f['workersFalse']:
+                    if not MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
+                        MachineWorker.objects.filter(worker_id=wid, machine_id=f['id']).delete()
+            # Store session data for success feedback on workers list
+            request.session['workersMachines'] = {'associated': True}
+            # Redirect to worker
+            return redirect('workers:workers')
+        return render(request, self.template_name, self.context)
+
+    def getContext(self):
+        self.context = {
+            'formset': \
+                self.MachineWorkerFormSet(initial=[{'machine': str(m), 'id': m.id, 'worker': True} for m in Machine.objects.filter(active=True, workers__isnull=True)]) \
+                if not self.request.POST else self.MachineWorkerFormSet(self.request.POST)
+            ,
+            'title': 'Workers | Associate machines'
         }
