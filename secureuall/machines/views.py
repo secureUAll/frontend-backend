@@ -78,6 +78,11 @@ def MachinesView(request, id):
                     if p=='Monthly': machine.periodicity = 'M'
                     machine.save()
                 elif 'scan_request' in request.POST:
+                    # Validate that machine has workers
+                    if not machine.workers.all().exists():
+                        return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because this machine does not have a worker associated."}, status=200)
+                    elif not machine.workers.all().exclude(status='D').exists():
+                        return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because all workers that machine is associated with are down."}, status=200)
                     if settings.PRODUCTION:
                         KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
                     else:

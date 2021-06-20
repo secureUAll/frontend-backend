@@ -770,13 +770,23 @@
                         'scan_request': {{machine.id}},
                     },
                     success: function(json) {
-                        console.log("Successfully sent scan request.");
-                        showNotification(
-                            "Scan request registered",
-                            "Your scan is now scheduled and will be executed soon. You will be notified as soon as it ends.",
-                            "success",
-                            "travel_info"
-                        );
+                        // Validate that is was successfull
+                        if (json['status']) {
+                            console.log("Successfully sent scan request.");
+                            showNotification(
+                                "Scan request registered",
+                                "Your scan is now scheduled and will be executed soon. You will be notified as soon as it ends.",
+                                "success",
+                                "travel_info"
+                            );
+                        } else {
+                            showNotification(
+                                "There was an error scheduling your scan",
+                                json['message'],
+                                "danger",
+                                "ui-2_settings-90"
+                            );
+                        }
                     },
                     error: function(response) {
                         console.log("Could not send request. Error: " + response);
