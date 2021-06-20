@@ -78,8 +78,11 @@ def MachinesView(request, id):
                     if p=='Monthly': machine.periodicity = 'M'
                     machine.save()
                 elif 'scan_request' in request.POST:
-                    KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
-                    return JsonResponse({'status':'false','message':"Validation passed"}, status=200)
+                    if settings.PRODUCTION:
+                        KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
+                    else:
+                        return JsonResponse({'status': False, 'message': "Not in production! Can't schedule requests."}, status=500)
+                    return JsonResponse({'status':True,'message':"Validation passed"}, status=200)
                 elif 'new_sub' in request.POST:
                     u = None
                     try:
