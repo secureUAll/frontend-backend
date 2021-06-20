@@ -67,7 +67,7 @@ def DashboardView(request, *args, **kwargs):
     weeks_without_vuln = 0
     for scan in scanset:
         if scan.vulnerabilities:
-            delta = (date.today()-scan.date)
+            delta = (timezone.now()-scan.date)
             weeks_without_vuln = (int)((delta.days)/7)
             break
 

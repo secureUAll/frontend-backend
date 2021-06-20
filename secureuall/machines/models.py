@@ -102,7 +102,7 @@ class MachineWorker(models.Model):
 class Scan(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='scans')
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='scans')
-    date = models.DateField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=15)
 
     def __str__(self):

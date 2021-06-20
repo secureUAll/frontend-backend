@@ -71,5 +71,15 @@ admin.site.register(Log, LogAdmin)
 class ScanAdmin(admin.ModelAdmin):
     list_display = ['worker', 'machine', 'status', 'date']
     list_filter = list_display
+    inlines = [VulnerabilityInline]
+
 
 admin.site.register(Scan, ScanAdmin)
+
+
+class VulnerabilityAdmin(admin.ModelAdmin):
+    list_display = ['machine', 'risk', 'created', 'status']
+    list_filter = list_display
+
+
+admin.site.register(Vulnerability, VulnerabilityAdmin)

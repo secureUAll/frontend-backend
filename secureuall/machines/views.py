@@ -52,6 +52,8 @@ def MachinesView(request, id):
         machine = Machine.objects.get(id=id)
         machine_users_id=machine.users.all().values_list("user", flat=True)
 
+
+
         # pie chart set up (vulnerabilities by risk)
         def get_piechartdata(vulns):
             count=0
@@ -135,22 +137,24 @@ def MachinesView(request, id):
                 if 'machine_scanlevel' in request.POST:
                     machine.scanLevel = request.POST['machine_scanlevel']
                     machine.save()
-                    changes = MachineChanges.objects.get(machine=machine, type='S')
+                    changes = MachineChanges.objects.filter(machine=machine, type='S')
                     if not changes:
                         MachineChanges.objects.create(machine=machine, type='S')
                     else:
-                        changes.save()
+                        for mc in changes:
+                            mc.save()
                 elif 'machine_periodicity' in request.POST:
                     p = request.POST['machine_periodicity']
                     if p=='Daily': machine.periodicity = 'D'
                     if p=='Weekly': machine.periodicity = 'W'
                     if p=='Monthly': machine.periodicity = 'M'
                     machine.save()
-                    changes = MachineChanges.objects.get(machine=machine, type='P')
+                    changes = MachineChanges.objects.filter(machine=machine, type='P')
                     if not changes:
                         MachineChanges.objects.create(machine=machine, type='P')
                     else:
-                        changes.save()
+                        for mc in changes:
+                            mc.save()
                 elif 'scan_request' in request.POST:
                     # Validate that machine has workers
                     if not machine.workers.all().exists():
@@ -209,6 +213,8 @@ def MachinesView(request, id):
             user_type = "A"
         else: 
             user_type = machine.users.get(user=request.user.id).userType
+
+        print("\n\n\n\nHEREEE\n\n\n")
         
         context = {
             'machine': machine,
@@ -233,6 +239,10 @@ def MachinesView(request, id):
             request.session['workersMachines'] = None
     except Machine.DoesNotExist:
         raise Http404('Machine does not exist')
+
+    print("RETURNING CONTECT")
+    print(context)
+
     return render(request, "machines/machines.html", context)
 
 

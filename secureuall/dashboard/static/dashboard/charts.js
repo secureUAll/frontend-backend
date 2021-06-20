@@ -203,7 +203,7 @@ const initMachinesRiskLevelChart = () => {
         console.log("SEARCH by", search);
         // If searching, give feedback and show option to clear
         if (search != "") {
-            var text = "Filtered by risk level <strong>" + search + "</strong>.";
+            var text = "Filtered by <strong>" + search + "</strong>.";
             document.getElementById("machinesTableFilterText").innerHTML = text;
             $("#clearFilterMachines").removeClass("d-none");
         // Else, remove clear btn and display message suggesting filtering

@@ -600,7 +600,7 @@
                                         <span class="d-none">RISK-{{vuln.getriskdisplay}}</span>
                                     </td>
                                     <td class="vuln-type">{{vuln.type}}</td>
-                                    <td class="vuln-date">{{vuln.scan.date}}</td>
+                                    <td class="vuln-date">{{vuln.scan.date|date:"Y/m/d H:i"}}</td>
                                     <td class="vuln-desc">{{vuln.description}}</td>
                                     <td class="vuln-location">
                                         {% for location in vuln.locationsplit %}
