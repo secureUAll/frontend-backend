@@ -155,10 +155,10 @@ const initVulnsByScanChart = () => {
     const ctx = document.getElementById('lineChart').getContext("2d");
 
     // Colors
-    const chartColor = "#ed9dd8";
+    const chartColor = "#92d400";
     const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(237, 157, 216, 0)");
-    gradientFill.addColorStop(1, "rgba(237, 157, 216, 0.40)");
+    gradientFill.addColorStop(0, "rgba(145, 212, 0, 0.1)");
+    gradientFill.addColorStop(1, "rgba(145, 212, 0, 0.3)");
 
     // Draw chart
     myChart = new Chart(ctx, {
