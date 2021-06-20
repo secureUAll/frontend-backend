@@ -58,6 +58,17 @@
                                 </a>
                             </div>
                         {% endif %}
+                        {% if alerts.noworkers %}
+                            <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
+                                <h6 class="text-danger">
+                                    <i class="now-ui-icons ui-2_settings-90 blink_me"></i>
+                                    There are no workers registered!
+                                </h6>
+                                <p>
+                                    The system can not make scans without one.
+                                </p>
+                            </div>
+                        {% endif %}
                         {% if alerts.requests %}
                             <div class="{% if alerts.number > 2 %}col-4{% else %}col-6{% endif %} font-weight-bold d-flex flex-column">
                                 <h6 class="text-danger">

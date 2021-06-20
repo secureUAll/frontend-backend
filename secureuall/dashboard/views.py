@@ -97,12 +97,17 @@ def DashboardView(request, *args, **kwargs):
         machineset = machineset.filter(users__user__in=[request.user.id])
 
     # ALERTS
-    alerts = {'workers': Worker.objects.filter(status='D'),
-              'requests': list(UserAccessRequest.objects.filter(pending=True).order_by('-created_at')),
-              'machines': Machine.objects.filter(active=True, workers__isnull=True), 'number': 0}
+    alerts = {
+        'workers': Worker.objects.filter(status='D'),
+        'requests': list(UserAccessRequest.objects.filter(pending=True).order_by('-created_at')),
+        'machines': Machine.objects.filter(active=True, workers__isnull=True) if Worker.objects.all() else Machine.objects.filter(id=9876567), # TODO Remove later
+        'noworkers': not Worker.objects.all().exists(),
+        'number': 0
+  }
     alerts['number'] += 1 if alerts['workers'].exists() else 0
     alerts['number'] += 1 if alerts['machines'].exists() else 0
     alerts['number'] += 1 if len(alerts['requests']) else 0
+    alerts['noworkers'] += 1 if alerts['noworkers'] else 0
         
     context = {
         'workers': Worker.objects.all().order_by('-created'),

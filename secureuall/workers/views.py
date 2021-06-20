@@ -199,6 +199,9 @@ class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
     MachineWorkerFormSet = formset_factory(MachineWorkerForm, extra=0, can_delete=False)
 
     def get(self, request, *args, **kwargs):
+        # If there are no workers, redirect
+        if not Worker.objects.all():
+            return redirect('workers:workers')
         self.getContext()
         return render(request, self.template_name, self.context)
 

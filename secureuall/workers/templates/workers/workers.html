@@ -31,9 +31,9 @@
 {% endblock styles %}
 
 {% block content %}
-    <!-- Row of Tables -->
+    {# Filters #}
+    {% if filter or workers %}
     <div class="row" id="workers">
-        {# Filters #}
         <div class="col-12 d-flex">
             <div class="card card-chart d-flex flex-column">
                 <div class="card-header d-flex">
@@ -59,6 +59,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         {# Workers list #}
         {% for worker in workers %}
@@ -240,7 +241,7 @@
                 </div>
             </div>
         {% empty %}
-            <div class="col-12 d-flex">
+            <div class="col-12 p-0 d-flex">
                 <div class="card card-chart d-flex flex-column">
                     <div class="card-header">
                         <h5 class="card-category"></h5>
@@ -270,7 +271,7 @@
     <script src="{% static 'assets/js/refresh.js' %}"></script>
 
     <script>
-        {% if machinesWithoutWorker %}
+        {% if workers and machinesWithoutWorker or filter and machinesWithoutWorker %}
             showNotification(
                 "There are {{machinesWithoutWorker}} hosts without a worker!",
                 "Click <a class=\"text-white font-weight-bold\" href=\"/workers/machineslost\">here</a> to see the full list and associate them to a worker.",
