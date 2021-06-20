@@ -34,7 +34,13 @@
         {% else %}
             {% comment %}Production login button{% endcomment %}
             <a href="/saml2/login">
-                <button class="btn btn-primary col-12">Log in with your UA account</button>
+                <button
+                    class="btn btn-primary col-12"
+                    data-helper="0"
+                    data-placement="bottom"
+                    title="Authentication"
+                    data-content="This platform is restricted to University of Aveiro students, so the authentication is done through this institution Identity Provider."
+                >Log in with your UA account</button>
             </a>
         {% endif %}
     </div>

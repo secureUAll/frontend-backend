@@ -35,6 +35,11 @@ class Machine(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    # SSL data
+    sslVersion = models.CharField(max_length=50, null=True, blank=True)
+    sllAlgorithm = models.CharField(max_length=30, null=True, blank=True)
+    sslExpired = models.DateField(null=True, blank=True)
+    sslInvalid = models.BooleanField(default=False)
 
     tracker = FieldTracker()
 
