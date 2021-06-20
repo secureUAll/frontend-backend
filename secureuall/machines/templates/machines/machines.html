@@ -35,26 +35,25 @@
 
 <!-- Row Latest updates -->
 <div class="d-flex flex-row flex-wrap mb-auto">
-    <div class="col-6 d-flex pl-0">
-        <div class="card">
-            <div class="card-header d-flex">
-                <h6
-                    class="mt-3 pb-4"
-                    data-helper="0"
-                    data-placement="right"
-                    title="General information"
-                    {% if user_type == 'O' or user.is_admin %}
-                        data-content="Here you can learn some basic information about the host and associate users to it."
-                    {% else %}
-                        data-content="Here you can learn some basic information about the host."
-                    {% endif %}
-                >Host General Information</h6>
-            </div>
-            <div class="card-body">
-                <div class="my-auto">
-                    <!-- Machine General Information -->
 
-                    {# Key/value dictionary #}
+    <div class="col-6 pl-0 d-flex flex-column flex-wrap">
+        {# General info #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <h6
+                        class="mt-3 mb-3"
+                        data-helper="0"
+                        data-placement="right"
+                        title="General information"
+                        {% if user_type == 'O' or user.is_admin %}
+                            data-content="Here you can learn some basic information about the host and associate users to it."
+                        {% else %}
+                            data-content="Here you can learn some basic information about the host."
+                        {% endif %}
+                    >Host General Information</h6>
+                </div>
+                <div class="card-body">
                     <div class="row mx-0">
                         <div class="d-flex col-md-12 p-0 text-secondary">
                             <dl class="col-md-6 p-0">
@@ -79,7 +78,7 @@
                             </dl>
                             <dl class="col-md-6 p-0">
                                 <dt>OS</dt>
-                                <dd>{{machine.os}}</dd>
+                                <dd>{% if machine.os %}{{machine.os}}{% else %}-{% endif %}</dd>
                                 <dt>Risk</dt>
                                 {% if machine.risk == '1' %}
                                     <dd><span class="badge p-2 bg-primary">1</span></dd>
@@ -95,159 +94,247 @@
                             </dl>
                         </div>
                     </div>
-
-                    {# Workers #}
-                    {% if user.is_admin and machine.active %}
-                    <div class="d-flex fle-row">
-                        <div class="col-md-6 p-0 d-flex flex-column mt-5">
-                            <dl class="dl-line">
-                                <dt class="text-secondary">Workers</dt>
-                                {% if machine.workers.all %}
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table table-discreet">
-                                            <tbody>
-                                            {% for mw in machine.workers.all %}
-                                                <tr>
-                                                    <td onclick="window.location='/workers#worker{{mw.worker.id}}';">Worker {{mw.worker.name}}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </dd>
-                                {% else %}
-                                <p class="text-danger">No workers associated!</p>
-                                {% endif %}
-                            </dl>
-                        </div>
-                        <a href="/machines/{{machine.id}}/workers" class="my-auto mx-auto">
-                            <button
-                                class="btn btn-outline-primary"
-                                data-helper="1"
-                                data-placement="bottom"
-                                title="Associate to workers"
-                                data-content="Click here to associate the host to new workers and/or edit the associations."
-                            ><i class="now-ui-icons ui-2_settings-90 mr-2"></i>Associate to workers</button>
-                        </a>
-                    </div>
-                    {% endif %}
-
-
-                    {# Owners/Subscribers #}
-                    <div class="d-flex flex-row text-secondary mt-5">
-                        <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl class="dl-line">
-                                <dt>Owners</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table table-discreet table-users" id="ownersTable">
-                                            <tbody>
-                                            {% for key, value in machine_users.items %}
-                                                {% if key == 'O' %}
-                                                    {% for v in value %}
-                                                        <tr><td>{{v}}</td></tr>
-                                                    {% empty %}
-                                                        <span class="col-12 p-0">No owners yet.</span>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </dd>
-                            </dl>
-                            {% if user_type == 'O' or user_type == 'A' %}
-                                <button
-                                    class="btn btn-outline-primary mt-auto mr-auto"
-                                    data-toggle="modal"
-                                    data-target="#addUserModal"
-                                    id="addNewOwner"
-                                    data-helper="2"
-                                    data-placement="bottom"
-                                    title="Owners"
-                                    {% if user.is_admin %}
-                                        data-content="Use this button with caution! Owners are free to make all operations in the host."
-                                    {% else %}
-                                        data-content="Use this button with caution! Owners are free to make all operations in the host, including revoking your permissions."
-                                    {% endif %}
-                                ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6 p-0 d-flex flex-column">
-                            <dl class="dl-line">
-                                <dt>Subscribers</dt>
-                                <dd>
-                                    <div class="table-responsive d-flex">
-                                        <table class="table table-discreet table-users" id="subscribersTable">
-                                            <tbody>
-                                            {% for key, value in machine_users.items %}
-                                                {% if key == 'S' %}
-                                                    {% for v in value %}
-                                                        <tr><td>{{v}}</td></tr>
-                                                    {% empty %}
-                                                        <span class="col-12 p-0">No subscribers yet.</span>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </dd>
-                            </dl>
-                            {% if user_type == 'O' or user_type == 'A' %}
-                                <button
-                                    class="btn btn-outline-primary mr-auto mt-auto"
-                                    data-toggle="modal"
-                                    data-target="#addUserModal"
-                                    id="addNewSubscriber"
-                                    data-helper="3"
-                                    data-placement="bottom"
-                                    title="Subscribers"
-                                    data-content="This role grants read-only permissions. The only authorized actions for subscribers are changing a vulnerability status and adding comments to it."
-                                ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <!-- End Machine General Information -->
                 </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+
+        {# Workers #}
+        {% if user.is_admin and machine.active %}
+            <div class="d-flex flex-grow-1 pl-0">
+                <div class="card">
+                    <div class="card-header d-flex">
+                        <h6
+                            class="mt-3 mb-3"
+                            data-helper="0"
+                            data-placement="right"
+                            title="General information"
+                            {% if user_type == 'O' or user.is_admin %}
+                                data-content="Here you can learn some basic information about the host and associate users to it."
+                            {% else %}
+                                data-content="Here you can learn some basic information about the host."
+                            {% endif %}
+                        >Workers</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex fle-row">
+                            <div class="col-md-6 p-0 d-flex flex-column">
+                                <dl class="dl-line">
+                                    <dt class="text-secondary">Workers</dt>
+                                    {% if machine.workers.all %}
+                                    <dd>
+                                        <div class="table-responsive d-flex">
+                                            <table class="table table-discreet">
+                                                <tbody>
+                                                {% for mw in machine.workers.all %}
+                                                    <tr>
+                                                        <td onclick="window.location='/workers#worker{{mw.worker.id}}';">Worker {{mw.worker.name}}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </dd>
+                                    {% else %}
+                                    <p class="text-danger">No workers associated!</p>
+                                    {% endif %}
+                                </dl>
+                            </div>
+                            <a href="/machines/{{machine.id}}/workers" class="my-auto ml-auto">
+                                <button
+                                    class="btn btn-outline-primary"
+                                    data-helper="1"
+                                    data-placement="bottom"
+                                    title="Associate to workers"
+                                    data-content="Click here to associate the host to new workers and/or edit the associations."
+                                ><i class="now-ui-icons ui-2_settings-90 mr-2"></i>Associate to workers</button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer"></div>
+                </div>
+            </div>
+        {% endif %}
+
+        {# Owners/Subcribers #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
+                    <h6
+                        class="mt-3 mb-3"
+                        data-helper="0"
+                        data-placement="right"
+                        title="General information"
+                        {% if user_type == 'O' or user.is_admin %}
+                            data-content="Here you can learn some basic information about the host and associate users to it."
+                        {% else %}
+                            data-content="Here you can learn some basic information about the host."
+                        {% endif %}
+                    >Owners and subscribers</h6>
+                </div>
+                <div class="card-body d-flex flex-row">
+                    <div class="col-md-6 pl-0 d-flex flex-column">
+                        <dl class="dl-line">
+                            <dt>Owners</dt>
+                            <dd>
+                                <div class="table-responsive d-flex">
+                                    <table class="table table-discreet table-users" id="ownersTable">
+                                        <tbody>
+                                        {% for key, value in machine_users.items %}
+                                            {% if key == 'O' %}
+                                                {% for v in value %}
+                                                    <tr><td>{{v}}</td></tr>
+                                                {% empty %}
+                                                    <span class="col-12 p-0">No owners yet.</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </dd>
+                        </dl>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                            <button
+                                class="col-12 btn btn-outline-primary mt-auto"
+                                data-toggle="modal"
+                                data-target="#addUserModal"
+                                id="addNewOwner"
+                                data-helper="2"
+                                data-placement="bottom"
+                                title="Owners"
+                                {% if user.is_admin %}
+                                    data-content="Use this button with caution! Owners are free to make all operations in the host."
+                                {% else %}
+                                    data-content="Use this button with caution! Owners are free to make all operations in the host, including revoking your permissions."
+                                {% endif %}
+                            ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add owner</button>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 pr-0 d-flex flex-column">
+                        <dl class="dl-line">
+                            <dt>Subscribers</dt>
+                            <dd>
+                                <div class="table-responsive d-flex">
+                                    <table class="table table-discreet table-users" id="subscribersTable">
+                                        <tbody>
+                                        {% for key, value in machine_users.items %}
+                                            {% if key == 'S' %}
+                                                {% for v in value %}
+                                                    <tr><td>{{v}}</td></tr>
+                                                {% empty %}
+                                                    <span class="col-12 p-0">No subscribers yet.</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </dd>
+                        </dl>
+                        {% if user_type == 'O' or user_type == 'A' %}
+                            <button
+                                class="col-12 btn btn-outline-primary mt-auto"
+                                data-toggle="modal"
+                                data-target="#addUserModal"
+                                id="addNewSubscriber"
+                                data-helper="3"
+                                data-placement="bottom"
+                                title="Subscribers"
+                                data-content="This role grants read-only permissions. The only authorized actions for subscribers are changing a vulnerability status and adding comments to it."
+                            ><i class="now-ui-icons ui-1_simple-add mr-2"></i>Add subscriber</button>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer"></div>
             </div>
         </div>
     </div>
-    <div class="col-6 pr-0 d-flex">
-        <div class="card">
-            <div class="card-body">
-                <!-- Open Ports -->
-                <div class="my-auto">
+
+    <div class="col-6 pr-0 d-flex flex-column flex-wrap">
+        {# SSL #}
+        <div class="d-flex flex-grow-1 pl-0">
+            <div class="card">
+                <div class="card-header d-flex">
                     <h6
-                        class="mt-3"
-                        data-helper="4"
+                        class="mt-3 mb-3"
+                        data-helper="0"
                         data-placement="right"
-                        title="Open ports"
-                        data-content="This section displays the ports that have been identified during the scans."
-                    >Open Ports</h6>
-                    <div class="table-responsive col-12 p-0">
-                        <table class="table table-discreet" id="openPorts">
-                            <thead class=" text-primary">
-                                <th>Number</th>
-                                <th>Service</th>
-                                <th>Version</th>
-                                <th>Vulnerable</th>
-                            </thead>
-                            <tbody>
-                            {% for port in machine.ports.all %}
-                                <tr {% if port.vulnerable %} class="text-danger" {% endif %}>
-                                    <td>{{port.port}}</td>
-                                    <td>{{port.service.service}}</td>
-                                    <td>{{port.service.version}}</td>
-                                    <td>{{port.vulnerable}}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        title="General information"
+                        {% if user_type == 'O' or user.is_admin %}
+                            data-content="Here you can learn some basic information about the host and associate users to it."
+                        {% else %}
+                            data-content="Here you can learn some basic information about the host."
+                        {% endif %}
+                    >SSL Information</h6>
                 </div>
-                <!-- End Open Ports -->
+                <div class="card-body">
+                    {% if machine.sslVersion or machine.sllAlgorithm or machine.sslExpired %}
+                        <dl class="col-md-6 p-0">
+                            <dt>Version</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {{machine.sslVersion|default:"-"}}
+                            </dd>
+                            <dt>Algorithm</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {{machine.sllAlgorithm|default:"-"}}
+                            </dd>
+                            <dt>Valid until</dt>
+                            <dd {% if machine.sslInvalid %}class="text-danger"{% endif %}>
+                                {% with expireDate as machine.sslExpired|date:"Y/m/d" %}
+                                    {{expireDate|default:"-"}}
+                                {% endwith %}
+                            </dd>
+                        </dl>
+                        {% if machine.sslInvalid %}
+                            <p class="mt-3">
+                                <span class="font-weight-bold text-danger">Attention!</span>
+                                Your SSL configuration is invalid. This does not necessarily mean that any of the attributes presented here are wrong. Look at the email you received with the scan report for more details.
+                            </p>
+                        {% endif %}
+                    {% else %}
+                        <p>No information to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Open ports #}
+        <div class="d-flex flex-grow-1">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Open Ports -->
+                    <div class="my-auto">
+                        <h6
+                            class="mt-3"
+                            data-helper="4"
+                            data-placement="right"
+                            title="Open ports"
+                            data-content="This section displays the ports that have been identified during the scans."
+                        >Open Ports</h6>
+                        <div class="table-responsive col-12 p-0">
+                            <table class="table table-discreet" id="openPorts">
+                                <thead class=" text-primary">
+                                    <th>Number</th>
+                                    <th>Service</th>
+                                    <th>Version</th>
+                                    <th>Vulnerable</th>
+                                </thead>
+                                <tbody>
+                                {% for port in machine.ports.all %}
+                                    <tr {% if port.vulnerable %} class="text-danger" {% endif %}>
+                                        <td>{{port.port}}</td>
+                                        <td>{{port.service.service}}</td>
+                                        <td>{{port.service.version}}</td>
+                                        <td>{{port.vulnerable}}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- End Open Ports -->
+                </div>
             </div>
         </div>
     </div>
