@@ -626,30 +626,6 @@
                                     <td class="vuln-id" style="display:none">{{vuln.id}}</td>
                                 </tr>
                                 {% endif %}
-                                </td>
-                                <td class="vuln-type">{{vuln.type}}</td>
-                                <td class="vuln-date">{{vuln.scan.date}}</td>
-                                <td class="vuln-desc">{{vuln.description}}</td>
-                                <td class="vuln-location">{{vuln.location}}</td>
-                                <td class="vuln-status">
-                                {% if vuln.status == 'Fixed' %}
-                                    <span class="badge p-2 bg-primary text-center" style="width: 4rem;">Fixed</span>
-                                {% elif vuln.status == 'Not Fixed' %}
-                                    <span class="badge p-2 bg-danger text-center" style="width: 4rem;">Not Fixed</span>
-                                {% elif vuln.status == 'Fixing' %}
-                                    <span class="badge p-2 bg-warning text-center" style="width: 4rem;">Fixing</span>
-                                {% elif vuln.status == 'Invalid' %}
-                                    <span class="badge p-2 bg-default text-center" style="width: 4rem;">Invalid</span>
-                                {% endif %}
-                                </td>
-                                <td class="align-middle">
-                                    <div class="ml-auto">
-                                        <button class="btn btn-sm btn-outline-primary" title="Add comment" data-toggle="modal" data-target="#vulnCommentModal"><i class="now-ui-icons ui-1_simple-add"></i></button>
-                                    </div>
-                                </td>
-                                <td class="vuln-scanid" style="display:none">{{vuln.scan_id}}</td>
-                                <td class="vuln-id" style="display:none">{{vuln.id}}</td>
-                            </tr>
                             {% empty %}
                                 <span>No vulnerabilities to show.</span>
                             {% endfor %}
