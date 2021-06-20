@@ -228,7 +228,7 @@ class RequestsView(LoginRequiredMixin, UserHasAccessMixin, View):
             # Through every notification type active
             for un in req.user.notifications.all():
                 n = NotifyFactory.createNotification(un.type)
-                n.heading(f"Hello {self.request.user.first_name},")
+                n.heading(f"Hello {req.user.first_name},")
                 if req.approved:
                     n\
                         .text(f"Your request to access {n.bold(str(len(req.get_machines())))} hosts submitted {n.bold(req.created_at)} has been approved! &#128522;")\
