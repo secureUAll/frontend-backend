@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Machine, MachineWorker, Vulnerability, MachineUser, Scan, MachinePort, Log, MachineService
+from .models import Machine, MachineWorker, Vulnerability, MachineUser, Scan, MachinePort, Log, MachineService, MachineChanges
 
 
 # Machine
@@ -35,10 +35,15 @@ class LogInline(admin.TabularInline):
     model = Log
     extra = 0
 
+
+class MachineChangesInline(admin.TabularInline):
+    model = MachineChanges
+    extra = 0
+
 class MachineAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'ip', 'dns', 'active', 'scanLevel', 'location', 'nextScan']
     list_filter = ['location', 'scanLevel', 'nextScan', 'workers']
-    inlines = [MachineWorkerInline, VulnerabilityInline, MachineUserInline, ScanInline, MachinePortInline, LogInline]
+    inlines = [MachineWorkerInline, VulnerabilityInline, MachineUserInline, ScanInline, MachinePortInline, LogInline, MachineChangesInline]
 
 
 admin.site.register(Machine, MachineAdmin)
@@ -61,3 +66,10 @@ class LogAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Log, LogAdmin)
+
+
+class ScanAdmin(admin.ModelAdmin):
+    list_display = ['worker', 'machine', 'status', 'date']
+    list_filter = list_display
+
+admin.site.register(Scan, ScanAdmin)

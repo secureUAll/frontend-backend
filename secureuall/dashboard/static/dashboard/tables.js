@@ -1,8 +1,7 @@
 $(document).ready(function () {
     $(document).ready(function () {
-        $('#machinesTable').DataTable({
-            "lengthMenu": [ 25, 50, 100 ]
-        });
+        // On filter
+
         $('#workersTable').DataTable({
             "lengthMenu": [ 5, 10, 25 ]
         });

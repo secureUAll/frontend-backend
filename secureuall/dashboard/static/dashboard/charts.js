@@ -192,50 +192,44 @@ const initMachinesRiskLevelChart = () => {
 
     var pieChart = new Chart(ctx, myChart);
 
-    // on click event, filter
+    // Render machines table
+    machinesTable = $('#machinesTable').DataTable({
+        "lengthMenu": [ 25, 50, 100 ]
+    });
+
+    // Listen for search
+    machinesTable.on('search', (e, settings) => {
+        var search = machinesTable.search();
+        console.log("SEARCH by", search);
+        // If searching, give feedback and show option to clear
+        if (search != "") {
+            var text = "Filtered by risk level <strong>" + search + "</strong>.";
+            document.getElementById("machinesTableFilterText").innerHTML = text;
+            $("#clearFilterMachines").removeClass("d-none");
+        // Else, remove clear btn and display message suggesting filtering
+        } else {
+            $("#machinesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph on the right.");
+            $("#clearFilterMachines").addClass("d-none");
+        }
+    });
+
+    // Listen for clicks on pie chart slices for filtering
     canvas.onclick = function(evt) {
         var activePoints = pieChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
           var chartData = activePoints[0]['_chart'].config.data;
           var idx = activePoints[0]['_index'];
-  
           var label = chartData.labels[idx];
-          var table = document.getElementById("machinesTable");
-          var tr =  table.getElementsByTagName("tr");
 
-          var i, td;
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].querySelector("td span");
-            var regex = /^[a-zA-Z]+$/;
-            if (!label.match(regex)) {
-                td = tr[i].getElementsByTagName("td")[1];
-            }
-            if (td) {
-                if (td.innerText.indexOf(label) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-          }
-          var text = "Filtered by risk level <strong>" + label + "</strong>.";
-          document.getElementById("machinesTableFilterText").innerHTML = text;
-          $("#clearFilterMachines").removeClass("d-none");
+          machinesTable.search("RISK-" + label.toUpperCase());
+          machinesTable.draw();
         }
     };
 
     // on click event, clear filter
     document.getElementById("clearFilterMachines").onclick = function() {
-        var table  = document.getElementById("machinesTable");
-        var tr =  table.getElementsByTagName("tr");
-
-        var i;
-        for (i = 0; i < table.rows.length; i++) {
-            tr[i].style.display = "";
-        }
-
-        $("#machinesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph on the right.");
-        $("#clearFilterMachines").addClass("d-none");
+        machinesTable.search("");
+        machinesTable.draw();
     }
     
 };
