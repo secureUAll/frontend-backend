@@ -5,12 +5,14 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.conf import settings
 
 from login.models import User
 from .models import Worker
 from machines.models import Machine, MachineWorker, Log
 
 from machines.forms import MachineWorkerBatchInputForm, MachineForm, IPRangeForm
+from .forms import MachineWorkerForm
 from django.forms import formset_factory
 
 from login.validators import UserHasAccessMixin, UserIsAdminAccessMixin
@@ -26,7 +28,8 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
         context = {
             'workers': Worker.objects.all().order_by('-created'),
             'machinesAdded': request.session['machinesAdded'] if 'machinesAdded' in request.session else None,
-            'machinesWithoutWorker': Machine.objects.filter(workers=None).count(),
+            'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
+            'machinesWithoutWorker': Machine.objects.filter(workers=None, active=True).count(),
             'filter': request.GET.get('status') if 'status' in request.GET else None
         }
         # If status param, filter by status
@@ -34,7 +37,9 @@ class WorkersView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             context['workers'] = context['workers'].filter(status=request.GET.get('status'))
         # Remove session data after adding to context
         if 'machinesAdded' in request.session:
-            request.session['machinesAdded']=None
+            request.session['machinesAdded'] = None
+        if 'workersMachines' in request.session:
+            request.session['workersMachines'] = None
         return render(request, "workers/workers.html", context)
 
 
@@ -138,8 +143,9 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
                     elif mach and f['DELETE'] and MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).exists():
                         MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).delete()
                         request.session['machinesAdded']['disassociated'] += 1
-                # Notify colector of changes
-                KafkaService().send(topic='FRONTEND', key=b'UPDATE', value={'ID': self.context['worker'].id})
+                # Notify colector of changes (only on production)
+                if settings.PRODUCTION:
+                    KafkaService().send(topic='FRONTEND', key=b'UPDATE', value={'ID': self.context['worker'].id})
                 return redirect('workers:workers')
         return render(request, self.template_name, self.context)
 
@@ -184,4 +190,71 @@ class WorkerLogsView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
             'worker': w,
             'machine': m,
             'logs': Log.objects.filter(worker=w).order_by('-date') if w else Log.objects.filter(machine=m).order_by('-date')
+        }
+
+
+class MachinesWorkerView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
+    context = {}
+    template_name = "workers/machinesWorker.html"
+    MachineWorkerFormSet = formset_factory(MachineWorkerForm, extra=0, can_delete=False)
+    # By default, this view only shows machines without worker
+    # all=True shows all machines, with or without worker
+    all = True
+
+    def get(self, request, machineid=None, *args, **kwargs):
+        self.getContext(machineid)
+        # If there are no workers, redirect
+        if not Worker.objects.all() or not self.context['machines']:
+            if machineid:
+                return redirect('machines:machines', id=machineid)
+            else:
+                return redirect('workers:workers')
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, machineid=None, *args, **kwargs):
+        self.getContext(machineid)
+        valid = self.context['formset'].is_valid()
+        if valid:
+            # Same form to db
+            for f in self.context['formset']:
+                f = f.cleaned_data # {'machine': 'gmatos.pt', 'id': 4, workersTrue': [1], 'workersFalse': [2]}
+                print("CLEANED_DATA", f)
+                # For associations, create if does not exist already
+                for wid in f['workersTrue']:
+                    if not MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
+                        MachineWorker.objects.create(worker_id=wid, machine_id=f['id'])
+                # For disassociation, delete if exists already
+                for wid in f['workersFalse']:
+                    if MachineWorker.objects.filter(machine_id=f['id'], worker_id=wid).exists():
+                        MachineWorker.objects.filter(worker_id=wid, machine_id=f['id']).delete()
+            # Store session data for success feedback on workers list
+            request.session['workersMachines'] = {'associated': True}
+            # Redirect to worker
+            if machineid:
+                return redirect('machines:machines', id=machineid)
+            else:
+                return redirect('workers:workers')
+        return render(request, self.template_name, self.context)
+
+    def getContext(self, machineid):
+        if machineid:
+            machines = Machine.objects.filter(id=machineid, active=True)
+        elif self.all:
+            machines = Machine.objects.filter(active=True)
+        else:
+            machines = Machine.objects.filter(active=True, workers__isnull=True)
+        forminit = []
+        for m in machines:
+            minit = { 'machine': str(m), 'id': m.id }
+            for w in Worker.objects.all():
+                minit[f'worker_{w.id}'] = MachineWorker.objects.filter(machine=m, worker=w).exists()
+            forminit.append(minit)
+
+        self.context = {
+            'machines': machines,
+            'formset': \
+                self.MachineWorkerFormSet(initial=forminit) \
+                if not self.request.POST else self.MachineWorkerFormSet(self.request.POST)
+            ,
+            'title': 'Workers | Associate machines'
         }
