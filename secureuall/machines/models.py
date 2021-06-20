@@ -163,7 +163,7 @@ class Log(models.Model):
 
 class MachineChanges(models.Model):
     types = (
-        ("O", "Operative Sistem"),
+        ("O", "Operative System"),
         ("S", "Scan level"),
         ("P", "Periodicity"),
         ("R", "Risk"),
