@@ -116,7 +116,7 @@
                                     <span class="text-{{worker.get_status_display|color}}">{{worker.get_status_display}}</span>
                                 </dd>
                                 <dt>Created</dt>
-                                <dd>{{worker.created}}</dd>
+                                <dd>{{worker.created|date:"Y/m/d H:i"}}</dd>
                             </dl>
                         </div>
                         <!-- Machines table -->
@@ -215,7 +215,7 @@
                                                                 {% endif %}
                                                             </td>
                                                             <td>{{machine.get_periodicity_display}}</td>
-                                                            <td>{{machine.nextScan}}</td>
+                                                            <td>{{machine.nextScan|date:"Y/m/d"}}</td>
                                                         </tr>
                                                     {% endwith %}
                                                 {% endfor %}

@@ -76,11 +76,11 @@
                                     A total of {{alerts.requests|length}} requests are pending review!</h6>
                                 <ul>
                                     {% with alerts.requests|first as newestRequest %}
-                                        <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                        <li>The latest was submitted at {{newestRequest.created_at|date:"Y/m/d H:i"}}</li>
                                     {% endwith %}
                                     {% if alerts.requests|length > 1 %}
                                         {% with alerts.requests|last as oldestRequest %}
-                                            <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d G:i"}}</li>
+                                            <li>The oldest was submitted at {{oldestRequest.created_at|date:"Y/m/d H:i"}}</li>
                                         {% endwith %}
                                     {% endif %}
                                 </ul>

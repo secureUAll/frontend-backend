@@ -88,7 +88,7 @@
                         <tbody>
                         {% for request in requests|dictsortreversed:"created_at" %}
                             <tr id="requestRow{{request.id}}">
-                                <td>{{request.created_at}}</td>
+                                <td>{{request.created_at|date:"Y/m/d H:i"}}</td>
                                 {% if user.is_admin %}
                                 <td>{{request.user}}<br/>{{request.user.email}}</td>
                                 {% endif %}

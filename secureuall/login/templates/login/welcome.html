@@ -19,9 +19,9 @@
         <div class="border border-warning rounded p-2 mb-3">
             <p class="text-warning fw-bold mb-1"><i class="now-ui-icons travel_info mr-2"></i> You don't have access to the dashboard!</p>
             {% if requests.pending %}
-                <p class="mb-0">You have request(s) to access machine(s) pending for approval. When they change status you will be notified by email.</p>
+                <p class="mb-0">You have request(s) to access host(s) pending for approval. When they change status you will be notified by email.</p>
             {% else %}
-                <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a machine vulnerabilities data.</p>
+                <p class="mb-0">You need to have been authorized by an administrator to enter the system. Fill the form below to request access to a host vulnerabilities data.</p>
             {% endif %}
         </div>
 
@@ -47,7 +47,7 @@
                             <tbody>
                                 {% for r in user.accessRequest.all|dictsortreversed:"created_at" %}
                                     <tr>
-                                        <td>{{r.created_at}}</td>
+                                        <td>{{r.created_at|date:"Y/m/d H:i"}}</td>
                                         <td>
                                             {% for m in r.get_machines %}
                                             <span>{{m}}</span><br/>

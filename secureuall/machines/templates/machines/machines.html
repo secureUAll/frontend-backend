@@ -75,7 +75,7 @@
                                     {% endif %}
                                 </dd>
                                 <dt>Registered</dt>
-                                <dd>{{machine.created}}</dd>
+                                <dd>{{machine.created|date:"Y/m/d H:i"}}</dd>
                             </dl>
                             <dl class="col-md-6 p-0">
                                 <dt>OS</dt>
@@ -411,7 +411,7 @@
                                     data-content="When is the next scan? You can check its periodicity here."
                                 {% endif %}
                             >Next scan </dt>
-                            <dd>{{machine.nextScan}}</dd>
+                            <dd>{{machine.nextScan|date:"Y/m/d"}}</dd>
                         </dl>
                         <dl class="dl-12">
                             <dt>Periodicity </dt>
