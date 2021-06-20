@@ -39,7 +39,7 @@ class Machine(models.Model):
     sslVersion = models.CharField(max_length=50, null=True, blank=True)
     sllAlgorithm = models.CharField(max_length=30, null=True, blank=True)
     sslExpired = models.DateField(null=True, blank=True)
-    sslInvalid = models.BooleanField(default=False)
+    sslInvalid = models.BooleanField(default=False, null=True, blank=True)
 
     tracker = FieldTracker()
 
