@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import Q
 from .validators import *
-from model_utils import FieldTracker
 
 
 class Machine(models.Model):
@@ -35,8 +34,6 @@ class Machine(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
-    tracker = FieldTracker()
 
     def __str__(self):
         if self.ip and self.dns:
@@ -74,13 +71,6 @@ class Machine(models.Model):
         if ip and not dns and Machine.objects.filter(ip=ip, dns='').exists():
             return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip))
         return Machine.objects.filter(ip=ip, dns=dns)
-
-    def save(self, *args, **kwargs):
-        """ Automatically add "modified" to update_fields."""
-        update_fields = kwargs.get('update_fields')
-        if update_fields is not None:
-            kwargs['update_fields'] = set(update_fields) | {'modified'}
-        super().save(*args, **kwargs)
         
 
 class MachineUser(models.Model):
@@ -149,8 +139,6 @@ class Vulnerability(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    status_tracker = FieldTracker(fields=['status'])
-
     def __str__(self):
         return "(" + str(self.risk) + ") " + self.description
 
@@ -172,3 +160,15 @@ class Log(models.Model):
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='logs')
     log = models.TextField()
 
+
+class MachineChanges(models.Model):
+    types = (
+        ("O", "Operative Sistem"),
+        ("S", "Scan level"),
+        ("P", "Periodicity"),
+        ("R", "Risk"),
+    )
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="changes")
+    type = models.CharField(max_length=1, choices=types, null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True) 
+    updated = models.DateTimeField(auto_now=True)

@@ -2,7 +2,6 @@
 const initCharts = () => {
     initVulnsNumbersChart();
     initMachinesRiskLevelChart();
-    //initVulnsByGroupChart();
 }
 
 
@@ -96,108 +95,6 @@ const initVulnsNumbersChart = () => {
             },
         }
     });
-}
-
-const initVulnsByGroupChart = () => {
-    // Get element from DOM
-    const ctx = document.getElementById('vulnerabilitiesByGroupChart').getContext("2d");
-
-    // Colors
-    const gradientFill = [
-        'rgba(2239, 231, 106, 0.2)',
-        'rgba(132, 90, 169, 0.2)',
-        'rgba(175, 198, 173, 0.2)',
-        'rgba(249, 149, 225, 0.2)',
-        'rgba(240, 42, 102, 0.2)',
-        'rgba(42, 216, 240, 0.2)',
-        'rgba(255, 152, 13, 0.2)',
-        'rgba(26, 184, 131, 0.2)',
-        'rgba(11, 42, 182, 0.2)',
-        'rgba(255, 128, 16, 0.2)',
-    ];
-    const gradientFillHover = [
-        'rgba(239, 231, 106, 0.6)',
-        'rgba(132, 90, 169, 0.6)',
-        'rgba(175, 198, 173, 0.6)',
-        'rgba(249, 149, 225, 0.6)',
-        'rgba(240, 42, 102, 0.6)',
-        'rgba(42, 216, 240, 0.6)',
-        'rgba(255, 152, 13, 0.6)',
-        'rgba(26, 184, 131, 0.6)',
-        'rgba(11, 42, 182, 0.6)',
-        'rgba(255, 128, 16, 0.6)',
-    ];
-    const borderColor = [
-        'rgb(239, 231, 106)',
-        'rgb(132, 90, 169)',
-        'rgb(175, 198, 173)',
-        'rgb(249, 149, 225)',
-        'rgb(240, 42, 102)',
-        'rgb(42, 216, 240)',
-        'rgb(255, 152, 13)',
-        'rgba(26, 184, 131)',
-        'rgba(11, 42, 182)',
-        'rgba(255, 128, 16)',
-    ];
-
-    // Draw chart
-    var myChart = {
-        type: "bar",
-        data: {
-            labels: vulnsByGroupChartLabels,
-            datasets: [{
-                label: "Amount",
-                backgroundColor: gradientFill,
-                hoverBackgroundColor: gradientFillHover,
-                borderColor: borderColor,
-                fill: true,
-                borderWidth: 1,
-                data: vulnsByGroupChartValues
-            }]
-        },
-        options: {
-            responsive: true,
-            layout: {
-                padding: {
-                    top: 20
-                }
-            },
-            maintainAspectRatio: false,
-            legend: {
-                display: false
-            },
-            tooltips: {
-                bodySpacing: 4,
-                mode: "nearest",
-                intersect: 0,
-                position: "nearest",
-                xPadding: 10,
-                yPadding: 10,
-                caretPadding: 10,
-            },
-            responsive: 1,
-            scales: {
-                yAxes: [{
-                    gridLines: 0,
-                    gridLines: {
-                        zeroLineColor: "transparent",
-                        drawBorder: false
-                    },
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }],
-                xAxes: [{
-                    display: 1,
-                }]
-            },
-            plugins: {
-                labels: false
-            },
-        }
-    };
-
-    var viewsChart = new Chart(ctx, myChart);
 }
 
 

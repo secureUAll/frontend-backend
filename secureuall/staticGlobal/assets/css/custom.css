@@ -461,6 +461,10 @@ fieldset[disabled] .btn-danger.active {
     background-color: #f3b21b !important; 
     color: #FFFFFF;
 }
+.bg-secondary { 
+    background-color: #b3b3b3 !important; 
+    color: #FFFFFF;
+}
 
 .bg-1 { background-color: #92d400 !important }
 .bg-2 { background-color: #7ab300 !important }
@@ -666,6 +670,10 @@ table.table-discreet tbody tr .bg-danger {
     background-color: rgba(240, 89, 42, .6)!important;
     color: #FFFFFF;
 }
+table.table-discreet tbody tr .bg-default { 
+    background-color: rgba(151, 151, 151, .6)!important;
+    color: #FFFFFF;
+}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, .6)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, .6)!important;}
 
@@ -676,6 +684,10 @@ table.table-discreet tbody tr:hover .bg-4 { background-color: rgba(218, 156, 11,
 table.table-discreet tbody tr:hover .bg-5 { background-color: rgba(240, 89, 42, 1)!important; color: #FFFFFF; }
 table.table-discreet tbody tr:hover .bg-primary { background-color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr:hover .bg-danger { background-color: rgba(240, 89, 42, 1)!important;}
+table.table-discreet tbody tr:hover .bg-default { background-color: rgba(151, 151, 151, 1)!important;}
+table.table-discreet tbody tr:hover .bg-warning { background-color: rgba(218, 156, 11, 1)!important;}
+table.table-discreet tbody tr:hover .bg-info { background-color: rgba(75, 181, 255, 1)!important;}
+table.table-discreet tbody tr:hover .bg-alarm { background-color: rgba(232, 215, 26, 1)!important;}
 table.table-discreet tbody tr .text-primary { color: rgba(146, 212, 0, 1)!important;}
 table.table-discreet tbody tr .text-danger { color: rgba(240, 89, 42, 1)!important;}
 

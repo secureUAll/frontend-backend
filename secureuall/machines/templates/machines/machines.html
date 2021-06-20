@@ -316,7 +316,7 @@
                                     <option value = "Weekly" {% if machine.get_periodicity_display == 'Weekly' %}selected="selected"{% endif %}>Weekly</option>
                                     <option value = "Monthly" {% if machine.get_periodicity_display == 'Monthly' %}selected="selected"{% endif %}>Monthly</option>
                                     </select>
-                                    <button class="btn btn-outline-default" type="submit" id="periodicitySubmit">Apply</button>
+                                    <button class="btn btn-outline-secondary" type="submit" id="periodicitySubmit">Apply</button>
                                 </dd>
                             {% else %}
                                 <dd>
@@ -344,7 +344,7 @@
                                     <option value = "3" {% if machine.scanLevel == '3' %}selected="selected"{% endif %}> 3</option>
                                     <option value = "4" {% if machine.scanLevel == '4' %}selected="selected"{% endif %}> 4</option>
                                     </select>
-                                    <button class="btn btn-outline-default my-0" type="submit" id="scanLevelSubmit">Apply</button>
+                                    <button class="btn btn-outline-secondary my-0" type="submit" id="scanLevelSubmit">Apply</button>
                                 </dd>
                             {% else %}
                                 <dd>

@@ -7,19 +7,19 @@ $(document).ready(function () {
             "lengthMenu": [ 5, 10, 25 ]
         });
         $('#latestChangesTableAddRemoved').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
         });
         $('#latestChangesTableUpdates').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
         });
         $('#latestChangesTableFixedVulns').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
