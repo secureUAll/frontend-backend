@@ -48,6 +48,8 @@ def DashboardView(request, *args, **kwargs):
     # Define banner chart with vulnerabilities
     for x in range(12):
         scans = Scan.objects.filter(date__gt=date.today()-timedelta(days=x)).filter(date__lte=date.today()-timedelta(days=x-1))
+        if not request.user.is_admin:
+            scans = scans.filter(machine__users__user=request.user)
         count_vulnerabilities = 0
         for scan in scans:
             if scan.vulnerabilities:
