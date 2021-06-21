@@ -1,79 +1,8 @@
 
 // This function initializes all the charts
 const initCharts = () => {
-    //initVulnsByGroupChart();
     initVulsRiskLevelChart();
     initVulnsByScanChart();
-}
-
-const initVulnsByGroupChart = () => {
-    // Get element from DOM
-    const ctx = document.getElementById('vulnerabilitiesByGroupChart').getContext("2d");
-
-    // Colors
-    const chartColor = "#92d400";
-    const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
-
-    const gradientFillHover = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFillHover.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFillHover.addColorStop(1, "rgba(146, 212, 0, 1)");
-
-    // Draw chart
-    var myChart = {
-        type: "bar",
-        data: {
-            labels: vulnsByGroupChartLabels,
-            datasets: [{
-                label: "Amount",
-                backgroundColor: gradientFill,
-                hoverBackgroundColor: gradientFillHover,
-                borderColor: chartColor,
-                fill: true,
-                borderWidth: 1,
-                data: vulnsByGroupChartValues
-            }]
-        },
-        options: {
-            layout: {
-                padding: {
-                    top: 20
-                }
-            },
-            maintainAspectRatio: false,
-            legend: {
-                display: false
-            },
-            tooltips: {
-                bodySpacing: 4,
-                mode: "nearest",
-                intersect: 0,
-                position: "nearest",
-                xPadding: 10,
-                yPadding: 10,
-                caretPadding: 10,
-            },
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    gridLines: 0,
-                    gridLines: {
-                        zeroLineColor: "transparent",
-                        drawBorder: false
-                    }
-                }],
-                xAxes: [{
-                    display: 1,
-                }]
-            },
-            plugins: {
-                labels: false
-            },
-        }
-    };
-
-    var viewsChart = new Chart(ctx, myChart);
 }
 
 
@@ -171,7 +100,28 @@ const initVulsRiskLevelChart = () => {
 
     var pieChart = new Chart(ctx, myChart);
 
-    // on click event, filter
+    // Render vulns table
+    vulnsTable = $('#vulnerabilitiesTable').DataTable({
+        "lengthMenu": [ 25, 50, 100 ],
+    });
+
+    // Listen for search
+    vulnsTable.on('search', (e, settings) => {
+        var search = vulnsTable.search();
+        console.log("SEARCH by", search);
+        // If searching, give feedback and show option to clear
+        if (search != "") {
+            var text = "Filtered by <strong>" + search + "</strong>.";
+            document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
+            $("#clearFilterVulnerabilities").removeClass("d-none");
+        // Else, remove clear btn and display message suggesting filtering
+        } else {
+            $("#vulnerabilitiesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph on the right.");
+            $("#clearFilterVulnerabilities").addClass("d-none");
+        }
+    });
+
+    // Listen for clicks on pie chart slices for filtering
     canvas.onclick = function(evt) {
         var activePoints = pieChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
@@ -180,43 +130,16 @@ const initVulsRiskLevelChart = () => {
   
           var label = chartData.labels[idx];
           var table = document.getElementById("vulnerabilitiesTable");
-          var tr =  table.getElementsByTagName("tr");
 
-          var i, td;
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].querySelector("td span");
-            var regex = /^[a-zA-Z]+$/;
-            if (!label.match(regex)) {
-                td = tr[i].getElementsByTagName("td")[0];
-            }
-            if (td) {
-                if (td.innerText.indexOf(label) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-          }
-          var text = "Filtered by risk level <strong>" + label + "</strong>.";
-          document.getElementById("vulnerabilitiesTableFilterText").innerHTML = text;
-          $("#clearFilterVulnerabilities").removeClass("d-none");
+          vulnsTable.search("RISK-" + label.toUpperCase());
+          vulnsTable.draw();
         }
     };
 
     // on click event, clear filter
     document.getElementById("clearFilterVulnerabilities").onclick = function() {
-
-        $("#clearFilterVulnerabilities").addClass("d-none");
-
-        var table  = document.getElementById("vulnerabilitiesTable");
-        var tr =  table.getElementsByTagName("tr");
-
-        var i;
-        for (i = 0; i < table.rows.length; i++) {
-            tr[i].style.display = "";
-        }
-
-        $("#vulnerabilitiesTableFilterText").text("No filter applied to table.");
+        vulnsTable.search("");
+        vulnsTable.draw();
     }
 
 };
@@ -228,8 +151,8 @@ const initVulnsByScanChart = () => {
     // Colors
     const chartColor = "#92d400";
     const gradientFill = ctx.createLinearGradient(0, 170, 0, 50);
-    gradientFill.addColorStop(0, "rgba(146, 212, 0, 0)");
-    gradientFill.addColorStop(1, "rgba(146, 212, 0, 0.40)");
+    gradientFill.addColorStop(0, "rgba(145, 212, 0, 0.1)");
+    gradientFill.addColorStop(1, "rgba(145, 212, 0, 0.3)");
 
     // Draw chart
     myChart = new Chart(ctx, {
@@ -252,6 +175,17 @@ const initVulnsByScanChart = () => {
                 data: vulnsByScanChartValues,
             }]
         },
+        options: {
+            responsive: true,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function(value) {if (value % 1 === 0) {return value;}}
+                    }
+                }]
+            }
+        }
         //options: gradientChartOptionsConfiguration,
     });
 }

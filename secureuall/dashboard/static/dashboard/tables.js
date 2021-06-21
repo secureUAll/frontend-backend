@@ -1,25 +1,24 @@
 $(document).ready(function () {
     $(document).ready(function () {
-        $('#machinesTable').DataTable({
-            "lengthMenu": [ 25, 50, 100 ]
-        });
+        // On filter
+
         $('#workersTable').DataTable({
             "lengthMenu": [ 5, 10, 25 ]
         });
         $('#latestChangesTableAddRemoved').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
         });
         $('#latestChangesTableUpdates').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false
         });
         $('#latestChangesTableFixedVulns').DataTable({
-            "lengthMenu": [ 10, 15, 25 ],
+            "lengthMenu": [ 5 ],
             "searching": false,
             "lengthChange": false,
             "ordering": false

@@ -2,60 +2,50 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from login.models import User, UserAccessRequest
-from machines.models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment
+from machines.models import Machine, MachineUser, Scan, MachineService, MachinePort, Vulnerability, VulnerabilityComment, MachineChanges
 from workers.models import Worker
 
 from datetime import datetime, timedelta, date
 from django.utils import timezone
+import random
 
 
 # Create your views here.
 @login_required
 @user_passes_test(User.has_access, login_url="/welcome")
 def DashboardView(request, *args, **kwargs):
-    pielabels = []
-    piedata = []
-    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[]}
+    piechart = {'1':[],'2':[], '3':[],'4':[], '5':[], 'unclassified':[]}
     vulnsdata = []
     vulnslabels = []
-    active_vuln = Vulnerability.objects.all().exclude(status="Fixed").count()
-    fixed_vulns = []
-    machines_updates = {}
-    machines_addrem = {}
+    unresolved_vulns = []
+    machines_updates = []
+    machines_addrem = []
 
     vulnset = Vulnerability.objects.all().order_by('-scan')
 
-    # Define piechart (% of Machines in a Risk Level) x and y axes values.
-    if request.user.is_admin:
-        machineset = Machine.objects.filter(active__exact=True).order_by('-created')
+    # Filter subscribbed machines if logged user is not system admin
+    if not request.user.is_admin:
+        machineset = Machine.objects.filter(users__user__in=[request.user.id])
     else:
-        machineset = Machine.objects.filter(active__exact=True, users__user=request.user).order_by('-created')
-    for machine in machineset:
-        # Ignore empty risks
-        if machine.risk:
-            if str(machine.risk) in piechart:
-                print(machine)
-                piechart[machine.risk].append(machine)
-            else:
-                print(machine)
-                piechart[machine.risk].append(machine)
-    
-    pielabels = [x for x in piechart.keys()]
-    piedata = [len(v) for v in piechart.values()]
+        machineset = Machine.objects.filter(active__exact=True).order_by('-created')
 
-    # Calculates number of weeks without vulnerabilities.
-    scanset = Scan.objects.all().order_by('-date')
-    weeks_without_vuln = 0
-    for scan in scanset:
-        if scan.vulnerabilities:
-            delta = (date.today()-scan.date)
-            weeks_without_vuln = (int)((delta.days)/7)
-            break
+    # Define piechart (% of Machines in a Risk Level)
+    def get_piechartdata(mset):
+        for machine in mset:
+            # Ignore empty risks
+            if machine.risk:
+                if machine.risk=='0':
+                    piechart['unclassified'].append(machine)
+                else:
+                    piechart[str(machine.risk)].append(machine)
 
+    # get data for pie chart (vulnerabilities by risk)
+    get_piechartdata(machineset)
 
-    # Define vulnerabilities chart.
+    # Define banner chart with vulnerabilities
     for x in range(12):
         scans = Scan.objects.filter(date__exact=date.today()-timedelta(days=x))
         count_vulnerabilities = 0
@@ -67,34 +57,31 @@ def DashboardView(request, *args, **kwargs):
         delta = timezone.now()-timedelta(days=x)
         label = (str)(delta.day) + " "+ delta.strftime('%b')
         vulnslabels.append(label)
-    vulnsdata.reverse()
-    vulnslabels.reverse()
 
 
-    # Get fixed vulnerabilities from previous week
-    scanset_updates = Scan.objects.filter(date__gte=timezone.now()-timedelta(days=7))
-    for scan in scanset_updates:
-        vulns = Vulnerability.objects.filter(scan_id=scan.id)
-        for vuln in vulns:
-            if vuln.updated != vuln.created and vuln.status_tracker.has_changed('status') and vuln.status == "Fixed":
-                    if not vuln.machine in fixed_vulns:
-                        machine = Machine.objects.filter(id=vuln.machine)
-                        fixed_vulns.append(machine)
+    # Calculates number of weeks without vulnerabilities general
+    if not request.user.is_admin:
+        scanset = Scan.objects.all().order_by('-date')
+    else:
+        scanset = Scan.objects.filter(machine_id__in=[m.id for m in machineset]).order_by('-date')
+    weeks_without_vuln = 0
+    for scan in scanset:
+        if scan.vulnerabilities:
+            delta = (timezone.now()-scan.date)
+            weeks_without_vuln = (int)((delta.days)/7)
+            break
 
+
+    # CARDS UPDATES
+    # Get machines added and removed from previous week
+    machines_addrem = Machine.objects.filter(Q(active=False, updated__gte=timezone.now()-timedelta(days=7)) | Q(created__gte=timezone.now()-timedelta(days=7))).order_by('-updated')
+    
+    # Get unresolved vulnerabilities from previous week
+    unresolved_vulns = Vulnerability.objects.filter(Q(created__gte=timezone.now()-timedelta(days=7)) | Q(updated__gte=timezone.now()-timedelta(days=7)))
 
     # Get machines updates from previous week
-    machineset_updates = Machine.objects.filter(updated__gte=timezone.now()-timedelta(days=7))
-    for machine in machineset_updates:
-        changes = machine.tracker.changed()
-        if "os" in changes.keys(): machines_updates[machine] = "OS update"
-        if "scanLevel" in changes.keys(): machines_updates[machine] = "scan level update"
-        if "active" in changes.keys(): machines_addrem[machine] = machine.active
-    machinuserset = MachineUser.objects.filter(created__gte=timezone.now()-timedelta(days=7))
-    for machineuser in machinuserset:
-        if machineuser.userType=='S':
-            machines_updates[machineuser.machine] = "Subscriber added"
-        elif machineuser.userType=='O':
-            machines_updates[machineuser.machine] = "Owner added"
+    machines_updates = MachineChanges.objects.filter(created__gte=timezone.now()-timedelta(days=7), updated__gte=timezone.now()-timedelta(days=7))
+
 
     # ALERTS
     alerts = {
@@ -112,19 +99,19 @@ def DashboardView(request, *args, **kwargs):
     context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
-        'ports': MachinePort.objects.all(),
-        'vulnerabilities': vulnset,
-        'active_vulnerabilities': active_vuln,
-        'scans': scanset,
+        'ports': MachinePort.objects.filter(machine_id__in=[m.id for m in machineset]),
+        'vulnerabilities': vulnset.filter(machine_id__in=[m.id for m in machineset]),
+        'scans': scanset.filter(machine_id__in=[m.id for m in machineset]),
         'weeks_without_vulnerabilities': weeks_without_vuln,
-        'pielabels': pielabels,
-        'piedata': piedata,
-        'vulnsdata': vulnsdata,
-        'vulslabels': vulnslabels,
-        'fixed_vulns': fixed_vulns,
+        'active_vulnerabilities': vulnset.filter(status__in=['Fixing', 'Not Fixed'], machine_id__in=[m.id for m in machineset]),
+        'pielabels': [x for x in piechart.keys()],
+        'piedata': [len(v) for v in piechart.values()],
+        'vulnslabels': vulnslabels[::-1],
+        'vulnsdata': vulnsdata[::-1],
+        'unresolved_vulns': unresolved_vulns,
         'machines_updates': machines_updates,
         'machines_addrem': machines_addrem,
-        'alerts': alerts
+        'alerts': alerts,
     }
 
     return render(request, "dashboard/dashboard.html", context)
