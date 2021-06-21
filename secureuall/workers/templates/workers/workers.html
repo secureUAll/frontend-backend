@@ -210,9 +210,7 @@
                                                             <td>{% if machine.location %}{{machine.location}}{% endif %}</td>
                                                             <td><span class="badge p-2 bg-{{machine.scanLevel}}">{{machine.get_scanLevel_display}}</span></td>
                                                             <td>
-                                                                {% if machine.risk %}
-                                                                <span class="badge p-2 bg-{{machine.risk}}">{{machine.risk}}</span>
-                                                                {% endif %}
+                                                                <span class="badge p-2 bg-{{machine.risk}}">{% if machine.risk != '0' %}{{machine.risk}}{% else %}undefined{% endif %}</span>
                                                             </td>
                                                             <td>{{machine.get_periodicity_display}}</td>
                                                             <td>{{machine.nextScan|date:"Y/m/d"}}</td>
