@@ -28,7 +28,7 @@ class Machine(models.Model):
     dns = models.CharField(max_length=255, null=True, blank=True, validators=[validate_dns])
     os = models.CharField(max_length=20, null=True, blank=True)
     risk = models.CharField(max_length=1, choices=riskLevelsOps, null=True, blank=True)
-    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='1')
+    scanLevel = models.CharField(max_length=1, choices=scanLevelOps, null=True, blank=True, default='2')
     location = models.CharField(max_length=30, null=True, blank=True)
     periodicity = models.CharField(max_length=1, choices=periodicityOps, default='W')
     nextScan = models.DateField(auto_now_add=True)
