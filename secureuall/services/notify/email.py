@@ -40,7 +40,7 @@ class EmailNotify(Notify):
                 <tr>
                   <td style="line-height: 24px; font-size: 16px; color: #ffffff; width: 100%; margin: 0; padding: 20px;" align="left" bgcolor="#1a202c" width="100%">
                     
-                      <img src="https://deti-vuln-mon.ua.pt/static/assets/images/logos/email.png" style="height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; border: 0 none;">
+                      <img src="https://deti-vuln-mon.ua.pt/static/assets/images/logos/email.png" style="height: auto; line-height: 100%; outline: none; text-decoration: none; display: block; border: 0 none; width: 100%;">
                       <p class="text-center" style="line-height: 24px; font-size: 16px; width: 100%; margin: 0;" align="center">UA security exposure sentinel</p>
                     
                   </td>
