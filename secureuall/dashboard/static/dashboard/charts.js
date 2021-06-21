@@ -2,7 +2,6 @@
 const initCharts = () => {
     initVulnsNumbersChart();
     initMachinesRiskLevelChart();
-    //initVulnsByGroupChart();
 }
 
 
@@ -96,108 +95,6 @@ const initVulnsNumbersChart = () => {
             },
         }
     });
-}
-
-const initVulnsByGroupChart = () => {
-    // Get element from DOM
-    const ctx = document.getElementById('vulnerabilitiesByGroupChart').getContext("2d");
-
-    // Colors
-    const gradientFill = [
-        'rgba(2239, 231, 106, 0.2)',
-        'rgba(132, 90, 169, 0.2)',
-        'rgba(175, 198, 173, 0.2)',
-        'rgba(249, 149, 225, 0.2)',
-        'rgba(240, 42, 102, 0.2)',
-        'rgba(42, 216, 240, 0.2)',
-        'rgba(255, 152, 13, 0.2)',
-        'rgba(26, 184, 131, 0.2)',
-        'rgba(11, 42, 182, 0.2)',
-        'rgba(255, 128, 16, 0.2)',
-    ];
-    const gradientFillHover = [
-        'rgba(239, 231, 106, 0.6)',
-        'rgba(132, 90, 169, 0.6)',
-        'rgba(175, 198, 173, 0.6)',
-        'rgba(249, 149, 225, 0.6)',
-        'rgba(240, 42, 102, 0.6)',
-        'rgba(42, 216, 240, 0.6)',
-        'rgba(255, 152, 13, 0.6)',
-        'rgba(26, 184, 131, 0.6)',
-        'rgba(11, 42, 182, 0.6)',
-        'rgba(255, 128, 16, 0.6)',
-    ];
-    const borderColor = [
-        'rgb(239, 231, 106)',
-        'rgb(132, 90, 169)',
-        'rgb(175, 198, 173)',
-        'rgb(249, 149, 225)',
-        'rgb(240, 42, 102)',
-        'rgb(42, 216, 240)',
-        'rgb(255, 152, 13)',
-        'rgba(26, 184, 131)',
-        'rgba(11, 42, 182)',
-        'rgba(255, 128, 16)',
-    ];
-
-    // Draw chart
-    var myChart = {
-        type: "bar",
-        data: {
-            labels: vulnsByGroupChartLabels,
-            datasets: [{
-                label: "Amount",
-                backgroundColor: gradientFill,
-                hoverBackgroundColor: gradientFillHover,
-                borderColor: borderColor,
-                fill: true,
-                borderWidth: 1,
-                data: vulnsByGroupChartValues
-            }]
-        },
-        options: {
-            responsive: true,
-            layout: {
-                padding: {
-                    top: 20
-                }
-            },
-            maintainAspectRatio: false,
-            legend: {
-                display: false
-            },
-            tooltips: {
-                bodySpacing: 4,
-                mode: "nearest",
-                intersect: 0,
-                position: "nearest",
-                xPadding: 10,
-                yPadding: 10,
-                caretPadding: 10,
-            },
-            responsive: 1,
-            scales: {
-                yAxes: [{
-                    gridLines: 0,
-                    gridLines: {
-                        zeroLineColor: "transparent",
-                        drawBorder: false
-                    },
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }],
-                xAxes: [{
-                    display: 1,
-                }]
-            },
-            plugins: {
-                labels: false
-            },
-        }
-    };
-
-    var viewsChart = new Chart(ctx, myChart);
 }
 
 
@@ -295,50 +192,44 @@ const initMachinesRiskLevelChart = () => {
 
     var pieChart = new Chart(ctx, myChart);
 
-    // on click event, filter
+    // Render machines table
+    machinesTable = $('#machinesTable').DataTable({
+        "lengthMenu": [ 25, 50, 100 ]
+    });
+
+    // Listen for search
+    machinesTable.on('search', (e, settings) => {
+        var search = machinesTable.search();
+        console.log("SEARCH by", search);
+        // If searching, give feedback and show option to clear
+        if (search != "") {
+            var text = "Filtered by <strong>" + search + "</strong>.";
+            document.getElementById("machinesTableFilterText").innerHTML = text;
+            $("#clearFilterMachines").removeClass("d-none");
+        // Else, remove clear btn and display message suggesting filtering
+        } else {
+            $("#machinesTableFilterText").text("No filter applied to table. To filter per risk level click on the risk slice in the graph on the right.");
+            $("#clearFilterMachines").addClass("d-none");
+        }
+    });
+
+    // Listen for clicks on pie chart slices for filtering
     canvas.onclick = function(evt) {
         var activePoints = pieChart.getElementsAtEvent(evt);
         if (activePoints[0]) {
           var chartData = activePoints[0]['_chart'].config.data;
           var idx = activePoints[0]['_index'];
-  
           var label = chartData.labels[idx];
-          var table = document.getElementById("machinesTable");
-          var tr =  table.getElementsByTagName("tr");
 
-          var i, td;
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].querySelector("td span");
-            var regex = /^[a-zA-Z]+$/;
-            if (!label.match(regex)) {
-                td = tr[i].getElementsByTagName("td")[1];
-            }
-            if (td) {
-                if (td.innerText.indexOf(label) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-          }
-          var text = "Filtered by risk level <strong>" + label + "</strong>.";
-          document.getElementById("machinesTableFilterText").innerHTML = text;
-          $("#clearFilterMachines").removeClass("d-none");
+          machinesTable.search("RISK-" + label.toUpperCase());
+          machinesTable.draw();
         }
     };
 
     // on click event, clear filter
     document.getElementById("clearFilterMachines").onclick = function() {
-        var table  = document.getElementById("machinesTable");
-        var tr =  table.getElementsByTagName("tr");
-
-        var i;
-        for (i = 0; i < table.rows.length; i++) {
-            tr[i].style.display = "";
-        }
-
-        $("#machinesTableFilterText").text("No filter applied to table. ");
-        $("#clearFilterMachines").addClass("d-none");
+        machinesTable.search("");
+        machinesTable.draw();
     }
     
 };

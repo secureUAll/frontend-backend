@@ -1,11 +1,11 @@
 from django.db import models
 from django.db.models import Q
 from .validators import *
-from model_utils import FieldTracker
 
 
 class Machine(models.Model):
     riskLevelsOps = (
+        ('0', 'unclassified'),
         ('1', 1),
         ('2', 2),
         ('3', 3),
@@ -41,8 +41,6 @@ class Machine(models.Model):
     sslExpired = models.DateField(null=True, blank=True)
     sslInvalid = models.BooleanField(default=False, null=True, blank=True)
 
-    tracker = FieldTracker()
-
     def __str__(self):
         if self.ip and self.dns:
             return f"{self.ip} / {self.dns}"
@@ -74,18 +72,11 @@ class Machine(models.Model):
         # Different machines must have different IPs/DNS
         # An IP can be shared by multiple machines if they have different DNS
         # A DNS can be shared by multiple machines if they have different IPs
-        if dns and not ip and Machine.objects.filter(dns=dns, active=True):
-            return Machine.objects.filter(dns=dns, active=True)
-        if ip and not dns and Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip) & Q(active=True)):
-            return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip) & Q(active=True))
-        return Machine.objects.filter(ip=ip, dns=dns, active=True)
-
-    def save(self, *args, **kwargs):
-        """ Automatically add "modified" to update_fields."""
-        update_fields = kwargs.get('update_fields')
-        if update_fields is not None:
-            kwargs['update_fields'] = set(update_fields) | {'modified'}
-        super().save(*args, **kwargs)
+        if dns and not ip and Machine.objects.filter(ip='', dns=dns).exists():
+            return Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns))
+        if ip and not dns and Machine.objects.filter(ip=ip, dns='').exists():
+            return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip))
+        return Machine.objects.filter(ip=ip, dns=dns)
         
 
 class MachineUser(models.Model):
@@ -111,7 +102,7 @@ class MachineWorker(models.Model):
 class Scan(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='scans')
     worker = models.ForeignKey('workers.Worker', on_delete=models.CASCADE, related_name='scans')
-    date = models.DateField(auto_now=True)
+    date = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=15)
 
     def __str__(self):
@@ -154,10 +145,14 @@ class Vulnerability(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    status_tracker = FieldTracker(fields=['status'])
-
     def __str__(self):
         return "(" + str(self.risk) + ") " + self.description
+
+    def locationsplit(self):
+        return self.location.split(" ")
+
+    def getriskdisplay(self):
+        return "unclassified" if not self.risk else self.risk
 
 
 class VulnerabilityComment(models.Model):
@@ -180,12 +175,12 @@ class Log(models.Model):
 
 class MachineChanges(models.Model):
     types = (
-        ("O", "Operative Sistem"),
+        ("O", "Operative System"),
         ("S", "Scan level"),
         ("P", "Periodicity"),
         ("R", "Risk"),
     )
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name="changes")
     type = models.CharField(max_length=1, choices=types, null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True) 
     updated = models.DateTimeField(auto_now=True)
