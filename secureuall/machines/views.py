@@ -52,8 +52,6 @@ def MachinesView(request, id):
         machine = Machine.objects.get(id=id)
         machine_users_id=machine.users.all().values_list("user", flat=True)
 
-
-
         # pie chart set up (vulnerabilities by risk)
         def get_piechartdata(vulns):
             count=0
@@ -81,14 +79,13 @@ def MachinesView(request, id):
         # get data for line chart (vulnerabilities per scan)
         for scan in scanset:
             # adding to line chart
-            if scan.status=='Done':
-                label = (str)(scan.date.day) + " "+ scan.date.strftime('%b')
-                if not scan.date in linechart.keys():
-                    linechart[label] = scan.vulnerabilities.count()
-                else: 
-                    count = linechart[label]
-                    count += scan.vulnerabilities.count()
-                    linechart[label] = count
+            label = scan.date.strftime('%d/%b')
+            if not scan.date in linechart.keys():
+                linechart[label] = scan.vulnerabilities.count()
+            else:
+                count = linechart[label]
+                count += scan.vulnerabilities.count()
+                linechart[label] = count
 
         # get data for pie chart (vulnerabilities by risk)
         count_vulns = get_piechartdata(allvulns)
@@ -230,7 +227,7 @@ def MachinesView(request, id):
             'scan_filter': scan_filter,
             'workersMachines': request.session['workersMachines'] if 'workersMachines' in request.session else None,
         }
-
+        
         # Clean session vars
         if 'workersMachines' in request.session:
             request.session['workersMachines'] = None
