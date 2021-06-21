@@ -47,7 +47,7 @@ def DashboardView(request, *args, **kwargs):
 
     # Define banner chart with vulnerabilities
     for x in range(12):
-        scans = Scan.objects.filter(date__exact=date.today()-timedelta(days=x))
+        scans = Scan.objects.filter(date__gt=date.today()-timedelta(days=x)).filter(date__lte=date.today()-timedelta(days=x-1))
         count_vulnerabilities = 0
         for scan in scans:
             if scan.vulnerabilities:
@@ -95,7 +95,8 @@ def DashboardView(request, *args, **kwargs):
     alerts['number'] += 1 if alerts['machines'].exists() else 0
     alerts['number'] += 1 if len(alerts['requests']) else 0
     alerts['noworkers'] += 1 if alerts['noworkers'] else 0
-        
+
+    print("VUNSDATA", vulnsdata)
     context = {
         'workers': Worker.objects.all().order_by('-created'),
         'machines': machineset,
