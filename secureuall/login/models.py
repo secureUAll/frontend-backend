@@ -11,6 +11,7 @@ class User(AbstractUser):
 
     @staticmethod
     def has_access(user):
+        # Only admins or users with machines have access to the system
         if not user or not user.is_authenticated:
             return False
         return user.is_admin or user.machines.all().count()

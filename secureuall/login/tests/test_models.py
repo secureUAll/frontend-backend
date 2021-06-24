@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 # Create your tests here.
-from login.models import User, UserAccessRequest
+from login.models import User, UserAccessRequest, UserNotification
 from machines.models import MachineUser, Machine
 
 
@@ -86,3 +86,16 @@ class UserAccessRequestModelTest(TestCase):
                 approved=True,
                 pending=True
             )
+
+
+class UserNotificationModelTest(TestCase):
+
+    def test_constraint_unique_together(self):
+        u = User.objects.create(username="normalhascess@test.pt", is_admin=False)
+        with self.assertRaises(IntegrityError):
+            UserNotification.objects.create(type='Email', user=u, value='abc')
+            UserNotification.objects.create(type='Email', user=u, value='def')
+
+    def test_signal_newUser_creates_Notification(self):
+        u = User.objects.create(username="testsignal@test.pt")
+        self.assertTrue(UserNotification.objects.filter(user=u, type='Email').exists())
