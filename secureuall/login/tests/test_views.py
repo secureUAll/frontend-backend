@@ -107,3 +107,53 @@ class WelcomeViewTest(TestCase):
             target_status_code=200,
             fetch_redirect_response=False
         )
+
+
+class ProfileViewTest(TestCase):
+    userpass="abc"
+
+    @classmethod
+    def setUpTestData(cls):
+        u = User.objects.create_user(
+            username="authorized@test.pt", email="authorized@test.pt",
+            password=ProfileViewTest.userpass,
+            is_admin=True
+        )
+        MachineUser.objects.create(
+            user=u,
+            machine=Machine.objects.create(dns='abc.pt'),
+            userType='S'
+        )
+
+    # View properties
+    def test_view_url_exists_at_desired_location(self):
+        self.client.login(username='authorized@test.pt', password=ProfileViewTest.userpass)
+        response = self.client.get('/profile/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        self.client.login(username='authorized@test.pt', password=ProfileViewTest.userpass)
+        response = self.client.get(reverse('login:profile'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        self.client.login(username='authorized@test.pt', password=ProfileViewTest.userpass)
+        response = self.client.get(reverse('login:profile'))
+        self.assertTemplateUsed(response, 'login/profile.html')
+
+
+class AboutViewTest(TestCase):
+
+    # View properties
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/about/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse('login:about'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('login:about'))
+        self.assertTemplateUsed(response, 'login/about.html')
+
