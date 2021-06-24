@@ -5,6 +5,7 @@ from django.forms.utils import ErrorList
 from machines.models import Machine
 from .models import Worker
 
+
 class MachineWorkerForm(forms.Form):
     machine = forms.CharField(
         max_length=300,
