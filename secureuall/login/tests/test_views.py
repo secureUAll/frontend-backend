@@ -3,7 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from django.urls import reverse
 
-from login.models import User, UserAccessRequest
+from login.models import User
 from machines.models import MachineUser, Machine
 
 
