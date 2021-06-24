@@ -56,12 +56,9 @@ class UserNotificationForm(forms.Form):
             raise ValidationError("The value is mandatory for active notifications!", params={'value': data['value']})
 
         # make sure that value matches regex
-        if data['value']:
-            print("HEREE", [ut[1] for ut in UserNotification.notificationsTypes if ut[0]==self.cleaned_data['type']][0])
+        if data['value'] and 'type' in data:
             regex = re.compile([ut[1] for ut in UserNotification.notificationsTypes if ut[0]==self.cleaned_data['type']][0])
-            print(data['value'], regex.fullmatch(data['value']))
             if not regex.fullmatch(data['value']):
-                print("INVALID")
                 raise ValidationError("Value is not valid for selected type.", params={'value': data['value']})
 
         return data

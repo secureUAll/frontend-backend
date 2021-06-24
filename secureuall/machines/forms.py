@@ -46,6 +46,7 @@ class MachineWorkerBatchInputForm(forms.Form):
                 dns=m if validate_dns(m) else None
             )
             # Check if already exists in the database
+            # If so, flag with 'edit' = True
             dbquery = Machine.exists(mobj.ip, mobj.dns)
             if dbquery.exists():
                 mobj = dbquery.first()
@@ -168,10 +169,14 @@ class MachineNameForm(forms.Form):
             cleaned_data['dns'] = cleaned_data['name']
         # If DNS and IP already on DB, associate id
         cleaned_data['machine'] = None
-        if 'dns' in cleaned_data and Machine.objects.filter(dns=cleaned_data['dns']).exists():
-            cleaned_data['machine'] = Machine.objects.filter(dns=cleaned_data['dns']).first()
-        elif 'ip' in cleaned_data and Machine.objects.filter(ip=cleaned_data['ip']).exists():
-            cleaned_data['machine'] = Machine.objects.filter(ip=cleaned_data['ip']).first()
+        query = Machine.exists(
+            self.cleaned_data['ip'] if 'ip' in self.cleaned_data else None,
+            self.cleaned_data['dns'] if 'dns' in self.cleaned_data else None
+        )
+        if 'dns' in cleaned_data and query.exists():
+            cleaned_data['machine'] = query.first()
+        elif 'ip' in cleaned_data and query.exists():
+            cleaned_data['machine'] = query.first()
         return cleaned_data
 
 

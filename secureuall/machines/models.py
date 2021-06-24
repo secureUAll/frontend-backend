@@ -72,9 +72,9 @@ class Machine(models.Model):
         # Different machines must have different IPs/DNS
         # An IP can be shared by multiple machines if they have different DNS
         # A DNS can be shared by multiple machines if they have different IPs
-        if dns and not ip and Machine.objects.filter(ip='', dns=dns).exists():
+        if dns and not ip and Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns)).exists():
             return Machine.objects.filter(Q(Q(ip='') | Q(ip=None)) & Q(dns=dns))
-        if ip and not dns and Machine.objects.filter(ip=ip, dns='').exists():
+        if ip and not dns and Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip)).exists():
             return Machine.objects.filter(Q(Q(dns='') | Q(dns=None)) & Q(ip=ip))
         return Machine.objects.filter(ip=ip, dns=dns)
         
