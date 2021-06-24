@@ -192,3 +192,8 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 # Deploy config
 DEPLOY_URL = os.environ.get("DEPLOY_URL")
+
+# Solving problem in Chrome log in
+# Solution found at https://github.com/IdentityPython/djangosaml2/issues/274#issuecomment-842512706
+# Doc: https://djangosaml2.readthedocs.io/contents/setup.html#samesite-cookie
+SESSION_COOKIE_SECURE = True
