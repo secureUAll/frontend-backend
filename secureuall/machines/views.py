@@ -156,7 +156,7 @@ def MachinesView(request, id):
                         return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because this machine does not have a worker associated."}, status=200)
                     elif not machine.workers.all().exclude(worker__status='D').exists():
                         return JsonResponse({'status': False, 'message': "It is not possible to schedule a scan because all workers that machine is associated with are down."}, status=200)
-                    if settings.PRODUCTION:
+                    if settings.PRODUCTION or settings.DOCKER_DEBUG:
                         KafkaService().send('FRONTEND', key=b'SCAN', value={'ID': id})
                     else:
                         return JsonResponse({'status': False, 'message': "Not in production! Can't schedule requests."}, status=500)

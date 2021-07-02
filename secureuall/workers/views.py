@@ -144,7 +144,7 @@ class AddMachinesView(LoginRequiredMixin, UserIsAdminAccessMixin, View):
                         MachineWorker.objects.filter(worker=self.context['worker'], machine=mach).delete()
                         request.session['machinesAdded']['disassociated'] += 1
                 # Notify colector of changes (only on production)
-                if settings.PRODUCTION:
+                if settings.PRODUCTION or settings.DOCKER_DEBUG:
                     KafkaService().send(topic='FRONTEND', key=b'UPDATE', value={'ID': self.context['worker'].id})
                 return redirect('workers:workers')
         return render(request, self.template_name, self.context)
